@@ -1,10 +1,26 @@
 import React from 'react';
+import { StyleSheet, Text } from 'react-native';
 
 import { FLAGS } from '../contracts/flags';
+import { PixelPanel } from '../ui/PixelPanel';
+import { Screen } from '../ui/Screen';
 import { strings } from '../ui/strings';
-import { PlaceholderScreen } from '../ui/PlaceholderScreen';
+import { theme } from '../ui/theme';
 
 export function RaidLobbyScreen() {
-  const body = FLAGS.raids ? strings.raid_body : strings.raid_disabled;
-  return <PlaceholderScreen title={strings.raid_title} body={body} />;
+  return (
+    <Screen title={strings.raid_title}>
+      <PixelPanel>
+        <Text style={styles.body}>{FLAGS.raids ? strings.raid_body : strings.raid_disabled}</Text>
+      </PixelPanel>
+    </Screen>
+  );
 }
+
+const styles = StyleSheet.create({
+  body: {
+    ...theme.type.body,
+    color: theme.colors.textDim,
+    textAlign: 'center',
+  },
+});

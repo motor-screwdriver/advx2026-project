@@ -4,6 +4,7 @@ import React from 'react';
 
 import { useGameFonts } from '../src/ui/fonts';
 import { theme } from '../src/ui/theme';
+import { GameProvider } from '../src/ui/useGame';
 
 export default function RootLayout() {
   const fontsReady = useGameFonts();
@@ -11,7 +12,7 @@ export default function RootLayout() {
     return null;
   }
   return (
-    <>
+    <GameProvider>
       <StatusBar style="light" />
       <Stack
         screenOptions={{
@@ -19,6 +20,6 @@ export default function RootLayout() {
           contentStyle: { backgroundColor: theme.colors.bg },
         }}
       />
-    </>
+    </GameProvider>
   );
 }

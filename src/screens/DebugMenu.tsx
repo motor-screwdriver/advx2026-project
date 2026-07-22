@@ -6,6 +6,7 @@ import { FLAGS } from '../contracts/flags';
 import { PixelButton } from '../ui/PixelButton';
 import { strings } from '../ui/strings';
 import { theme } from '../ui/theme';
+import { useGame, type DebugPreset } from '../ui/useGame';
 
 interface DebugRoute {
   href: string;
@@ -14,39 +15,61 @@ interface DebugRoute {
 
 const ROUTES: DebugRoute[] = [
   { href: '/onboarding', label: strings.onboarding_title },
-  { href: '/hero-ceremony', label: strings.ceremony_title },
+  { href: '/hero-ceremony', label: strings.ceremony_begin },
   { href: '/morning-scene', label: strings.morning_title },
   { href: '/death', label: strings.death_title },
-  { href: '/resurrection', label: strings.resurrection_title },
+  { href: '/resurrection', label: strings.soul_title },
   { href: '/mosaic', label: strings.mosaic_title },
   { href: '/chest', label: strings.chest_title },
   { href: '/inventory', label: strings.inventory_title },
+  { href: '/tutorial', label: strings.tutorial_title },
   { href: '/settings', label: strings.settings_title },
 ];
 
-/** Temporary M0 navigation: every stub screen reachable from Home. */
+const PRESETS: { preset: DebugPreset; label: string }[] = [
+  { preset: 'empty', label: strings.debug_empty },
+  { preset: 'mid', label: strings.debug_mid },
+  { preset: 'death', label: strings.debug_death },
+];
+
+/** Temporary M0-M1 navigation + state presets. Removed before release. */
 export function DebugMenu() {
+  const { loadDebugPreset } = useGame();
   const routes = FLAGS.raids
     ? [...ROUTES, { href: '/raid-lobby', label: strings.raid_title }]
     : ROUTES;
   return (
     <View style={styles.menu}>
-      <Text style={styles.heading}>{strings.home_debug_title}</Text>
-      {routes.map((route) => (
-        <Link key={route.href} href={route.href} asChild>
-          <PixelButton label={route.label} />
-        </Link>
-      ))}
+      <Text style={styles.heading}>{strings.debug_title}</Text>
+      <View style={styles.grid}>
+        {routes.map((route) => (
+          <Link key={route.href} href={route.href} asChild>
+            <PixelButton compact label={route.label} />
+          </Link>
+        ))}
+      </View>
+      <Text style={styles.heading}>{strings.debug_presets}</Text>
+      <View style={styles.grid}>
+        {PRESETS.map(({ preset, label }) => (
+          <PixelButton key={preset} compact label={label} onPress={() => loadDebugPreset(preset)} />
+        ))}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  menu: { gap: theme.spacing(3) },
+  menu: { gap: theme.spacing(2) },
   heading: {
     ...theme.type.label,
     color: theme.colors.textDim,
     textAlign: 'center',
     textTransform: 'uppercase',
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: theme.spacing(2),
   },
 });
