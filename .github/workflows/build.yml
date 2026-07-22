@@ -103,7 +103,13 @@ jobs:
       - name: Build iOS (simulator)
         working-directory: ios
         run: |
-          WORKSPACE=$(ls -1 *.xcworkspace | head -n 1)
+          WORKSPACE=$(find . -maxdepth 1 -name '*.xcworkspace' -type d | head -n 1)
+          if [ -z "$WORKSPACE" ]; then
+            echo "No .xcworkspace found in ios/"
+            ls -la
+            exit 1
+          fi
+          echo "Using workspace: $WORKSPACE"
           SCHEME=$(xcodebuild -list -json -workspace "$WORKSPACE" | python3 -c "
           import sys, json
           d = json.load(sys.stdin)
@@ -112,6 +118,7 @@ jobs:
               raise SystemExit('No Xcode schemes found: ' + json.dumps(d))
           print(schemes[0])
           ")
+          echo "Using scheme: $SCHEME"
           xcodebuild \
             -workspace "$WORKSPACE" \
             -scheme "$SCHEME" \
