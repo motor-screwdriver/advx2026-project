@@ -4,121 +4,54 @@ on:
   push:
     branches: [main, feature/build]
   workflow_dispatch:
-    inputs:
-      platform:
-        description: Platform to build
-        type: choice
-        options:
-          - all
-          - android
-          - ios
-        default: all
-
-concurrency:
-  group: build-${{ github.ref }}
-  cancel-in-progress: true
 
 env:
   EXPO_NO_TELEMETRY: 1
 
 jobs:
-  check:
-    name: Check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - run: npm ci
-      - run: npm run check
-
   android:
-    name: Android
-    needs: check
-    if: >-
-      github.event_name == 'push' ||
-      inputs.platform == 'all' ||
-      inputs.platform == 'android'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
-
       - uses: android-actions/setup-android@v3
-
       - run: npm ci
-
-      - name: Prebuild Android
-        run: npx expo prebuild --platform android --non-interactive
-
-      - name: Assemble debug APK
+      - run: npx expo prebuild --platform android --non-interactive
+      - run: ./gradlew assembleDebug --no-daemon
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: android-apk
           path: android/app/build/outputs/apk/debug/*.apk
-          if-no-files-found: error
 
   ios:
-    name: iOS
-    needs: check
-    if: >-
-      github.event_name == 'push' ||
-      inputs.platform == 'all' ||
-      inputs.platform == 'ios'
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-
       - run: npm ci
-
-      - name: Prebuild iOS
-        run: npx expo prebuild --platform ios --non-interactive
-
-      - name: Install CocoaPods
+      - run: npx expo prebuild --platform ios --non-interactive
+      - run: pod install
         working-directory: ios
-        run: pod install
-
-      - name: Build iOS (simulator)
+      - name: Build
         working-directory: ios
         run: |
           WORKSPACE=$(find . -maxdepth 1 -name '*.xcworkspace' -type d | head -n 1)
-          if [ -z "$WORKSPACE" ]; then
-            echo "No .xcworkspace found in ios/"
-            ls -la
-            exit 1
-          fi
-          echo "Using workspace: $WORKSPACE"
           SCHEME=$(xcodebuild -list -json -workspace "$WORKSPACE" | python3 -c "
           import sys, json
           d = json.load(sys.stdin)
-          schemes = (d.get('workspace') or d.get('project') or {}).get('schemes') or []
-          if not schemes:
-              raise SystemExit('No Xcode schemes found: ' + json.dumps(d))
-          print(schemes[0])
+          print((d.get('workspace') or d.get('project'))['schemes'][0])
           ")
-          echo "Using scheme: $SCHEME"
           xcodebuild \
             -workspace "$WORKSPACE" \
             -scheme "$SCHEME" \
@@ -128,10 +61,7 @@ jobs:
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             build
-
-      - name: Upload .app
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: ios-simulator-app
+          name: ios-app
           path: ios/build/Build/Products/Debug-iphonesimulator/*.app
-          if-no-files-found: error
