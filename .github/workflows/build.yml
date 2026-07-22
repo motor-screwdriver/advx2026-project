@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    branches: [main]
+    branches: [main, feature/build]
   workflow_dispatch:
     inputs:
       platform:
