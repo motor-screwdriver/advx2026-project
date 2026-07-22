@@ -4,8 +4,6 @@ A pixel-art tamagotchi (Soul Knight style) where your hero stays alive only whil
 **you** sleep. 7 hearts = 7 days of the week. Bad nights deal damage; 0 HP = death
 with one resurrection attempt per 7 days. A perfect week = level up + loot chest.
 
-Hackathon build: 4 developers, 72 hours, Expo Go demo. Product language: English only.
-
 ## Stack
 
 - Expo **SDK 54** + React Native + TypeScript, Expo Router (`app/` = thin routes).
@@ -58,7 +56,3 @@ screens never import `sync` or `engine` directly.
 - `git pull` before starting work. Commit small and often.
 - Commit only inside your own folders. Unfinished work hides behind
   `FLAGS` in `src/contracts/flags.ts` — `main` must always boot.
-
-## Docs
-
-Full specification, requirements and the team pipeline live in `docs/` (Russian).
