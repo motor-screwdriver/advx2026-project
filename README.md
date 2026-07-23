@@ -19,17 +19,17 @@ with one resurrection attempt per 7 days. A perfect week = level up + loot chest
 ## Run
 
 ```bash
-npm install
-npm start          # Expo dev server — scan the QR with Expo Go
+pnpm install
+pnpm start          # Expo dev server — scan the QR with Expo Go
 ```
 
 ## Verify
 
 ```bash
-npm run check      # = lint (eslint + boundaries) + typecheck (tsc) + jest
+pnpm run check      # = lint (eslint + boundaries) + typecheck (tsc) + jest
 ```
 
-`npm run check` must be green before every commit. No file may exceed 250 lines
+`pnpm run check` must be green before every commit. No file may exceed 250 lines
 and no function 60 lines — ESLint enforces both.
 
 Import boundaries are enforced by `eslint-plugin-boundaries` (see
@@ -56,7 +56,7 @@ screens never import `sync` or `engine` directly.
 - **E-ink** (`src/systems/eink.ts`, FLAGS.eink): Dot Quote/0 hero + stats cards
   pushed from the phone after night results / resurrection / level-ups / equips
   (5 s debounce, all failures silent). Setup: flip `FLAGS.eink`, enter device ID
-  + API key in Settings → "Send test card".
+  - API key in Settings → "Send test card".
 - **Sharing** (`src/systems/share.ts`): `shareViewAsPng(ref, title)` captures any
   view (Mosaic) via react-native-view-shot → expo-sharing.
 - **Health auto-detect**: CUT — see the spike note in `src/systems/healthSync.ts`
