@@ -1,51 +1,19 @@
 import React from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
 
+import { SPRITES } from '../../assets/manifest';
 import type { HeroType } from '../contracts/types';
-import { useBob } from './animations';
-import { HERO_BITMAP, HERO_COLORS, SKIN_COLOR } from './heroSprites';
-import { theme } from './theme';
+import { PixelSprite } from './PixelSprite';
 
 interface Props {
   type: HeroType;
   size?: number;
   animated?: boolean;
+  /** Perfect-week gold skin (uses the `_gold` sprite variant). */
+  gold?: boolean;
 }
 
-/** Pixel hero rendered from a bitmap (placeholder until real sprites). */
-export function HeroSprite({ type, size = 64, animated = true }: Props) {
-  const bob = useBob();
-  const cell = size / 8;
-  return (
-    <Animated.View style={animated ? { transform: [{ translateY: bob }] } : undefined}>
-      {HERO_BITMAP.map((row, y) => (
-        <View key={y} style={styles.row}>
-          {row.split('').map((char, x) => (
-            <View
-              key={x}
-              style={{ width: cell, height: cell, backgroundColor: pixelColor(char, type) }}
-            />
-          ))}
-        </View>
-      ))}
-    </Animated.View>
-  );
+/** Real pixel hero from the asset pipeline: a 2-frame idle strip per class. */
+export function HeroSprite({ type, size = 64, animated = true, gold = false }: Props) {
+  const key = (gold ? `hero_${type}_gold` : `hero_${type}`) as keyof typeof SPRITES;
+  return <PixelSprite sprite={SPRITES[key]} size={size} animated={animated} fps={2} />;
 }
-
-function pixelColor(char: string, type: HeroType): string {
-  switch (char) {
-    case 'O':
-    case 'E':
-      return theme.colors.outline;
-    case 'C':
-      return HERO_COLORS[type];
-    case 'S':
-      return SKIN_COLOR;
-    default:
-      return 'transparent';
-  }
-}
-
-const styles = StyleSheet.create({
-  row: { flexDirection: 'row' },
-});

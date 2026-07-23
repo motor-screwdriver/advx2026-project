@@ -2,7 +2,10 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
 
+import { SCENES } from '../../assets/manifest';
+import { playSfx } from '../systems/audio';
 import { PixelButton } from '../ui/PixelButton';
+import { SceneBanner } from '../ui/SceneBanner';
 import { Screen } from '../ui/Screen';
 import { SoulTether } from '../ui/SoulTether';
 import { strings } from '../ui/strings';
@@ -20,6 +23,7 @@ export function ResurrectionGameScreen() {
     setPhase(success ? 'won' : 'lost');
     if (success) {
       resurrect();
+      playSfx('sfx_victory');
     }
   };
 
@@ -34,6 +38,7 @@ export function ResurrectionGameScreen() {
 
   return (
     <Screen title={strings.soul_title}>
+      <SceneBanner sprite={SCENES.scene_resurrection} />
       {phase === 'playing' && <SoulTether onResult={onResult} />}
       {phase !== 'playing' && (
         <>

@@ -2,10 +2,13 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { ICONS, SPRITES, type SpriteEntry } from '../../assets/manifest';
 import type { ChestLoot, ChestRarity } from '../contracts/types';
+import { playSfx } from '../systems/audio';
 import { makePop, makeShake } from '../ui/animations';
 import { PixelButton } from '../ui/PixelButton';
 import { PixelPanel } from '../ui/PixelPanel';
+import { PixelSprite } from '../ui/PixelSprite';
 import { Screen } from '../ui/Screen';
 import { strings } from '../ui/strings';
 import { theme } from '../ui/theme';
@@ -33,6 +36,7 @@ export function ChestScreen() {
 
   // The whole stage is the tap target — no tiny button to hunt for.
   const open = () => {
+    playSfx('sfx_chest');
     makeShake(shakeX, 8).start(() => {
       const result = openChest();
       setLoot(result);
@@ -76,7 +80,7 @@ function ClosedStage({ shakeX, triedEmpty, onOpen }: ClosedProps) {
   return (
     <Pressable style={styles.stage} onPress={onOpen}>
       <Animated.View style={{ transform: [{ translateX: shakeX }] }}>
-        <ChestGlyph />
+        <ChestGlyph frame={0} />
       </Animated.View>
       <Animated.Text style={[styles.hint, { opacity: pulse }]}>
         {triedEmpty ? strings.chest_none : strings.chest_tap}
@@ -85,19 +89,20 @@ function ClosedStage({ shakeX, triedEmpty, onOpen }: ClosedProps) {
   );
 }
 
-/** Chunky chest drawn from views: lid, body, gold clasp and bands. */
-function ChestGlyph() {
-  return (
-    <View style={styles.chest}>
-      <View style={styles.chestLid}>
-        <View style={styles.chestBand} />
-      </View>
-      <View style={styles.chestBody}>
-        <View style={styles.chestBand} />
-        <View style={styles.chestClasp} />
-      </View>
-    </View>
-  );
+/** Real 3-frame chest sprite: 0 closed, 1 opening, 2 open. */
+function ChestGlyph({ frame = 0 }: { frame?: number }) {
+  return <PixelSprite sprite={SPRITES.chest} size={140} frame={frame} animated={false} />;
+}
+
+function lootIcon(loot: ChestLoot): SpriteEntry | null {
+  const table = ICONS as Record<string, SpriteEntry | undefined>;
+  if (loot.artifactId) {
+    return table[`art_${loot.artifactId}`] ?? null;
+  }
+  if (loot.cosmeticId) {
+    return table[`cos_${loot.cosmeticId.replace('cosmetic_', '')}`] ?? null;
+  }
+  return null;
 }
 
 interface RevealProps {
@@ -108,6 +113,7 @@ interface RevealProps {
 
 function RevealStage({ loot, pop, onTake }: RevealProps) {
   const rarityColor = RARITY_COLORS[loot.rarity];
+  const icon = lootIcon(loot);
   const lootName = loot.artifactId
     ? loot.artifactId.split('_').join(' ')
     : (loot.cosmeticId?.replace('cosmetic_', '').split('_').join(' ') ?? '');
@@ -121,6 +127,7 @@ function RevealStage({ loot, pop, onTake }: RevealProps) {
           <View style={[styles.rarityTag, { backgroundColor: rarityColor }]}>
             <Text style={styles.rarityText}>{strings[RARITY_KEYS[loot.rarity]]}</Text>
           </View>
+          {icon && <PixelSprite sprite={icon} size={48} animated={false} />}
           <Text style={styles.lootName}>{lootName}</Text>
           {artifactDesc && <Text style={styles.desc}>{artifactDesc}</Text>}
           <Text style={styles.dim}>{loot.artifactId ? strings.chest_in_bag : strings.chest_earned}</Text>
@@ -142,43 +149,6 @@ const styles = StyleSheet.create({
     ...theme.type.body,
     color: theme.colors.textDim,
     textAlign: 'center',
-  },
-  chest: { alignItems: 'center' },
-  chestLid: {
-    width: 140,
-    height: 40,
-    backgroundColor: theme.colors.panel,
-    borderWidth: theme.borderWidth * 2,
-    borderColor: theme.colors.outline,
-    borderTopColor: theme.colors.bevelLight,
-    borderRadius: theme.borderRadius,
-    justifyContent: 'center',
-  },
-  chestBody: {
-    width: 140,
-    height: 72,
-    marginTop: -theme.borderWidth,
-    backgroundColor: theme.colors.inset,
-    borderWidth: theme.borderWidth * 2,
-    borderColor: theme.colors.outline,
-    borderRadius: theme.borderRadius,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  chestBand: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    alignSelf: 'center',
-    width: 16,
-    backgroundColor: theme.colors.bevelLight,
-  },
-  chestClasp: {
-    width: 24,
-    height: 24,
-    backgroundColor: theme.colors.gold,
-    borderWidth: theme.borderWidth,
-    borderColor: theme.colors.outline,
   },
   lootCard: {
     borderWidth: theme.borderWidth * 2,

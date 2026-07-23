@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { ICONS } from '../../assets/manifest';
+import { PixelSprite } from './PixelSprite';
 import { theme } from './theme';
 
 interface Props {
@@ -8,12 +10,16 @@ interface Props {
   max?: number;
 }
 
-/** HP pips: one square per heart, beveled when full. Static for now (stub). */
+/** HP pips rendered from the real pixel heart icons: full vs empty. */
 export function HeartRow({ hp, max = 7 }: Props) {
   return (
     <View style={styles.row}>
       {Array.from({ length: max }, (_, index) => (
-        <View key={index} style={[styles.pip, index < hp ? styles.full : styles.empty]} />
+        <PixelSprite
+          key={index}
+          sprite={index < hp ? ICONS.heart_full : ICONS.heart_empty}
+          size={22}
+        />
       ))}
     </View>
   );
@@ -24,19 +30,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     gap: theme.spacing(2),
-  },
-  pip: {
-    width: 20,
-    height: 20,
-    borderWidth: theme.borderWidth,
-    borderColor: theme.colors.outline,
-    borderRadius: 2,
-  },
-  full: {
-    backgroundColor: theme.colors.heartFull,
-    borderTopColor: theme.colors.heartFullEdge,
-  },
-  empty: {
-    backgroundColor: theme.colors.heartEmpty,
   },
 });

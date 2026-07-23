@@ -2,7 +2,9 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { ICONS } from '../../assets/manifest';
 import { PixelButton } from '../ui/PixelButton';
+import { PixelSprite } from '../ui/PixelSprite';
 import { Screen } from '../ui/Screen';
 import { strings } from '../ui/strings';
 import { theme } from '../ui/theme';
@@ -32,6 +34,9 @@ export function OnboardingScreen() {
 
   return (
     <Screen title={strings.onboarding_title}>
+      <View style={styles.logo}>
+        <PixelSprite sprite={ICONS.logo} size={120} animated={false} />
+      </View>
       <View style={styles.intro}>
         <Text style={styles.introText}>{strings.onboarding_intro_1}</Text>
         <Text style={styles.introText}>{strings.onboarding_intro_2}</Text>
@@ -67,6 +72,7 @@ function WheelColumn({ label, values, value, onChange }: WheelColumnProps) {
 }
 
 const styles = StyleSheet.create({
+  logo: { alignItems: 'center' },
   intro: { gap: theme.spacing(2) },
   introText: {
     ...theme.type.body,

@@ -1,9 +1,11 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { ICONS } from '../../assets/manifest';
 import type { ArtifactId } from '../contracts/types';
 import { PixelButton } from '../ui/PixelButton';
 import { PixelPanel } from '../ui/PixelPanel';
+import { PixelSprite } from '../ui/PixelSprite';
 import { Screen } from '../ui/Screen';
 import { strings } from '../ui/strings';
 import { theme } from '../ui/theme';
@@ -14,6 +16,10 @@ function humanize(id: string): string {
     .split('_')
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(' ');
+}
+
+function artIcon(id: ArtifactId) {
+  return ICONS[`art_${id}` as keyof typeof ICONS];
 }
 
 function artifactDesc(id: ArtifactId): string {
@@ -69,6 +75,7 @@ function Slot({ label, desc, artifact }: SlotProps) {
     <PixelPanel style={styles.slot} contentStyle={styles.slotContent}>
       <Text style={styles.slotLabel}>{label}</Text>
       <Text style={styles.slotDesc}>{desc}</Text>
+      {artifact && <PixelSprite sprite={artIcon(artifact)} size={40} animated={false} />}
       <Text style={artifact ? styles.slotValue : styles.slotEmpty}>
         {artifact ? humanize(artifact) : strings.inventory_slot_empty}
       </Text>
@@ -87,6 +94,7 @@ function ArtifactRow({ artifact, equipped, onEquip }: RowProps) {
   return (
     <PixelPanel contentStyle={styles.rowContent}>
       <View style={styles.rowHeader}>
+        <PixelSprite sprite={artIcon(artifact)} size={28} animated={false} />
         <Text style={styles.rowName}>{humanize(artifact)}</Text>
         {equippedIn && (
           <Text style={styles.badge}>
