@@ -6,7 +6,7 @@
  * Rescheduled from scratch on window change / check-in via initSystems().
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Notifications from 'expo-notifications';
+import { isRunningInExpoGo } from 'expo';
 import { Platform } from 'react-native';
 
 import type { SleepWindow } from '../contracts/types';
@@ -23,6 +23,24 @@ const ENABLED_KEY = '8bit-sleep/notifications-enabled';
 const BEDTIME_LEAD_MIN = 60;
 const MORNING_DELAY_MIN = 15;
 
+/**
+ * expo-notifications registers a device-push-token listener at import time,
+ * which console.errors on Android in Expo Go (SDK 53+ dropped remote push).
+ * We use only LOCAL notifications, so the native module is lazy-loaded and
+ * skipped in Expo Go: solo play behaves identically there and dev/production
+ * builds keep full notification support.
+ */
+type NotificationsModule = typeof import('expo-notifications');
+let cachedModule: NotificationsModule | null | undefined;
+
+function loadNotifications(): NotificationsModule | null {
+  if (cachedModule === undefined) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    cachedModule = isRunningInExpoGo() ? null : (require('expo-notifications') as NotificationsModule);
+  }
+  return cachedModule;
+}
+
 export async function getNotificationsEnabled(): Promise<boolean> {
   try {
     return (await AsyncStorage.getItem(ENABLED_KEY)) !== 'off'; // default ON
@@ -35,13 +53,17 @@ export async function getNotificationsEnabled(): Promise<boolean> {
 export async function setNotificationsEnabled(enabled: boolean): Promise<void> {
   await AsyncStorage.setItem(ENABLED_KEY, enabled ? 'on' : 'off');
   if (!enabled) {
-    await Notifications.cancelAllScheduledNotificationsAsync();
+    await loadNotifications()?.cancelAllScheduledNotificationsAsync();
   }
 }
 
 /** Called once from initSystems(): foreground handler + Android channel. */
 export function configureNotificationHandler(): void {
-  Notifications.setNotificationHandler({
+  const n = loadNotifications();
+  if (!n) {
+    return;
+  }
+  n.setNotificationHandler({
     handleNotification: async () => ({
       shouldPlaySound: false,
       shouldSetBadge: false,
@@ -50,22 +72,22 @@ export function configureNotificationHandler(): void {
     }),
   });
   if (Platform.OS === 'android') {
-    void Notifications.setNotificationChannelAsync('default', {
+    void n.setNotificationChannelAsync('default', {
       name: 'default',
-      importance: Notifications.AndroidImportance.DEFAULT,
+      importance: n.AndroidImportance.DEFAULT,
     });
   }
 }
 
-async function ensurePermission(): Promise<boolean> {
-  const current = await Notifications.getPermissionsAsync();
+async function ensurePermission(n: NotificationsModule): Promise<boolean> {
+  const current = await n.getPermissionsAsync();
   if (current.granted) {
     return true;
   }
   if (!current.canAskAgain) {
     return false; // denied permanently — stay silent, the game still works
   }
-  return (await Notifications.requestPermissionsAsync()).granted;
+  return (await n.requestPermissionsAsync()).granted;
 }
 
 /**
@@ -77,21 +99,29 @@ export async function syncNotifications(
   checkedInToday: boolean,
   now: Date = new Date(),
 ): Promise<void> {
-  await Notifications.cancelAllScheduledNotificationsAsync();
-  if (!window || !(await getNotificationsEnabled()) || !(await ensurePermission())) {
+  const n = loadNotifications();
+  if (!n) {
     return;
   }
-  await scheduleBedtimeReminder(window, now);
-  await scheduleMorningSummary(window, checkedInToday, now);
+  await n.cancelAllScheduledNotificationsAsync();
+  if (!window || !(await getNotificationsEnabled()) || !(await ensurePermission(n))) {
+    return;
+  }
+  await scheduleBedtimeReminder(n, window, now);
+  await scheduleMorningSummary(n, window, checkedInToday, now);
 }
 
 /** Daily repeating push at bedMin − 60, hero-persona line rotated per day. */
-async function scheduleBedtimeReminder(window: SleepWindow, now: Date): Promise<void> {
+async function scheduleBedtimeReminder(
+  n: NotificationsModule,
+  window: SleepWindow,
+  now: Date,
+): Promise<void> {
   const clockMin = nightLineToClockMin(shiftNightLine(window.bedMin, -BEDTIME_LEAD_MIN));
-  await Notifications.scheduleNotificationAsync({
+  await n.scheduleNotificationAsync({
     content: { title: NOTIF_TITLE, body: pickDailyLine(BEDTIME_LINES, now) },
     trigger: {
-      type: Notifications.SchedulableTriggerInputTypes.DAILY,
+      type: n.SchedulableTriggerInputTypes.DAILY,
       hour: Math.floor(clockMin / 60),
       minute: clockMin % 60,
     },
@@ -103,6 +133,7 @@ async function scheduleBedtimeReminder(window: SleepWindow, now: Date): Promise<
  * instead (re-synced on every app open / night evaluation).
  */
 async function scheduleMorningSummary(
+  n: NotificationsModule,
   window: SleepWindow,
   checkedInToday: boolean,
   now: Date,
@@ -111,8 +142,8 @@ async function scheduleMorningSummary(
   const date = checkedInToday
     ? nextOccurrenceSkippingToday(now, clockMin)
     : nextOccurrence(now, clockMin);
-  await Notifications.scheduleNotificationAsync({
+  await n.scheduleNotificationAsync({
     content: { title: NOTIF_TITLE, body: MORNING_SUMMARY_BODY },
-    trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date },
+    trigger: { type: n.SchedulableTriggerInputTypes.DATE, date },
   });
 }

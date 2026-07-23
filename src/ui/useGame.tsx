@@ -22,7 +22,8 @@ import { useGameStore } from '../state/store';
 import type { EngineMeta } from '../state/store';
 // Dev D seam: systems bootstrap + real e-ink push (src/systems).
 import { initSystems, SystemsLayer } from '../systems';
-import { sendTestCard as sendEinkTestCard } from '../systems/eink';
+import { customizeWidgets as customizeEinkWidgets } from '../systems/eink';
+import { scanDeviceId as scanEinkDeviceId } from '../systems/nfc';
 
 export type DebugPreset = 'empty' | 'mid' | 'death';
 
@@ -41,7 +42,8 @@ interface GameApi {
   changeWindow: (window: SleepWindow) => void;
   resetProgress: () => void;
   toggleDemoMode: () => void;
-  sendTestCard: (deviceId: string, apiKey: string) => void;
+  customizeWidgets: (deviceId: string, apiKey: string) => void;
+  scanDeviceId: () => Promise<string | null>;
   loadDebugPreset: (preset: DebugPreset) => void;
 }
 
@@ -103,10 +105,12 @@ function buildApi(
     },
     resetProgress: () => useGameStore.getState().reset(),
     toggleDemoMode: () => useGameStore.getState().toggleDemoMode(),
-    // Dev D: real Dot e-ink push (silently no-ops while FLAGS.eink is off).
-    sendTestCard: (deviceId, apiKey) => {
-      void sendEinkTestCard(deviceId, apiKey);
+    // Dev D: push both e-ink widgets now (silently no-ops while FLAGS.eink is off).
+    customizeWidgets: (deviceId, apiKey) => {
+      void customizeEinkWidgets(deviceId, apiKey);
     },
+    // Dev D: native NFC scan of the Quote tag → parsed device ID (null in Expo Go).
+    scanDeviceId: () => scanEinkDeviceId(),
     loadDebugPreset,
   };
 }

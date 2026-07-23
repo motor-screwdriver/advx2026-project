@@ -18,7 +18,7 @@ import { theme } from '../ui/theme';
 export const CARD_WIDTH = 296;
 export const CARD_HEIGHT = 152;
 const ICON_SIZE = 40;
-const SPRITE_SIZE = 96;
+const SPRITE_SIZE = 92;
 const HEART_SIZE = 16;
 const MAX_HP = 7;
 const INK = '#000000';
@@ -100,16 +100,35 @@ function HeroCard({ state }: { state: GameState }) {
   const hero = state.hero!;
   return (
     <View style={styles.card}>
-      <HeroSprite1Bit type={hero.type} />
-      <View style={styles.meta}>
-        <Text style={styles.name}>
-          {hero.type.toUpperCase()} LV.{hero.level}
-        </Text>
-        <HeartRow hp={state.hp} />
-        <Text style={styles.line}>STREAK: {state.perfectWeekStreak}</Text>
-        <Text style={styles.line}>
-          NEXT LVL: {state.perfectWeekStreak}/{MAX_HP}
-        </Text>
+      <View style={styles.frame}>
+        <View style={styles.spriteBox}>
+          <HeroSprite1Bit type={hero.type} />
+        </View>
+        <View style={styles.meta}>
+          <View style={styles.headerRow}>
+            <Text style={styles.name}>{hero.type.toUpperCase()}</Text>
+            <Text style={styles.badge}>LV {hero.level}</Text>
+          </View>
+          <View style={styles.divider} />
+          <HeartRow hp={state.hp} />
+          <Text style={styles.line}>STREAK {state.perfectWeekStreak}</Text>
+          <NextLevelBar streak={state.perfectWeekStreak} />
+        </View>
+      </View>
+    </View>
+  );
+}
+
+/** Segmented 7-cell "next level" bar — same data as before, drawn as blocks. */
+function NextLevelBar({ streak }: { streak: number }) {
+  const filled = Math.min(streak, MAX_HP);
+  return (
+    <View style={styles.progressRow}>
+      <Text style={styles.progressLabel}>NEXT</Text>
+      <View style={styles.progressTrack}>
+        {Array.from({ length: MAX_HP }, (_, i) => (
+          <View key={i} style={i < filled ? styles.cellFull : styles.cellEmpty} />
+        ))}
       </View>
     </View>
   );
@@ -149,16 +168,53 @@ const styles = StyleSheet.create({
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
     backgroundColor: PAPER,
+    padding: 5,
+  },
+  frame: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    padding: theme.spacing(3),
-    gap: theme.spacing(3),
+    borderWidth: 2,
+    borderColor: INK,
+    paddingHorizontal: 8,
+    gap: 10,
+  },
+  spriteBox: {
+    width: 104,
+    height: 104,
+    borderWidth: 2,
+    borderColor: INK,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   spriteClip: { width: SPRITE_SIZE, height: SPRITE_SIZE, overflow: 'hidden' },
-  meta: { flex: 1, gap: theme.spacing(2) },
-  name: { fontFamily: theme.fontFamily, fontSize: 12, lineHeight: 16, color: INK },
+  meta: { flex: 1, gap: 6 },
+  headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  name: { fontFamily: theme.fontFamily, fontSize: 13, lineHeight: 16, color: INK },
+  badge: {
+    fontFamily: theme.fontFamily,
+    fontSize: 9,
+    lineHeight: 12,
+    color: PAPER,
+    backgroundColor: INK,
+    paddingHorizontal: 4,
+    paddingVertical: 3,
+  },
+  divider: { height: 2, backgroundColor: INK },
   hearts: { flexDirection: 'row', gap: 2 },
   heart: { width: HEART_SIZE, height: HEART_SIZE },
   line: { fontFamily: theme.fontFamily, fontSize: 10, lineHeight: 14, color: INK },
+  progressRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  progressLabel: { fontFamily: theme.fontFamily, fontSize: 8, lineHeight: 12, color: INK },
+  progressTrack: {
+    flex: 1,
+    flexDirection: 'row',
+    gap: 2,
+    borderWidth: 2,
+    borderColor: INK,
+    padding: 2,
+  },
+  cellFull: { flex: 1, height: 8, backgroundColor: INK },
+  cellEmpty: { flex: 1, height: 8, backgroundColor: PAPER },
   icon: { width: ICON_SIZE, height: ICON_SIZE },
 });

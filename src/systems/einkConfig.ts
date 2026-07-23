@@ -30,3 +30,18 @@ export async function getEinkConfig(): Promise<EinkConfig | null> {
 export async function setEinkConfig(config: EinkConfig): Promise<void> {
   await AsyncStorage.setItem(KEY, JSON.stringify(config));
 }
+
+/**
+ * Accepts either a raw device ID or a full Quote NFC link and returns just the
+ * ID. Tapping a phone to the Quote surfaces a link like
+ * https://dot.mindreset.tech/clip/quote/0/2/7CE8B17A3FCC — the ID is the last
+ * path segment. Non-URL input passes through trimmed.
+ */
+export function parseDeviceId(input: string): string {
+  const trimmed = input.trim();
+  if (!trimmed.includes('/')) {
+    return trimmed;
+  }
+  const path = trimmed.split(/[?#]/)[0].replace(/\/+$/, '');
+  return path.slice(path.lastIndexOf('/') + 1);
+}

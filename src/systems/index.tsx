@@ -36,13 +36,24 @@ export function initSystems(): void {
 }
 
 function onStoreChange(state: GameStore, prev: GameStore): void {
-  if (state.game.window !== prev.game.window || state.game.nights !== prev.game.nights) {
+  const g = state.game;
+  const p = prev.game;
+  if (g.window !== p.window || g.nights !== p.nights) {
     void resyncNotifications();
   }
   const lastEvent = state.events[state.events.length - 1];
   const prevLastEvent = prev.events[prev.events.length - 1];
-  if (lastEvent !== prevLastEvent || state.game.equipped !== prev.game.equipped) {
-    scheduleEinkPush(state.game);
+  // Push whenever any field shown on the Dot widgets changes: hero (sprite/
+  // name/level), hp (hearts), streak (+ next-lvl), nights (last-night/rate),
+  // or equipped cosmetics.
+  const cardChanged =
+    g.hero !== p.hero ||
+    g.hp !== p.hp ||
+    g.perfectWeekStreak !== p.perfectWeekStreak ||
+    g.nights !== p.nights ||
+    g.equipped !== p.equipped;
+  if (lastEvent !== prevLastEvent || cardChanged) {
+    scheduleEinkPush(g);
   }
 }
 
