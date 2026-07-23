@@ -6,6 +6,7 @@ export const FLAGS = {
   healthSync: false,
   eink: false,
   selfieFace: false,
+  artGallery: true,
 } as const;
 
 export type FlagName = keyof typeof FLAGS;

@@ -40,6 +40,9 @@ export const strings = {
   raid_title: 'Campfire Raid',
   raid_body: 'Stub. 2-5 heroes around one campfire (Supabase, P2).',
   raid_disabled: 'Disabled: FLAGS.raids = false.',
+
+  gallery_title: 'Art Gallery',
+  gallery_body: 'QA wall: every pipeline asset, straight from assets/manifest.ts.',
 } as const;
 
 export type StringKey = keyof typeof strings;
