@@ -20,6 +20,9 @@ import type {
 } from '../contracts/types';
 import { useGameStore } from '../state/store';
 import type { EngineMeta } from '../state/store';
+// Dev D seam: systems bootstrap + real e-ink push (src/systems).
+import { initSystems, SystemsLayer } from '../systems';
+import { sendTestCard as sendEinkTestCard } from '../systems/eink';
 
 export type DebugPreset = 'empty' | 'mid' | 'death';
 
@@ -54,6 +57,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const lastEvaluation = useGameStore((s) => s.lastEvaluation);
   const pendingBedTime = useGameStore((s) => s.pendingBedTime);
   const hydrated = useGameStore((s) => s.hydrated);
+  React.useEffect(() => {
+    initSystems(); // Dev D: notifications, demo panel wiring, e-ink triggers
+  }, []);
   const api = useMemo<GameApi>(
     () => buildApi(game, lastEvaluation, pendingBedTime),
     [game, lastEvaluation, pendingBedTime],
@@ -61,7 +67,12 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   if (!hydrated) {
     return null; // wait for AsyncStorage rehydration, avoid an onboarding flash
   }
-  return <GameContext.Provider value={api}>{children}</GameContext.Provider>;
+  return (
+    <GameContext.Provider value={api}>
+      {children}
+      <SystemsLayer />
+    </GameContext.Provider>
+  );
 }
 
 function buildApi(
@@ -92,8 +103,10 @@ function buildApi(
     },
     resetProgress: () => useGameStore.getState().reset(),
     toggleDemoMode: () => useGameStore.getState().toggleDemoMode(),
-    // Dev D wires the real e-ink push; keep the callback shape stable.
-    sendTestCard: (deviceId, apiKey) => console.log('[eink] test card', deviceId, apiKey),
+    // Dev D: real Dot e-ink push (silently no-ops while FLAGS.eink is off).
+    sendTestCard: (deviceId, apiKey) => {
+      void sendEinkTestCard(deviceId, apiKey);
+    },
     loadDebugPreset,
   };
 }

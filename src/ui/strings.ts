@@ -170,7 +170,7 @@ export const strings = {
 
   // Raid (P2, behind FLAGS.raids)
   raid_title: 'Campfire Raid',
-  raid_body: '2-5 heroes around one campfire (Supabase, P2).',
+  raid_body: '2-5 heroes around one campfire (P2).',
   raid_disabled: 'Disabled: FLAGS.raids = false.',
 
   gallery_title: 'Art Gallery',
