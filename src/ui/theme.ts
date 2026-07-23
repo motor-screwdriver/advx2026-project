@@ -23,6 +23,9 @@ export const colors = {
   pixelGold: '#eab54d',
   pixelGray: '#a89b8c', // warm gray
   pixelBlack: '#1c1410', // warm black
+
+  rareBlue: '#57a8e8', // Rare loot frame
+  epicViolet: '#a179e6', // Epic loot frame
 } as const;
 
 export const GAME_FONT = 'press-start';

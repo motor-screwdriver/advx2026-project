@@ -35,6 +35,7 @@ assets/_src/
 *.pem
 
 # local env files
+.env
 .env*.local
 
 # typescript
