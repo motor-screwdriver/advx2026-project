@@ -94,7 +94,7 @@ export function MorningSceneScreen() {
           )}
         </View>
       </PixelPanel>
-      <PixelButton label={strings.morning_continue} onPress={() => router.replace('/')} />
+      <PixelButton label={strings.morning_continue} onPress={() => router.dismissTo('/')} />
     </Screen>
   );
 }

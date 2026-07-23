@@ -1,4 +1,4 @@
-/t#!/usr/bin/env python3
+#!/usr/bin/env python3
 """generate_audio.py — the 8bit Sleep deterministic chiptune audio pipeline.
 
 Every music loop and SFX is synthesized procedurally in pure stdlib Python:
@@ -149,27 +149,32 @@ def write_wav(path, buf):
         wav.writeframes(to_u8(buf))
 
 
-# --- music_day: "day calm" — 8 bars of 3/4 in C major, 106 BPM, 13.58 s ----
-DAY_BPM = 106
+# --- music_day: "morning stroll" — 8 bars of 3/4 in C major, 100 BPM, 14.4 s
+# Gently lively waltz: flowing triangle lead over a soft oom-pah-pah bass and
+# a hushed brush pulse. Warmer and less busy than before, but still awake.
+DAY_BPM = 100
 DAY_BEATS = 24
-DAY_LEAD = [  # triangle melody — (beat, dur_beats, midi)
-    (0, 1, 72), (1, 0.5, 71), (1.5, 0.5, 72), (2, 1, 76),
-    (3, 1.5, 74), (4.5, 0.5, 72), (5, 1, 69),
-    (6, 1, 67), (7, 0.5, 69), (7.5, 0.5, 67), (8, 1, 64),
-    (9, 1, 65), (10, 1, 64), (11, 1, 62),
-    (12, 1, 64), (13, 1, 67), (14, 1, 72),
-    (15, 1.5, 69), (16.5, 0.5, 67), (17, 1, 64),
-    (18, 1, 65), (19, 1, 64), (20, 1, 62),
-    (21, 3, 60),
+DAY_LEAD = [  # triangle melody — (beat, dur_beats, midi), rising & falling
+    (0, 1, 72), (1, 1, 76), (2, 1, 79),
+    (3, 2, 77), (5, 1, 76),
+    (6, 1, 72), (7, 1, 74), (8, 1, 76),
+    (9, 2, 77), (11, 1, 72),
+    (12, 1, 72), (13, 1, 76), (14, 1, 79),
+    (15, 2, 81), (17, 1, 79),
+    (18, 1, 77), (19, 1, 76), (20, 1, 74),
+    (21, 3, 72),
 ]
-DAY_BASS = [  # square bass, chord roots: C G Am G | C Am G C
-    (0, 1, 48), (1, 1, 43), (2, 1, 48),
-    (3, 1, 43), (4, 1, 50), (5, 1, 43),
-    (6, 1, 45), (7, 1, 52), (8, 1, 45),
-    (9, 1, 43), (10, 1, 50), (11, 1, 43),
-    (12, 1, 48), (13, 1, 43), (14, 1, 48),
-    (15, 1, 45), (16, 1, 52), (17, 1, 45),
-    (18, 1, 43), (19, 1, 50), (20, 1, 47),
+DAY_HARM = [  # soft triangle counter-note under the held lead tones
+    (3, 2, 74), (9, 2, 72), (15, 2, 74), (21, 3, 67),
+]
+DAY_BASS = [  # square waltz oom-pah-pah (root then fifth): C G Am F | C G F C
+    (0, 1, 48), (1, 1, 55), (2, 1, 55),
+    (3, 1, 43), (4, 1, 50), (5, 1, 50),
+    (6, 1, 45), (7, 1, 52), (8, 1, 52),
+    (9, 1, 41), (10, 1, 48), (11, 1, 48),
+    (12, 1, 48), (13, 1, 55), (14, 1, 55),
+    (15, 1, 43), (16, 1, 50), (17, 1, 50),
+    (18, 1, 41), (19, 1, 48), (20, 1, 48),
     (21, 3, 48),
 ]
 
@@ -177,39 +182,51 @@ DAY_BASS = [  # square bass, chord roots: C G Am G | C Am G C
 def build_day():
     seq = Sequencer(DAY_BPM, DAY_BEATS)
     for beat, dur, midi in DAY_LEAD:
-        seq.note(beat, dur, midi, 0.50, wave='triangle',
-                 env=(0.008, 0.06, 0.72, min(0.12, seq.seconds(dur) * 0.35)))
+        seq.note(beat, dur, midi, 0.46, wave='triangle',
+                 env=(0.012, 0.08, 0.72, min(0.16, seq.seconds(dur) * 0.4)))
+    for beat, dur, midi in DAY_HARM:
+        seq.note(beat, dur, midi, 0.18, wave='triangle',
+                 env=(0.02, 0.10, 0.6, min(0.2, seq.seconds(dur) * 0.4)))
     for beat, dur, midi in DAY_BASS:
-        seq.note(beat, dur, midi, 0.34, wave='square', duty=0.5,
-                 env=(0.006, 0.05, 0.66, min(0.09, seq.seconds(dur) * 0.3)))
+        vol = 0.30 if beat % 3 == 0 else 0.19  # accent the downbeat, soften pah
+        seq.note(beat, dur, midi, vol, wave='square', duty=0.5,
+                 env=(0.008, 0.06, 0.6, min(0.1, seq.seconds(dur) * 0.3)))
     for beat in range(DAY_BEATS):
-        seq.hat(beat, vol=0.09 if beat % 3 == 0 else 0.055)
+        seq.hat(beat, vol=0.05 if beat % 3 == 0 else 0.022)  # gentle brush pulse
     return seq.buf
 
 
-# --- music_night: "night lullaby" — 4 bars of 4/4, 70 BPM, 13.71 s ---------
-NIGHT_BPM = 70
+# --- music_night: "lullaby" — 4 bars of 4/4, 60 BPM, 16 s; slow, soft, sleepy
+# All triangle (no buzzy squares): one warm bell per beat over a held root+fifth
+# pad, with a sparse descending music-box line that keeps sinking toward rest.
+NIGHT_BPM = 60
 NIGHT_BEATS = 16
-NIGHT_BARS = [(0, 48, False), (4, 45, True), (8, 41, False), (12, 43, False)]  # C Am F G
-NIGHT_ARP = [12, 16, 19, 24, 19, 16, 12, 16]  # 8th-note chord tones above root
-NIGHT_MELODY = [  # soft 25% square, sparse music-box line
-    (0, 2, 76), (2, 2, 74), (4, 4, 72),
-    (8, 2, 69), (10, 2, 72), (12, 2, 71), (14, 1, 74),
+# (bar_start, root_midi, major?) — a gentle C Am F G that resolves on the loop.
+NIGHT_BARS = [(0, 48, True), (4, 45, False), (8, 41, True), (12, 43, True)]
+NIGHT_ARP_MAJ = [12, 16, 19, 16]  # slow bell arpeggio (octave, tenth, twelfth)
+NIGHT_ARP_MIN = [12, 15, 19, 15]
+NIGHT_MELODY = [  # sparse, high, descending music-box line — (beat, dur, midi)
+    (0, 3, 79), (3, 1, 77),
+    (4, 4, 76),
+    (8, 3, 77), (11, 1, 74),
+    (12, 4, 74),
 ]
 
 
 def build_night():
     seq = Sequencer(NIGHT_BPM, NIGHT_BEATS)
-    for bar_start, root, minor in NIGHT_BARS:
-        offsets = [(15 if minor and o == 16 else o) for o in NIGHT_ARP]
-        for i, off in enumerate(offsets):
-            seq.note(bar_start + i * 0.5, 0.5, root + off, 0.30,
-                     wave='triangle', env=(0.004, 0.22, 0.30, 0.10))
-        seq.note(bar_start, 4, root, 0.20, wave='triangle',
-                 env=(0.03, 0.3, 0.5, 0.5))
+    for bar_start, root, major in NIGHT_BARS:
+        arp = NIGHT_ARP_MAJ if major else NIGHT_ARP_MIN
+        for i, off in enumerate(arp):  # one soft bell per beat, gently fading
+            seq.note(bar_start + i, 1, root + off, 0.17, wave='triangle',
+                     env=(0.02, 0.4, 0.3, 0.5))
+        seq.note(bar_start, 4, root, 0.13, wave='triangle',      # warm root pad
+                 env=(0.4, 1.2, 0.5, 1.6))
+        seq.note(bar_start, 4, root + 7, 0.09, wave='triangle',  # open fifth
+                 env=(0.5, 1.2, 0.5, 1.6))
     for beat, dur, midi in NIGHT_MELODY:
-        seq.note(beat, dur, midi, 0.20, wave='square', duty=0.25,
-                 env=(0.02, 0.15, 0.6, min(0.3, seq.seconds(dur) * 0.35)))
+        seq.note(beat, dur, midi, 0.15, wave='triangle',
+                 env=(0.04, 0.5, 0.6, min(1.0, seq.seconds(dur) * 0.4)))
     return seq.buf
 
 

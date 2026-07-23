@@ -3,52 +3,54 @@ import { Animated, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { PixelArt } from './PixelArt';
 import { FLOWER, TUFT } from './sceneBitmaps';
 import { PhaseVisual } from './timeOfDay';
-import { useCycle } from './usePixelMotion';
+import { useCycle, useScroll } from './usePixelMotion';
 
-/**
- * Tall, detailed pixel-grass band with an irregular (non-straight) skyline of
- * blades, scattered texture specks, swaying tufts and a few flowers. Sits at
- * the bottom of the scene; the hero stands on top of it.
- */
 export const GRASS_HEIGHT = 210;
 const COL = 8;
 const JAG = 26;
 const SOIL = 34;
-/** Irregular blade heights (px) — repeated across the width for a curvy top. */
+/** One seamless ground tile; a row of identical tiles scrolls in TILE steps. */
+const TILE = 192;
+/** Irregular blade heights (px) — repeated for a curvy, non-straight top. */
 const JAG_PATTERN = [8, 16, 11, 22, 14, 19, 9, 24, 13, 20, 10, 17] as const;
 const SWAY = [0, 1, 2, 1, 0, -1, -2, -1] as const;
-/** Blade group spacing and heights for the swaying grass field on the crest. */
-const BLADE_GAP = 40;
 const BLADE_H = [10, 18, 13, 20, 11, 16] as const;
-const BLADE_FPS = [3, 4, 5] as const;
+const SCROLL_STEP = 4;
+const SCROLL_FPS = 12;
+/** Fixed decoration slots inside one tile (x in px, kept within 0..TILE). */
+const BLADES = [
+  { x: 14, fps: 3, seed: 0 },
+  { x: 60, fps: 4, seed: 2 },
+  { x: 110, fps: 5, seed: 4 },
+  { x: 158, fps: 3, seed: 1 },
+] as const;
+const TUFTS = [26, 128] as const;
+const FLOWERS = [46, 150] as const;
+const SPECK_COUNT = Math.floor(TILE / 18);
 
-function Skyline({ width, main, tip }: { width: number; main: string; tip: string }) {
-  const cols = Math.ceil(width / COL) + 1;
+function Skyline({ main, tip }: { main: string; tip: string }) {
+  const cols = TILE / COL;
   return (
     <View style={styles.skyline}>
-      {Array.from({ length: cols }, (_, i) => {
-        const h = JAG_PATTERN[i % JAG_PATTERN.length];
-        return (
-          <View key={i} style={{ width: COL, height: h, backgroundColor: main }}>
-            <View style={{ height: 3, backgroundColor: tip }} />
-          </View>
-        );
-      })}
+      {Array.from({ length: cols }, (_, i) => (
+        <View key={i} style={{ width: COL, height: JAG_PATTERN[i % JAG_PATTERN.length], backgroundColor: main }}>
+          <View style={{ height: 3, backgroundColor: tip }} />
+        </View>
+      ))}
     </View>
   );
 }
 
-function Specks({ width, dark, bright }: { width: number; dark: string; bright: string }) {
-  const dots = Math.floor(width / 18);
+function Specks({ dark, bright }: { dark: string; bright: string }) {
   return (
     <>
-      {Array.from({ length: dots }, (_, i) => (
+      {Array.from({ length: SPECK_COUNT }, (_, i) => (
         <View
           key={i}
           style={{
             position: 'absolute',
             top: JAG + 6 + (i % 5) * 14,
-            left: (i * 37) % width,
+            left: (i * 37) % TILE,
             width: 4,
             height: 4,
             backgroundColor: i % 2 === 0 ? bright : dark,
@@ -69,20 +71,19 @@ function SwayTuft({ left, bright, dark }: { left: number; bright: string; dark: 
 }
 
 /** A clump of thin blades that shear back and forth like grass in the wind. */
-function BladeGroup({ left, fps, bright, main }: { left: number; fps: number; bright: string; main: string }) {
-  const sway = useCycle(SWAY, fps);
+function BladeGroup(props: { left: number; fps: number; seed: number; bright: string; main: string }) {
+  const sway = useCycle(SWAY, props.fps);
   const skewX = sway.interpolate({ inputRange: [-2, 2], outputRange: ['-6deg', '6deg'] });
-  const idx = Math.round(left / BLADE_GAP);
   return (
-    <Animated.View style={[styles.blades, { left, transform: [{ skewX }] }]}>
+    <Animated.View style={[styles.blades, { left: props.left, transform: [{ skewX }] }]}>
       {[0, 1, 2, 3, 4].map((k) => (
         <View
           key={k}
           style={{
             width: 3,
-            height: BLADE_H[(idx + k) % BLADE_H.length],
+            height: BLADE_H[(props.seed + k) % BLADE_H.length],
             marginRight: 2,
-            backgroundColor: k % 2 === 0 ? bright : main,
+            backgroundColor: k % 2 === 0 ? props.bright : props.main,
           }}
         />
       ))}
@@ -90,49 +91,60 @@ function BladeGroup({ left, fps, bright, main }: { left: number; fps: number; br
   );
 }
 
-export function SceneGrass({ visual }: { visual: PhaseVisual }) {
-  const { width } = useWindowDimensions();
-  const tufts = [0.06, 0.2, 0.42, 0.6, 0.78, 0.92];
-  const flowers = [0.14, 0.5, 0.85];
-  const bladeCount = Math.floor(width / BLADE_GAP) + 1;
+/** A single repeating ground tile (TILE px wide) with all its decorations. */
+function GrassTile({ visual }: { visual: PhaseVisual }) {
   return (
-    <View style={[styles.band, { height: GRASS_HEIGHT }]} pointerEvents="none">
-      <Skyline width={width} main={visual.grass} tip={visual.grassBlade} />
-      <View style={[styles.fill, { backgroundColor: visual.grass }]}>
-        <Specks width={width} dark={visual.grassDark} bright={visual.grassBlade} />
-        {flowers.map((f, i) => (
-          <View key={`f${i}`} style={{ position: 'absolute', bottom: SOIL + 8, left: f * width }}>
-            <PixelArt rows={FLOWER} cell={4} map={{ p: visual.flower, y: '#ffe9a8', g: visual.grassDark, D: visual.grassBlade }} />
-          </View>
-        ))}
-      </View>
-      <View style={[styles.soil, { height: SOIL, backgroundColor: visual.soil }]} />
-      {Array.from({ length: bladeCount }, (_, i) => (
-        <BladeGroup
-          key={`b${i}`}
-          left={i * BLADE_GAP + (i % 2) * 12}
-          fps={BLADE_FPS[i % BLADE_FPS.length]}
-          bright={visual.grassBlade}
-          main={visual.grass}
-        />
+    <View style={styles.tile}>
+      <Skyline main={visual.grass} tip={visual.grassBlade} />
+      <Specks dark={visual.grassDark} bright={visual.grassBlade} />
+      {FLOWERS.map((x, i) => (
+        <View key={`f${i}`} style={{ position: 'absolute', bottom: SOIL + 8, left: x }}>
+          <PixelArt rows={FLOWER} cell={4} map={{ p: visual.flower, y: '#ffe9a8', g: visual.grassDark, D: visual.grassBlade }} />
+        </View>
       ))}
-      {tufts.map((t, i) => (
-        <SwayTuft key={`t${i}`} left={t * width} bright={visual.grassBlade} dark={visual.grassDark} />
+      {TUFTS.map((x, i) => (
+        <SwayTuft key={`t${i}`} left={x} bright={visual.grassBlade} dark={visual.grassDark} />
+      ))}
+      {BLADES.map((b, i) => (
+        <BladeGroup key={`b${i}`} left={b.x} fps={b.fps} seed={b.seed} bright={visual.grassBlade} main={visual.grass} />
       ))}
     </View>
   );
 }
 
+/**
+ * Tall pixel-grass band with a curvy skyline, swaying blades, tufts and
+ * flowers. Built from identical TILE-wide tiles so it can scroll seamlessly:
+ * while `traveling` the whole row slides left in whole-pixel steps and wraps
+ * every TILE, making the ground rush by beneath the (centred) walking hero.
+ */
+export function SceneGrass({ visual, traveling }: { visual: PhaseVisual; traveling: boolean }) {
+  const { width } = useWindowDimensions();
+  const offset = useScroll(traveling, TILE, SCROLL_STEP, SCROLL_FPS);
+  const tiles = Math.ceil(width / TILE) + 2;
+  return (
+    <View style={[styles.band, { height: GRASS_HEIGHT }]} pointerEvents="none">
+      <View style={[styles.fill, { top: JAG, backgroundColor: visual.grass }]} />
+      <View style={[styles.soil, { height: SOIL, backgroundColor: visual.soil }]} />
+      <Animated.View style={[styles.scroller, { transform: [{ translateX: Animated.multiply(offset, -1) }] }]}>
+        {Array.from({ length: tiles }, (_, i) => (
+          <View key={i} style={styles.tileSlot}>
+            <GrassTile visual={visual} />
+          </View>
+        ))}
+      </Animated.View>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-  band: { position: 'absolute', left: 0, right: 0, bottom: 0 },
-  skyline: { flexDirection: 'row', alignItems: 'flex-end', height: JAG, overflow: 'hidden' },
-  fill: { flex: 1 },
+  band: { position: 'absolute', left: 0, right: 0, bottom: 0, overflow: 'hidden' },
+  scroller: { position: 'absolute', left: 0, top: 0, bottom: 0, flexDirection: 'row' },
+  tileSlot: { width: TILE },
+  tile: { width: TILE, height: GRASS_HEIGHT },
+  skyline: { position: 'absolute', left: 0, top: 0, flexDirection: 'row', alignItems: 'flex-end', height: JAG, width: TILE },
+  fill: { position: 'absolute', left: 0, right: 0, bottom: 0 },
   soil: { position: 'absolute', left: 0, right: 0, bottom: 0 },
   tuft: { position: 'absolute', bottom: SOIL + 2 },
-  blades: {
-    position: 'absolute',
-    bottom: GRASS_HEIGHT - JAG,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-  },
+  blades: { position: 'absolute', bottom: GRASS_HEIGHT - JAG, flexDirection: 'row', alignItems: 'flex-end' },
 });

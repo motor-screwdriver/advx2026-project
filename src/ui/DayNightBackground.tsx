@@ -55,8 +55,9 @@ function Stars({ color }: { color: string }) {
   );
 }
 
-/** Full-bleed animated pixel sky/ground scene behind the home overlays. */
-export function DayNightBackground({ phase }: { phase: DayPhase }) {
+/** Full-bleed animated pixel sky/ground scene behind the home overlays. When
+ * `traveling` the ground scrolls beneath the (centred) walking hero. */
+export function DayNightBackground({ phase, traveling = false }: { phase: DayPhase; traveling?: boolean }) {
   const v = PHASE_VISUALS[phase];
   return (
     <View style={StyleSheet.absoluteFill}>
@@ -71,7 +72,7 @@ export function DayNightBackground({ phase }: { phase: DayPhase }) {
       <SceneClouds visual={v} />
       <Hills color={v.hillBack} base={40} amp={24} waves={2.2} phase={0} bottom={GRASS_HEIGHT - 12} />
       <Hills color={v.hillFront} base={28} amp={30} waves={3.1} phase={1.4} bottom={GRASS_HEIGHT - 4} />
-      <SceneGrass visual={v} />
+      <SceneGrass visual={v} traveling={traveling} />
     </View>
   );
 }

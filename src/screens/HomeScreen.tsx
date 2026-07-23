@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Animated, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { playMusic } from '../systems/audio';
@@ -65,18 +65,18 @@ function HeroHome() {
   };
 
   return (
-    <HomeScene phase={getDayPhase()}>
+    <HomeScene phase={getDayPhase()} traveling={asleep}>
       <TopBar hp={state.hp} streak={state.perfectWeekStreak} level={hero.level} />
       <View style={styles.heroWrap}>
-        <Animated.View style={[styles.heroInner, { transform: walk.transform }]}>
-          {asleep && !walk.walking && <Text style={styles.zzz}>z z Z</Text>}
+        <View style={styles.heroInner}>
           <HeroSprite
             type={hero.type}
             size={HERO_SIZE}
+            walking={walk.walking}
             fps={walk.walking ? 6 : 2}
             gold={state.perfectWeekStreak >= MAX_HP}
           />
-        </Animated.View>
+        </View>
       </View>
       <View style={styles.dock}>
         <FloatingButton
@@ -94,10 +94,10 @@ function HeroHome() {
   );
 }
 
-function HomeScene({ phase, children }: { phase: DayPhase; children: React.ReactNode }) {
+function HomeScene({ phase, traveling = false, children }: { phase: DayPhase; traveling?: boolean; children: React.ReactNode }) {
   return (
     <View style={styles.root}>
-      <DayNightBackground phase={phase} />
+      <DayNightBackground phase={phase} traveling={traveling} />
       <SafeAreaView style={styles.safe}>{children}</SafeAreaView>
     </View>
   );
@@ -162,11 +162,6 @@ const styles = StyleSheet.create({
     paddingBottom: 176,
   },
   heroInner: { alignItems: 'center', gap: theme.spacing(2) },
-  zzz: {
-    ...theme.type.body,
-    color: theme.colors.text,
-    letterSpacing: 3,
-  },
   dock: {
     position: 'absolute',
     left: theme.spacing(4),

@@ -49,7 +49,7 @@ export function TutorialScreen() {
         </PixelPanel>
       ))}
       <View style={styles.footer}>
-        <PixelButton label={strings.tutorial_done} onPress={() => router.replace('/')} />
+        <PixelButton label={strings.tutorial_done} onPress={() => router.dismissTo('/')} />
       </View>
     </Screen>
   );
