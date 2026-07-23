@@ -2,7 +2,8 @@ name: Build
 
 on:
   push:
-    branches: [main, feature/build]
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
   workflow_dispatch:
 
 env:
@@ -13,6 +14,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Resolve version
+        id: version
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            VERSION="${{ github.ref_name }}"
+          else
+            VERSION="$(node -p "require('./package.json').version")"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Building version $VERSION"
+      - name: Sync version
+        run: |
+          node <<'EOF'
+          const fs = require('fs');
+          const version = process.env.VERSION;
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          pkg.version = version;
+          fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          const app = JSON.parse(fs.readFileSync('app.json', 'utf8'));
+          app.expo.version = version;
+          fs.writeFileSync('app.json', JSON.stringify(app, null, 2) + '\n');
+          EOF
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -24,17 +49,41 @@ jobs:
       - uses: android-actions/setup-android@v3
       - run: npm ci
       - run: npx expo prebuild --platform android --non-interactive
-      - run: ./gradlew assembleDebug --no-daemon
+      - run: ./gradlew assembleRelease --no-daemon
         working-directory: android
       - uses: actions/upload-artifact@v4
         with:
-          name: android-apk
-          path: android/app/build/outputs/apk/debug/*.apk
+          name: android-apk-${{ steps.version.outputs.version }}
+          path: android/app/build/outputs/apk/release/*.apk
 
   ios:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
+      - name: Resolve version
+        id: version
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            VERSION="${{ github.ref_name }}"
+          else
+            VERSION="$(node -p "require('./package.json').version")"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Building version $VERSION"
+      - name: Sync version
+        run: |
+          node <<'EOF'
+          const fs = require('fs');
+          const version = process.env.VERSION;
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          pkg.version = version;
+          fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          const app = JSON.parse(fs.readFileSync('app.json', 'utf8'));
+          app.expo.version = version;
+          fs.writeFileSync('app.json', JSON.stringify(app, null, 2) + '\n');
+          EOF
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -55,7 +104,7 @@ jobs:
           xcodebuild \
             -workspace "$WORKSPACE" \
             -scheme "$SCHEME" \
-            -configuration Debug \
+            -configuration Release \
             -sdk iphonesimulator \
             -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath build \
@@ -63,5 +112,5 @@ jobs:
             build
       - uses: actions/upload-artifact@v4
         with:
-          name: ios-app
-          path: ios/build/Build/Products/Debug-iphonesimulator/*.app
+          name: ios-app-${{ steps.version.outputs.version }}
+          path: ios/build/Build/Products/Release-iphonesimulator/*.app
