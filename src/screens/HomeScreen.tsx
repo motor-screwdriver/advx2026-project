@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
-import { Animated, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { playMusic } from '../systems/audio'
@@ -46,7 +46,6 @@ function usePhaseMusic(asleep: boolean) {
   useEffect(() => {
     playMusic(asleep ? 'music_night' : 'music_day')
   }, [asleep])
-  )
 }
 
 function HeroHome() {
@@ -55,10 +54,7 @@ function HeroHome() {
   const hero = state.hero!
   const asleep = pendingBedTime !== null
 
-  // Cozy day theme while awake; hushed night theme once tucked in.
-  useEffect(() => {
-    playMusic(asleep ? 'music_night' : 'music_day')
-  }, [asleep])
+  usePhaseMusic(asleep)
 
   const walk = useHeroWalk(asleep)
 
@@ -71,7 +67,6 @@ function HeroHome() {
     const hpAfter = Math.min(Math.max(state.hp + evaluation.hpDelta, 0), MAX_HP)
     router.push(hpAfter === 0 ? '/death' : '/morning-scene')
   }
-
 
   return (
     <HomeScene phase={getDayPhase()} traveling={asleep}>
