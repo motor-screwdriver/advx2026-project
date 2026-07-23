@@ -35,7 +35,7 @@ const PRESETS: { preset: DebugPreset; label: string }[] = [
 /** Temporary M0-M1 navigation + state presets. Removed before release. */
 export function DebugMenu() {
   const { loadDebugPreset } = useGame();
-  const routes = FLAGS.raids
+  let routes = FLAGS.raids
     ? [...ROUTES, { href: '/raid-lobby', label: strings.raid_title }]
     : ROUTES;
   routes = FLAGS.artGallery
