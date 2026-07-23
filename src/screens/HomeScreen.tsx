@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Animated, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { playMusic } from '../systems/audio'
@@ -46,6 +46,7 @@ function usePhaseMusic(asleep: boolean) {
   useEffect(() => {
     playMusic(asleep ? 'music_night' : 'music_day')
   }, [asleep])
+  )
 }
 
 function HeroHome() {
@@ -54,7 +55,10 @@ function HeroHome() {
   const hero = state.hero!
   const asleep = pendingBedTime !== null
 
-  usePhaseMusic(asleep)
+  // Cozy day theme while awake; hushed night theme once tucked in.
+  useEffect(() => {
+    playMusic(asleep ? 'music_night' : 'music_day')
+  }, [asleep])
 
   const walk = useHeroWalk(asleep)
 
@@ -67,6 +71,7 @@ function HeroHome() {
     const hpAfter = Math.min(Math.max(state.hp + evaluation.hpDelta, 0), MAX_HP)
     router.push(hpAfter === 0 ? '/death' : '/morning-scene')
   }
+
 
   return (
     <HomeScene phase={getDayPhase()} traveling={asleep}>
@@ -82,30 +87,38 @@ function HeroHome() {
           />
         </View>
       </View>
-      <View style={styles.dock}>
-        <FloatingButton
-          variant="primary"
-          scale={2}
-          delay={0}
-          label={asleep ? strings.home_wakeup : strings.home_sleep}
-          onPress={onContextTap}
-        />
-        <FloatingButton
-          scale={2}
-          delay={220}
-          label={strings.home_nav_bag}
-          onPress={() => router.push('/inventory')}
-        />
-        <FloatingButton
-          variant="round"
-          scale={2}
-          delay={440}
-          label="⚙"
-          onPress={() => router.push('/settings')}
-        />
-      </View>
+      <ActionDock asleep={asleep} onContextTap={onContextTap} />
       <DevTools />
     </HomeScene>
+  )
+}
+
+/** Bottom action dock: sleep/wake, inventory and settings. */
+function ActionDock({ asleep, onContextTap }: { asleep: boolean; onContextTap: () => void }) {
+  const router = useRouter()
+  return (
+    <View style={styles.dock}>
+      <FloatingButton
+        variant="primary"
+        scale={2}
+        delay={0}
+        label={asleep ? strings.home_wakeup : strings.home_sleep}
+        onPress={onContextTap}
+      />
+      <FloatingButton
+        scale={2}
+        delay={220}
+        label={strings.home_nav_bag}
+        onPress={() => router.push('/inventory')}
+      />
+      <FloatingButton
+        variant="round"
+        scale={2}
+        delay={440}
+        label="⚙"
+        onPress={() => router.push('/settings')}
+      />
+    </View>
   )
 }
 
