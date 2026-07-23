@@ -9,9 +9,11 @@
     "userInterfaceStyle": "dark",
     "backgroundColor": "#221812",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.eightbitsleep.app"
     },
     "android": {
+      "package": "com.eightbitsleep.app",
       "adaptiveIcon": {
         "backgroundColor": "#221812",
         "foregroundImage": "./assets/android-icon-foreground.png",
