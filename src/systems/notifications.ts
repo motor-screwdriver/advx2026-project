@@ -28,7 +28,8 @@ const MORNING_DELAY_MIN = 15
  * which console.errors on Android in Expo Go (SDK 53+ dropped remote push).
  * We use only LOCAL notifications, so the native module is lazy-loaded and
  * skipped in Expo Go: solo play behaves identically there and dev/production
- * builds keep full notification support.
+ * builds keep full notification support. Web has no scheduling APIs (calls
+ * throw "not available on web"), so it is skipped too — the game works without.
  */
 type NotificationsModule = typeof import('expo-notifications')
 let cachedModule: NotificationsModule | null | undefined
@@ -36,9 +37,7 @@ let cachedModule: NotificationsModule | null | undefined
 function loadNotifications(): NotificationsModule | null {
   if (cachedModule === undefined) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    cachedModule = isRunningInExpoGo()
-      ? null
-      : (require('expo-notifications') as NotificationsModule)
+    cachedModule = isRunningInExpoGo() ? null : (require('expo-notifications') as NotificationsModule);
   }
   return cachedModule
 }
