@@ -1,10 +1,14 @@
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { SCENES, SPRITES } from '../../assets/manifest';
+import { playSfx } from '../systems/audio';
 import { HeroSprite } from '../ui/HeroSprite';
 import { PixelButton } from '../ui/PixelButton';
 import { PixelPanel } from '../ui/PixelPanel';
+import { PixelSprite } from '../ui/PixelSprite';
+import { SceneBanner } from '../ui/SceneBanner';
 import { Screen } from '../ui/Screen';
 import { strings } from '../ui/strings';
 import { theme } from '../ui/theme';
@@ -14,6 +18,10 @@ export function DeathScreen() {
   const router = useRouter();
   const { state, canResurrect, startNewHero } = useGame();
   const hero = state.hero;
+
+  useEffect(() => {
+    playSfx('sfx_death');
+  }, []);
 
   if (!hero) {
     return (
@@ -30,6 +38,7 @@ export function DeathScreen() {
 
   return (
     <Screen title={strings.death_title}>
+      <SceneBanner sprite={SCENES.scene_death} />
       <PixelPanel>
         <View style={styles.stage}>
           <View style={styles.fallen}>
@@ -48,6 +57,7 @@ export function DeathScreen() {
         </View>
       ) : (
         <View style={styles.goneBlock}>
+          <PixelSprite sprite={SPRITES.gravestone} size={96} animated={false} />
           <Text style={styles.dim}>{strings.death_no_charge}</Text>
           <Text style={styles.gone}>{strings.death_gone}</Text>
           <PixelButton label={strings.death_new_hero} onPress={newHero} />
@@ -71,7 +81,7 @@ const styles = StyleSheet.create({
     color: theme.colors.textDim,
     textAlign: 'center',
   },
-  goneBlock: { gap: theme.spacing(3) },
+  goneBlock: { gap: theme.spacing(3), alignItems: 'center' },
   dim: {
     ...theme.type.label,
     color: theme.colors.textDim,

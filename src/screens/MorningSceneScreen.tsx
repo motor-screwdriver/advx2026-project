@@ -1,12 +1,15 @@
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 
+import { SCENES } from '../../assets/manifest';
 import type { NightOutcome } from '../contracts/types';
+import { playSfx } from '../systems/audio';
 import { useFadeIn } from '../ui/animations';
 import { HeroSprite } from '../ui/HeroSprite';
 import { PixelButton } from '../ui/PixelButton';
 import { PixelPanel } from '../ui/PixelPanel';
+import { SceneBanner } from '../ui/SceneBanner';
 import { Screen } from '../ui/Screen';
 import { strings } from '../ui/strings';
 import { theme } from '../ui/theme';
@@ -36,10 +39,29 @@ const LINE_KEYS: Record<NightOutcome, keyof typeof strings> = {
   MISSED: 'morning_missed',
 };
 
+const SCENE_KEYS: Record<NightOutcome, keyof typeof SCENES> = {
+  PERFECT: 'scene_perfect',
+  GOOD: 'scene_good',
+  BAD: 'scene_bad',
+  TERRIBLE: 'scene_terrible',
+  MISSED: 'scene_bad',
+};
+
 export function MorningSceneScreen() {
   const router = useRouter();
   const { state, lastEvaluation } = useGame();
   const fade = useFadeIn(300);
+
+  useEffect(() => {
+    if (!lastEvaluation) {
+      return;
+    }
+    if (lastEvaluation.hpDelta < 0) {
+      playSfx('sfx_damage');
+    } else if (lastEvaluation.outcome === 'PERFECT') {
+      playSfx('sfx_victory');
+    }
+  }, [lastEvaluation]);
 
   if (!lastEvaluation) {
     return (
@@ -59,6 +81,7 @@ export function MorningSceneScreen() {
 
   return (
     <Screen title={strings.morning_title}>
+      <SceneBanner sprite={SCENES[SCENE_KEYS[outcome]]} />
       <PixelPanel style={{ borderColor: color }}>
         <View style={styles.stage}>
           {state.hero && <HeroSprite type={state.hero.type} size={72} />}

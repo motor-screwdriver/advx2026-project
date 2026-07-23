@@ -1,7 +1,8 @@
 import { Link, useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { playMusic } from '../systems/audio';
 import { HeartRow } from '../ui/HeartRow';
 import { HeroSprite } from '../ui/HeroSprite';
 import { PixelButton } from '../ui/PixelButton';
@@ -36,6 +37,11 @@ function NoHeroHome() {
 function HeroHome() {
   const router = useRouter();
   const { state, pendingBedTime, sleepNow, wakeNow } = useGame();
+
+  // Cozy day theme while awake; hushed night theme once tucked in.
+  useEffect(() => {
+    playMusic(pendingBedTime === null ? 'music_day' : 'music_night');
+  }, [pendingBedTime]);
 
   const onContextTap = () => {
     if (pendingBedTime === null) {
@@ -80,7 +86,7 @@ function HeroPanel() {
   return (
     <PixelPanel>
       <View style={styles.heroRow}>
-        <HeroSprite type={hero.type} size={72} />
+        <HeroSprite type={hero.type} size={72} gold={state.perfectWeekStreak >= MAX_HP} />
         <View style={styles.heroMeta}>
           <Text style={styles.heroName}>{strings[`hero_${hero.type}` as keyof typeof strings]}</Text>
           <Text style={styles.level}>
