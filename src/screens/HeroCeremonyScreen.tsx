@@ -49,7 +49,7 @@ export function HeroCeremonyScreen() {
         <Text style={styles.name}>{heroName}</Text>
         <Text style={styles.awakens}>{strings.ceremony_awakens}</Text>
         <Text style={styles.passive}>{strings.ceremony_flavor}</Text>
-        <PixelButton label={strings.ceremony_begin} onPress={() => router.replace('/')} />
+        <PixelButton label={strings.ceremony_begin} onPress={() => router.dismissTo('/')} />
       </Animated.View>
     </Screen>
   );

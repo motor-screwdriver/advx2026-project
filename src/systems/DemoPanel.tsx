@@ -4,18 +4,18 @@
  * [PERFECT] [BAD] [DEATH] run real simulated nights through the store;
  * [RESET] restores the pre-demo snapshot. Booth judges see the true flow.
  */
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 
-import { useGameStore } from '../state/store';
-import { PixelButton } from '../ui/PixelButton';
-import { theme } from '../ui/theme';
-import { resetDemo, runDemoNight } from './demoMode';
+import { useGameStore } from '../state/store'
+import { PixelButton } from '../ui/PixelButton'
+import { theme } from '../ui/theme'
+import { resetDemo, runDemoNight } from './demoMode'
 
 export function DemoPanel() {
-  const demoMode = useGameStore((s) => s.game.demoMode);
+  const demoMode = useGameStore((s) => s.game.demoMode)
   if (!demoMode) {
-    return null;
+    return null
   }
   return (
     <View style={styles.wrap} pointerEvents="box-none">
@@ -29,7 +29,7 @@ export function DemoPanel() {
         </View>
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -60,4 +60,4 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: theme.spacing(2),
   },
-});
+})

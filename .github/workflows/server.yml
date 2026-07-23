@@ -27,8 +27,8 @@ jobs:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           password: ${{ secrets.DEPLOY_PASSWORD }}
-          source: "backend/,compose.yaml"
-          target: "~/8bit-sleep"
+          source: 'backend/,compose.yaml'
+          target: '~/8bit-sleep'
           overwrite: true
 
       - name: Build

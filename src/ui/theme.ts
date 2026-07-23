@@ -7,7 +7,7 @@ export const colors = {
   bg: '#221812', // app background, deep espresso brown
   panel: '#3a2a1c', // warm wood panel
   inset: '#2c2016', // sunken wells, buttons
-  outline: '#140d08', // 2px dark coffee outlines
+  outline: '#2b1e12', // thin, softened brown outlines (lighter than pure coffee)
   bevelLight: '#5c4328', // brass top-edge bevel
 
   text: '#f5e6c8', // parchment cream (soft, warm — not white)
@@ -44,7 +44,7 @@ export const theme = {
   colors,
   type,
   fontFamily: GAME_FONT,
-  borderWidth: 2,
+  borderWidth: 1,
   borderRadius: 4,
   spacing: (units: number) => units * 4,
 } as const;

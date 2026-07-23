@@ -1,14 +1,14 @@
-import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
-import { Animated, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient'
+import React from 'react'
+import { Animated, StyleSheet, useWindowDimensions, View } from 'react-native'
 
-import { SceneClouds } from './SceneClouds';
-import { GRASS_HEIGHT, SceneGrass } from './SceneGrass';
-import { SceneSun } from './SceneSun';
-import { PHASE_VISUALS, type DayPhase } from './timeOfDay';
-import { useCycle } from './usePixelMotion';
+import { SceneClouds } from './SceneClouds'
+import { GRASS_HEIGHT, SceneGrass } from './SceneGrass'
+import { SceneSun } from './SceneSun'
+import { PHASE_VISUALS, type DayPhase } from './timeOfDay'
+import { useCycle } from './usePixelMotion'
 
-const HCOL = 10;
+const HCOL = 10
 /** Pseudo-random star field (x,y fractions of the sky), split into 3 blink groups. */
 const STARS: readonly [number, number][] = [
   [0.08, 0.06],
@@ -32,33 +32,33 @@ const STARS: readonly [number, number][] = [
   [0.24, 0.32],
   [0.57, 0.31],
   [0.72, 0.34],
-];
-const TWINKLE = [1, 0.85, 0.5, 0.85] as const;
+]
+const TWINKLE = [1, 0.85, 0.5, 0.85] as const
 
 function Hills(props: {
-  color: string;
-  base: number;
-  amp: number;
-  waves: number;
-  phase: number;
-  bottom: number;
+  color: string
+  base: number
+  amp: number
+  waves: number
+  phase: number
+  bottom: number
 }) {
-  const { width } = useWindowDimensions();
-  const cols = Math.ceil(width / HCOL) + 1;
+  const { width } = useWindowDimensions()
+  const cols = Math.ceil(width / HCOL) + 1
   return (
     <View style={[styles.hills, { bottom: props.bottom }]} pointerEvents="none">
       {Array.from({ length: cols }, (_, i) => {
-        const t = (i / cols) * Math.PI * props.waves + props.phase;
-        const h = Math.round(props.base + props.amp * Math.sin(t));
-        return <View key={i} style={{ width: HCOL, height: h, backgroundColor: props.color }} />;
+        const t = (i / cols) * Math.PI * props.waves + props.phase
+        const h = Math.round(props.base + props.amp * Math.sin(t))
+        return <View key={i} style={{ width: HCOL, height: h, backgroundColor: props.color }} />
       })}
     </View>
-  );
+  )
 }
 
 function Stars({ color }: { color: string }) {
-  const { width, height } = useWindowDimensions();
-  const cycles = [useCycle(TWINKLE, 3), useCycle(TWINKLE, 2), useCycle(TWINKLE, 4)];
+  const { width, height } = useWindowDimensions()
+  const cycles = [useCycle(TWINKLE, 3), useCycle(TWINKLE, 2), useCycle(TWINKLE, 4)]
   return (
     <>
       {STARS.map(([x, y], i) => (
@@ -76,12 +76,19 @@ function Stars({ color }: { color: string }) {
         />
       ))}
     </>
-  );
+  )
 }
 
-/** Full-bleed animated pixel sky/ground scene behind the home overlays. */
-export function DayNightBackground({ phase }: { phase: DayPhase }) {
-  const v = PHASE_VISUALS[phase];
+/** Full-bleed animated pixel sky/ground scene behind the home overlays. When
+ * `traveling` the ground scrolls beneath the (centred) walking hero. */
+export function DayNightBackground({
+  phase,
+  traveling = false,
+}: {
+  phase: DayPhase
+  traveling?: boolean
+}) {
+  const v = PHASE_VISUALS[phase]
   return (
     <View style={StyleSheet.absoluteFill}>
       <LinearGradient
@@ -109,9 +116,9 @@ export function DayNightBackground({ phase }: { phase: DayPhase }) {
         phase={1.4}
         bottom={GRASS_HEIGHT - 4}
       />
-      <SceneGrass visual={v} />
+      <SceneGrass visual={v} traveling={traveling} />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -124,4 +131,4 @@ const styles = StyleSheet.create({
     height: 90,
     overflow: 'hidden',
   },
-});
+})

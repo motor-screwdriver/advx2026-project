@@ -13,12 +13,12 @@
  * build with HealthKit entitlement / Health Connect permission, read the
  * asleep stages overlapping [bedMin, wakeMin] and pre-fill the check-ins.
  */
-import { FLAGS } from '../contracts/flags';
+import { FLAGS } from '../contracts/flags'
 
 /** Always null while the feature is cut — the engine keeps manual check-ins. */
 export async function readLastNightSleep(): Promise<null> {
   if (!FLAGS.healthSync) {
-    return null;
+    return null
   }
-  return null;
+  return null
 }

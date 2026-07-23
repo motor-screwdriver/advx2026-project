@@ -49,3 +49,25 @@ export function useCycle(values: readonly number[], fps: number): Animated.Value
   }, [v, fps]);
   return v;
 }
+
+/**
+ * A looping scroll offset in whole-pixel steps, wrapping every `span` px. When
+ * `enabled` is false the offset holds at 0. Pair it with a row of identical
+ * tiles `span` wide to scroll a seamless, repeating ground beneath the hero.
+ */
+export function useScroll(enabled: boolean, span: number, stepPx: number, fps: number): Animated.Value {
+  const v = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (!enabled) {
+      v.setValue(0);
+      return;
+    }
+    let x = 0;
+    const id = setInterval(() => {
+      x = (x + stepPx) % span;
+      v.setValue(x);
+    }, 1000 / fps);
+    return () => clearInterval(id);
+  }, [enabled, span, stepPx, fps, v]);
+  return v;
+}

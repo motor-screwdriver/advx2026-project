@@ -3,32 +3,32 @@
  * Settings, stored locally on-device only. Never leaves the phone except
  * as the Authorization header of Dot API calls.
  */
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-const KEY = '8bit-sleep/eink-config';
+const KEY = '8bit-sleep/eink-config'
 
 export interface EinkConfig {
-  deviceId: string;
-  apiKey: string;
+  deviceId: string
+  apiKey: string
 }
 
 export async function getEinkConfig(): Promise<EinkConfig | null> {
   try {
-    const raw = await AsyncStorage.getItem(KEY);
+    const raw = await AsyncStorage.getItem(KEY)
     if (!raw) {
-      return null;
+      return null
     }
-    const parsed = JSON.parse(raw) as Partial<EinkConfig>;
+    const parsed = JSON.parse(raw) as Partial<EinkConfig>
     return parsed.deviceId && parsed.apiKey
       ? { deviceId: parsed.deviceId, apiKey: parsed.apiKey }
-      : null;
+      : null
   } catch {
-    return null;
+    return null
   }
 }
 
 export async function setEinkConfig(config: EinkConfig): Promise<void> {
-  await AsyncStorage.setItem(KEY, JSON.stringify(config));
+  await AsyncStorage.setItem(KEY, JSON.stringify(config))
 }
 
 /**
@@ -38,10 +38,10 @@ export async function setEinkConfig(config: EinkConfig): Promise<void> {
  * path segment. Non-URL input passes through trimmed.
  */
 export function parseDeviceId(input: string): string {
-  const trimmed = input.trim();
+  const trimmed = input.trim()
   if (!trimmed.includes('/')) {
-    return trimmed;
+    return trimmed
   }
-  const path = trimmed.split(/[?#]/)[0].replace(/\/+$/, '');
-  return path.slice(path.lastIndexOf('/') + 1);
+  const path = trimmed.split(/[?#]/)[0].replace(/\/+$/, '')
+  return path.slice(path.lastIndexOf('/') + 1)
 }

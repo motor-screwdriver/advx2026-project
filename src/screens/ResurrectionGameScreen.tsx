@@ -29,11 +29,11 @@ export function ResurrectionGameScreen() {
 
   const finish = () => {
     if (phase === 'won') {
-      router.replace('/');
+      router.dismissTo('/');
       return;
     }
     startNewHero();
-    router.replace('/hero-ceremony');
+    router.dismissTo('/hero-ceremony');
   };
 
   return (

@@ -26,14 +26,14 @@ export function DeathScreen() {
   if (!hero) {
     return (
       <Screen title={strings.death_title}>
-        <PixelButton label={strings.common_back} onPress={() => router.replace('/')} />
+        <PixelButton label={strings.common_back} onPress={() => router.dismissTo('/')} />
       </Screen>
     );
   }
 
   const newHero = () => {
     startNewHero();
-    router.replace('/hero-ceremony');
+    router.dismissTo('/hero-ceremony');
   };
 
   return (

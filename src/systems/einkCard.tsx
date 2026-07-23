@@ -6,23 +6,23 @@
  * The device is pushed with ditherType NONE: we control every pixel here,
  * so no fine lines under 2 px and only solid #000 / #fff.
  */
-import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
-import { captureRef } from 'react-native-view-shot';
+import React from 'react'
+import { Image, StyleSheet, Text, View } from 'react-native'
+import { captureRef } from 'react-native-view-shot'
 
-import { SPRITES_1BIT, type SpriteEntry } from '../../assets/manifest';
-import type { GameState, HeroType } from '../contracts/types';
-import { useGameStore } from '../state/store';
-import { theme } from '../ui/theme';
+import { SPRITES_1BIT, type SpriteEntry } from '../../assets/manifest'
+import type { GameState, HeroType } from '../contracts/types'
+import { useGameStore } from '../state/store'
+import { theme } from '../ui/theme'
 
-export const CARD_WIDTH = 296;
-export const CARD_HEIGHT = 152;
-const ICON_SIZE = 40;
-const SPRITE_SIZE = 92;
-const HEART_SIZE = 16;
-const MAX_HP = 7;
-const INK = '#000000';
-const PAPER = '#ffffff';
+export const CARD_WIDTH = 296
+export const CARD_HEIGHT = 152
+const ICON_SIZE = 40
+const SPRITE_SIZE = 92
+const HEART_SIZE = 16
+const MAX_HP = 7
+const INK = '#000000'
+const PAPER = '#ffffff'
 
 const HERO_1BIT: Record<HeroType, SpriteEntry> = {
   monk: SPRITES_1BIT.hero_monk,
@@ -34,34 +34,34 @@ const HERO_1BIT: Record<HeroType, SpriteEntry> = {
   ninja: SPRITES_1BIT.hero_ninja,
   mage: SPRITES_1BIT.hero_mage,
   warlock: SPRITES_1BIT.hero_warlock,
-};
-
-interface CaptureTargets {
-  card: View | null;
-  icon: View | null;
 }
 
-const targets: CaptureTargets = { card: null, icon: null };
+interface CaptureTargets {
+  card: View | null
+  icon: View | null
+}
+
+const targets: CaptureTargets = { card: null, icon: null }
 
 /** 296×152 hero card → base64 PNG (null when nothing mounted / capture failed). */
 export async function captureCardBase64(): Promise<string | null> {
-  return capture(targets.card, CARD_WIDTH, CARD_HEIGHT);
+  return capture(targets.card, CARD_WIDTH, CARD_HEIGHT)
 }
 
 /** 40×40 hero icon → base64 PNG for the Text API `icon` field. */
 export async function captureIconBase64(): Promise<string | null> {
-  return capture(targets.icon, ICON_SIZE, ICON_SIZE);
+  return capture(targets.icon, ICON_SIZE, ICON_SIZE)
 }
 
 async function capture(target: View | null, width: number, height: number): Promise<string | null> {
   if (!target) {
-    return null;
+    return null
   }
   try {
-    return await captureRef(target, { format: 'png', result: 'base64', width, height });
+    return await captureRef(target, { format: 'png', result: 'base64', width, height })
   } catch (error) {
-    console.log('[eink] card capture failed (silent):', error);
-    return null;
+    console.log('[eink] card capture failed (silent):', error)
+    return null
   }
 }
 
@@ -71,13 +71,13 @@ async function capture(target: View | null, width: number, height: number): Prom
  * before the debounced push fires.
  */
 export function EinkCardHost() {
-  const game = useGameStore((s) => s.game);
+  const game = useGameStore((s) => s.game)
   return (
     <View style={styles.host} pointerEvents="none">
       {game.hero && (
         <View
           ref={(view) => {
-            targets.card = view;
+            targets.card = view
           }}
           collapsable={false}
         >
@@ -86,18 +86,18 @@ export function EinkCardHost() {
       )}
       <View
         ref={(view) => {
-          targets.icon = view;
+          targets.icon = view
         }}
         collapsable={false}
       >
         <Image source={SPRITES_1BIT.hero_icon_40.source} style={styles.icon} />
       </View>
     </View>
-  );
+  )
 }
 
 function HeroCard({ state }: { state: GameState }) {
-  const hero = state.hero!;
+  const hero = state.hero!
   return (
     <View style={styles.card}>
       <View style={styles.frame}>
@@ -116,12 +116,12 @@ function HeroCard({ state }: { state: GameState }) {
         </View>
       </View>
     </View>
-  );
+  )
 }
 
 /** Segmented 7-cell "next level" bar — same data as before, drawn as blocks. */
 function NextLevelBar({ streak }: { streak: number }) {
-  const filled = Math.min(streak, MAX_HP);
+  const filled = Math.min(streak, MAX_HP)
   return (
     <View style={styles.progressRow}>
       <Text style={styles.progressLabel}>NEXT</Text>
@@ -131,13 +131,13 @@ function NextLevelBar({ streak }: { streak: number }) {
         ))}
       </View>
     </View>
-  );
+  )
 }
 
 /** First frame of the 2-frame 1-bit strip, nearest-neighbor scaled. */
 function HeroSprite1Bit({ type }: { type: HeroType }) {
-  const entry = HERO_1BIT[type];
-  const scale = SPRITE_SIZE / entry.frameHeight;
+  const entry = HERO_1BIT[type]
+  const scale = SPRITE_SIZE / entry.frameHeight
   return (
     <View style={styles.spriteClip}>
       <Image
@@ -145,7 +145,7 @@ function HeroSprite1Bit({ type }: { type: HeroType }) {
         style={{ width: entry.width * scale, height: entry.height * scale }}
       />
     </View>
-  );
+  )
 }
 
 function HeartRow({ hp }: { hp: number }) {
@@ -154,12 +154,16 @@ function HeartRow({ hp }: { hp: number }) {
       {Array.from({ length: MAX_HP }, (_, i) => (
         <Image
           key={i}
-          source={i < hp ? SPRITES_1BIT['1bit_heart_full'].source : SPRITES_1BIT['1bit_heart_empty'].source}
+          source={
+            i < hp
+              ? SPRITES_1BIT['1bit_heart_full'].source
+              : SPRITES_1BIT['1bit_heart_empty'].source
+          }
           style={styles.heart}
         />
       ))}
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -217,4 +221,4 @@ const styles = StyleSheet.create({
   cellFull: { flex: 1, height: 8, backgroundColor: INK },
   cellEmpty: { flex: 1, height: 8, backgroundColor: PAPER },
   icon: { width: ICON_SIZE, height: ICON_SIZE },
-});
+})

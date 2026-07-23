@@ -5,14 +5,14 @@
  * restores it byte-for-byte — real data survives the demo (spec NFR-12).
  * Reachable only via the hidden 5-tap gesture in Settings, never by accident.
  */
-import { router } from 'expo-router';
+import { router } from 'expo-router'
 
-import { mockGameState } from '../contracts/mock';
-import { useGameStore } from '../state/store';
-import { demoCheckIns, type DemoNightKind } from './demoNights';
+import { mockGameState } from '../contracts/mock'
+import { useGameStore } from '../state/store'
+import { demoCheckIns, type DemoNightKind } from './demoNights'
 
 /** Panel actions: [Perfect Night] [Bad Night] [Death] — [Reset] is separate. */
-export type DemoPanelAction = Exclude<DemoNightKind, 'terrible'> | 'death';
+export type DemoPanelAction = Exclude<DemoNightKind, 'terrible'> | 'death'
 
 type StoreSnapshot = Pick<
   ReturnType<(typeof useGameStore)['getState']>,
@@ -23,18 +23,18 @@ type StoreSnapshot = Pick<
   | 'lastEvaluation'
   | 'pendingChest'
   | 'events'
->;
+>
 
-const MAX_DEATH_NIGHTS = 10; // worst case: grace night + Iron Armor + 7 hearts
+const MAX_DEATH_NIGHTS = 10 // worst case: grace night + Iron Armor + 7 hearts
 
-let snapshot: StoreSnapshot | null = null;
+let snapshot: StoreSnapshot | null = null
 
 export function hasDemoSnapshot(): boolean {
-  return snapshot !== null;
+  return snapshot !== null
 }
 
 function takeSnapshot(): StoreSnapshot {
-  const s = useGameStore.getState();
+  const s = useGameStore.getState()
   return {
     game: s.game,
     meta: s.meta,
@@ -43,52 +43,52 @@ function takeSnapshot(): StoreSnapshot {
     lastEvaluation: s.lastEvaluation,
     pendingChest: s.pendingChest,
     events: s.events,
-  };
+  }
 }
 
 /** Fresh installs get a playable hero first, so every button "just works". */
 function ensurePlayableState(): void {
-  const { game } = useGameStore.getState();
+  const { game } = useGameStore.getState()
   if (!game.window || !game.hero) {
-    useGameStore.setState({ game: { ...mockGameState(), demoMode: true } });
+    useGameStore.setState({ game: { ...mockGameState(), demoMode: true } })
   }
 }
 
 function runOneNight(kind: DemoNightKind): void {
-  const s = useGameStore.getState();
+  const s = useGameStore.getState()
   if (!s.game.window) {
-    return;
+    return
   }
-  const { bedTime, wakeTime } = demoCheckIns(s.game.window, kind);
-  s.checkIn('bed', bedTime);
-  s.checkIn('wake', wakeTime);
-  s.evaluateCurrentNight();
+  const { bedTime, wakeTime } = demoCheckIns(s.game.window, kind)
+  s.checkIn('bed', bedTime)
+  s.checkIn('wake', wakeTime)
+  s.evaluateCurrentNight()
 }
 
 /** Run the scripted night(s), then route into the real morning/death flow. */
 export function runDemoNight(kind: DemoPanelAction): void {
   if (!useGameStore.getState().game.demoMode) {
-    return; // panel-only entry; never fires during normal play
+    return // panel-only entry; never fires during normal play
   }
   if (!snapshot) {
-    snapshot = takeSnapshot();
+    snapshot = takeSnapshot()
   }
-  ensurePlayableState();
+  ensurePlayableState()
   if (kind === 'death') {
     for (let i = 0; i < MAX_DEATH_NIGHTS && useGameStore.getState().game.hp > 0; i += 1) {
-      runOneNight('terrible');
+      runOneNight('terrible')
     }
   } else {
-    runOneNight(kind);
+    runOneNight(kind)
   }
-  router.push(useGameStore.getState().game.hp === 0 ? '/death' : '/morning-scene');
+  router.push(useGameStore.getState().game.hp === 0 ? '/death' : '/morning-scene')
 }
 
 /** [Reset]: restore the pre-demo snapshot byte-for-byte and go back Home. */
 export function resetDemo(): void {
   if (snapshot) {
-    useGameStore.setState({ ...snapshot, game: { ...snapshot.game, demoMode: true } });
-    snapshot = null;
+    useGameStore.setState({ ...snapshot, game: { ...snapshot.game, demoMode: true } })
+    snapshot = null
   }
-  router.replace('/');
+  router.replace('/')
 }

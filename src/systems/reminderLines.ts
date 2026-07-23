@@ -3,7 +3,7 @@
  * pushes fire while the app is not running, so they cannot depend on the
  * UI layer. Hero persona, English only.
  */
-export const NOTIF_TITLE = '8bit Sleep';
+export const NOTIF_TITLE = '8bit Sleep'
 
 /** Bedtime reminder pool — one per day, rotated deterministically. */
 export const BEDTIME_LINES = [
@@ -17,6 +17,6 @@ export const BEDTIME_LINES = [
   'Your hero already laid out your blanket. Don’t stand him up.',
   'The night watch starts soon. Your hero takes it only if you sleep.',
   'Bedtime in an hour. Heroes grow while mortals sleep.',
-] as const;
+] as const
 
-export const MORNING_SUMMARY_BODY = 'Your hero survived the night. See what happened.';
+export const MORNING_SUMMARY_BODY = 'Your hero survived the night. See what happened.'

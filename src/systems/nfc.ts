@@ -9,34 +9,34 @@
  * field stays manually editable as a fallback). `import type` is erased at
  * build time, so typing the module never triggers a runtime load.
  */
-import { isRunningInExpoGo } from 'expo';
-import type { TagEvent } from 'react-native-nfc-manager';
+import { isRunningInExpoGo } from 'expo'
+import type { TagEvent } from 'react-native-nfc-manager'
 
-import { parseDeviceId } from './einkConfig';
+import { parseDeviceId } from './einkConfig'
 
-type NfcModule = typeof import('react-native-nfc-manager');
+type NfcModule = typeof import('react-native-nfc-manager')
 
-let cached: NfcModule | null | undefined;
-let started = false;
+let cached: NfcModule | null | undefined
+let started = false
 
 function loadNfc(): NfcModule | null {
   if (cached === undefined) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    cached = isRunningInExpoGo() ? null : (require('react-native-nfc-manager') as NfcModule);
+    cached = isRunningInExpoGo() ? null : (require('react-native-nfc-manager') as NfcModule)
   }
-  return cached;
+  return cached
 }
 
 /** True when in-app NFC scanning is possible (native build + NFC hardware). */
 export async function isNfcAvailable(): Promise<boolean> {
-  const mod = loadNfc();
+  const mod = loadNfc()
   if (!mod) {
-    return false;
+    return false
   }
   try {
-    return await mod.default.isSupported();
+    return await mod.default.isSupported()
   } catch {
-    return false;
+    return false
   }
 }
 
@@ -45,52 +45,52 @@ export async function isNfcAvailable(): Promise<boolean> {
  * is unavailable, the user cancels, or the tag carries no usable URL.
  */
 export async function scanDeviceId(): Promise<string | null> {
-  const mod = loadNfc();
+  const mod = loadNfc()
   if (!mod) {
-    console.log('[nfc] scan unavailable — needs a dev/production build (NFC is off in Expo Go)');
-    return null;
+    console.log('[nfc] scan unavailable — needs a dev/production build (NFC is off in Expo Go)')
+    return null
   }
-  const manager = mod.default;
+  const manager = mod.default
   try {
     if (!started) {
-      await manager.start();
-      started = true;
+      await manager.start()
+      started = true
     }
-    await manager.requestTechnology(mod.NfcTech.Ndef);
-    const url = decodeFirstUrl(mod.Ndef, await manager.getTag());
+    await manager.requestTechnology(mod.NfcTech.Ndef)
+    const url = decodeFirstUrl(mod.Ndef, await manager.getTag())
     if (!url) {
-      console.log('[nfc] tag read but no URL/text record found');
-      return null;
+      console.log('[nfc] tag read but no URL/text record found')
+      return null
     }
-    const id = parseDeviceId(url);
-    console.log(`[nfc] scanned device ID ${id}`);
-    return id || null;
+    const id = parseDeviceId(url)
+    console.log(`[nfc] scanned device ID ${id}`)
+    return id || null
   } catch (error) {
-    console.log('[nfc] scan cancelled or failed (silent):', error);
-    return null;
+    console.log('[nfc] scan cancelled or failed (silent):', error)
+    return null
   } finally {
-    void manager.cancelTechnologyRequest().catch(() => undefined);
+    void manager.cancelTechnologyRequest().catch(() => undefined)
   }
 }
 
 /** Decode the first NDEF record's payload as a URI, falling back to text. */
 function decodeFirstUrl(ndef: NfcModule['Ndef'], tag: TagEvent | null): string | null {
-  const payload = tag?.ndefMessage?.[0]?.payload;
+  const payload = tag?.ndefMessage?.[0]?.payload
   if (!payload?.length) {
-    return null;
+    return null
   }
-  const bytes = Uint8Array.from(payload as number[]);
+  const bytes = Uint8Array.from(payload as number[])
   try {
-    const uri = ndef.uri.decodePayload(bytes);
+    const uri = ndef.uri.decodePayload(bytes)
     if (uri) {
-      return uri;
+      return uri
     }
   } catch {
     // Not a URI record — fall through and try a text record.
   }
   try {
-    return ndef.text.decodePayload(bytes) || null;
+    return ndef.text.decodePayload(bytes) || null
   } catch {
-    return null;
+    return null
   }
 }
