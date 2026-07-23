@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -9,9 +10,26 @@ import (
 )
 
 func main() {
+	ctx := context.Background()
+
+	app := &App{}
+	if url := os.Getenv("DATABASE_URL"); url != "" {
+		pool, err := newPool(ctx, url)
+		if err != nil {
+			log.Fatalf("db connect: %v", err)
+		}
+		defer pool.Close()
+		if err := migrate(ctx, pool); err != nil {
+			log.Fatalf("db migrate: %v", err)
+		}
+		app.pool = pool
+		log.Print("postgres ready")
+	} else {
+		log.Print("DATABASE_URL unset — raid endpoints return 503")
+	}
+
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /", handleRoot)
-	mux.HandleFunc("GET /health", handleHealth)
+	app.routes(mux)
 
 	addr := ":" + envOr("PORT", "8080")
 	srv := &http.Server{
@@ -43,6 +61,9 @@ func handleHealth(w http.ResponseWriter, _ *http.Request) {
 func writeJSON(w http.ResponseWriter, status int, body any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
+	if body == nil {
+		return
+	}
 	if err := json.NewEncoder(w).Encode(body); err != nil {
 		log.Printf("write response: %v", err)
 	}
