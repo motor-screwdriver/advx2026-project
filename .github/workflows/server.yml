@@ -1,8 +1,9 @@
 name: Deploy Backend
 
 # Deploys the raids backend (Go + Postgres) to the single shared dev/prod
-# server on a `server-x.y.z` tag. Deliberately minimal: no registry, no git on
-# the server — we copy backend/ + compose.yaml over SSH and rebuild in place.
+# server via Actions → Deploy Backend → Run workflow. Deliberately minimal:
+# no registry, no git on the server — we copy backend/ + compose.yaml over
+# SSH and rebuild in place.
 #
 # Required GitHub repo secrets:
 #   DEPLOY_HOST       server IP / hostname
@@ -12,9 +13,6 @@ name: Deploy Backend
 # Server prerequisites: Docker + docker compose plugin, port 8080 reachable.
 
 on:
-  push:
-    tags:
-      - 'server-*'
   workflow_dispatch:
 
 jobs:
