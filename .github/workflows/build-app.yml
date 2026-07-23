@@ -38,17 +38,20 @@ jobs:
           EOF
         env:
           VERSION: ${{ steps.version.outputs.version }}
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          cache: pnpm
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
       - uses: android-actions/setup-android@v3
-      - run: npm ci
-      - run: npx expo prebuild --platform android --non-interactive
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec expo prebuild --platform android --non-interactive
       - run: ./gradlew assembleRelease --no-daemon
         working-directory: android
       - uses: actions/upload-artifact@v4
@@ -84,12 +87,15 @@ jobs:
           EOF
         env:
           VERSION: ${{ steps.version.outputs.version }}
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npx expo prebuild --platform ios --non-interactive
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec expo prebuild --platform ios --non-interactive
       - run: pod install
         working-directory: ios
       - name: Build
