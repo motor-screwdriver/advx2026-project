@@ -1,8 +1,9 @@
 name: Deploy Backend
 
 # Deploys the raids backend (Go + Postgres) to the single shared dev/prod
-# server on a `server-x.y.z` tag. Deliberately minimal: no registry, no git on
-# the server — we copy backend/ + compose.yaml over SSH and rebuild in place.
+# server via Actions → Deploy Backend → Run workflow. Deliberately minimal:
+# no registry, no git on the server — we copy backend/ + compose.yaml over
+# SSH and rebuild in place.
 #
 # Required GitHub repo secrets:
 #   DEPLOY_HOST       server IP / hostname
@@ -12,9 +13,6 @@ name: Deploy Backend
 # Server prerequisites: Docker + docker compose plugin, port 8080 reachable.
 
 on:
-  push:
-    tags:
-      - 'server-*'
   workflow_dispatch:
 
 jobs:
@@ -33,7 +31,7 @@ jobs:
           target: "~/8bit-sleep"
           overwrite: true
 
-      - name: Build, restart and health-check
+      - name: Build
         uses: appleboy/ssh-action@v1.2.0
         env:
           PG_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
@@ -46,8 +44,29 @@ jobs:
             set -e
             cd ~/8bit-sleep
             printf 'POSTGRES_PASSWORD=%s\n' "$PG_PASSWORD" > .env
-            docker compose up -d --build
+            docker compose build
+
+      - name: Restart
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
+          script: |
+            set -e
+            cd ~/8bit-sleep
+            docker compose up -d
             docker compose ps
+
+      - name: Health-check
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
+          script: |
+            set -e
+            cd ~/8bit-sleep
             for i in $(seq 1 15); do
               if curl -fsS http://localhost:8080/health >/dev/null; then
                 echo "backend healthy"
