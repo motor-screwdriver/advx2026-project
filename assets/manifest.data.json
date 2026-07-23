@@ -1,0 +1,578 @@
+{
+ "audio": {
+  "music_day": {
+   "durationSec": 13.584761904761905,
+   "loop": true,
+   "path": "audio/music_day.wav"
+  },
+  "music_night": {
+   "durationSec": 13.714285714285714,
+   "loop": true,
+   "path": "audio/music_night.wav"
+  },
+  "sfx_chest": {
+   "durationSec": 0.8,
+   "loop": false,
+   "path": "audio/sfx_chest.wav"
+  },
+  "sfx_damage": {
+   "durationSec": 0.24997732426303854,
+   "loop": false,
+   "path": "audio/sfx_damage.wav"
+  },
+  "sfx_death": {
+   "durationSec": 1.5,
+   "loop": false,
+   "path": "audio/sfx_death.wav"
+  },
+  "sfx_victory": {
+   "durationSec": 2.0,
+   "loop": false,
+   "path": "audio/sfx_victory.wav"
+  }
+ },
+ "icons": {
+  "app_icon": {
+   "frameHeight": 1024,
+   "frameWidth": 1024,
+   "frames": 1,
+   "height": 1024,
+   "path": "icons/app_icon.png",
+   "width": 1024
+  },
+  "art_alarm_bell": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/art_alarm_bell.png",
+   "width": 64
+  },
+  "art_coffee_amulet": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/art_coffee_amulet.png",
+   "width": 64
+  },
+  "art_hourglass": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/art_hourglass.png",
+   "width": 64
+  },
+  "art_iron_armor": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/art_iron_armor.png",
+   "width": 64
+  },
+  "art_lucky_coin": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/art_lucky_coin.png",
+   "width": 64
+  },
+  "art_night_watch": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/art_night_watch.png",
+   "width": 64
+  },
+  "art_phoenix_feather": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/art_phoenix_feather.png",
+   "width": 64
+  },
+  "art_second_wind": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/art_second_wind.png",
+   "width": 64
+  },
+  "art_star_map": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/art_star_map.png",
+   "width": 64
+  },
+  "art_warm_blanket": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/art_warm_blanket.png",
+   "width": 64
+  },
+  "cos_aura": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/cos_aura.png",
+   "width": 64
+  },
+  "cos_crown": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/cos_crown.png",
+   "width": 64
+  },
+  "cos_frame": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/cos_frame.png",
+   "width": 64
+  },
+  "cos_hat": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/cos_hat.png",
+   "width": 64
+  },
+  "cos_mask": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/cos_mask.png",
+   "width": 64
+  },
+  "cos_pet": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/cos_pet.png",
+   "width": 64
+  },
+  "cos_plant": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/cos_plant.png",
+   "width": 64
+  },
+  "cos_scarf": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/cos_scarf.png",
+   "width": 64
+  },
+  "heart_armor": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/heart_armor.png",
+   "width": 64
+  },
+  "heart_empty": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/heart_empty.png",
+   "width": 64
+  },
+  "heart_full": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "icons/heart_full.png",
+   "width": 64
+  },
+  "logo": {
+   "frameHeight": 1024,
+   "frameWidth": 1024,
+   "frames": 1,
+   "height": 1024,
+   "path": "icons/logo.png",
+   "width": 1024
+  },
+  "tether_bar": {
+   "frameHeight": 128,
+   "frameWidth": 1024,
+   "frames": 1,
+   "height": 128,
+   "path": "icons/tether_bar.png",
+   "width": 1024
+  },
+  "tether_cursor": {
+   "frameHeight": 128,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 128,
+   "path": "icons/tether_cursor.png",
+   "width": 64
+  },
+  "tether_zone": {
+   "frameHeight": 128,
+   "frameWidth": 1024,
+   "frames": 1,
+   "height": 128,
+   "path": "icons/tether_zone.png",
+   "width": 1024
+  },
+  "tile_black": {
+   "frameHeight": 32,
+   "frameWidth": 32,
+   "frames": 1,
+   "height": 32,
+   "path": "icons/tile_black.png",
+   "width": 32
+  },
+  "tile_gold": {
+   "frameHeight": 32,
+   "frameWidth": 32,
+   "frames": 1,
+   "height": 32,
+   "path": "icons/tile_gold.png",
+   "width": 32
+  },
+  "tile_gray": {
+   "frameHeight": 32,
+   "frameWidth": 32,
+   "frames": 1,
+   "height": 32,
+   "path": "icons/tile_gray.png",
+   "width": 32
+  }
+ },
+ "scenes": {
+  "scene_bad": {
+   "frameHeight": 576,
+   "frameWidth": 1024,
+   "frames": 3,
+   "height": 576,
+   "path": "scenes/scene_bad.png",
+   "width": 3072
+  },
+  "scene_death": {
+   "frameHeight": 576,
+   "frameWidth": 1024,
+   "frames": 3,
+   "height": 576,
+   "path": "scenes/scene_death.png",
+   "width": 3072
+  },
+  "scene_good": {
+   "frameHeight": 576,
+   "frameWidth": 1024,
+   "frames": 3,
+   "height": 576,
+   "path": "scenes/scene_good.png",
+   "width": 3072
+  },
+  "scene_perfect": {
+   "frameHeight": 576,
+   "frameWidth": 1024,
+   "frames": 3,
+   "height": 576,
+   "path": "scenes/scene_perfect.png",
+   "width": 3072
+  },
+  "scene_resurrection": {
+   "frameHeight": 576,
+   "frameWidth": 1024,
+   "frames": 3,
+   "height": 576,
+   "path": "scenes/scene_resurrection.png",
+   "width": 3072
+  },
+  "scene_terrible": {
+   "frameHeight": 576,
+   "frameWidth": 1024,
+   "frames": 3,
+   "height": 576,
+   "path": "scenes/scene_terrible.png",
+   "width": 3072
+  }
+ },
+ "sprites": {
+  "chest": {
+   "frameHeight": 192,
+   "frameWidth": 192,
+   "frames": 3,
+   "height": 192,
+   "path": "sprites/chest.png",
+   "width": 576
+  },
+  "gravestone": {
+   "frameHeight": 192,
+   "frameWidth": 192,
+   "frames": 1,
+   "height": 192,
+   "path": "sprites/gravestone.png",
+   "width": 192
+  },
+  "hero_druid": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_druid.png",
+   "width": 512
+  },
+  "hero_druid_gold": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_druid_gold.png",
+   "width": 512
+  },
+  "hero_knight": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_knight.png",
+   "width": 512
+  },
+  "hero_knight_gold": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_knight_gold.png",
+   "width": 512
+  },
+  "hero_mage": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_mage.png",
+   "width": 512
+  },
+  "hero_mage_gold": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_mage_gold.png",
+   "width": 512
+  },
+  "hero_monk": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_monk.png",
+   "width": 512
+  },
+  "hero_monk_gold": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_monk_gold.png",
+   "width": 512
+  },
+  "hero_ninja": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_ninja.png",
+   "width": 512
+  },
+  "hero_ninja_gold": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_ninja_gold.png",
+   "width": 512
+  },
+  "hero_paladin": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_paladin.png",
+   "width": 512
+  },
+  "hero_paladin_gold": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_paladin_gold.png",
+   "width": 512
+  },
+  "hero_ranger": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_ranger.png",
+   "width": 512
+  },
+  "hero_ranger_gold": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_ranger_gold.png",
+   "width": 512
+  },
+  "hero_rogue": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_rogue.png",
+   "width": 512
+  },
+  "hero_rogue_gold": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_rogue_gold.png",
+   "width": 512
+  },
+  "hero_warlock": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_warlock.png",
+   "width": 512
+  },
+  "hero_warlock_gold": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/hero_warlock_gold.png",
+   "width": 512
+  }
+ },
+ "sprites_1bit": {
+  "1bit_heart_empty": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "sprites/1bit/1bit_heart_empty.png",
+   "width": 64
+  },
+  "1bit_heart_full": {
+   "frameHeight": 64,
+   "frameWidth": 64,
+   "frames": 1,
+   "height": 64,
+   "path": "sprites/1bit/1bit_heart_full.png",
+   "width": 64
+  },
+  "hero_druid": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/1bit/hero_druid.png",
+   "width": 512
+  },
+  "hero_icon_40": {
+   "frameHeight": 160,
+   "frameWidth": 160,
+   "frames": 1,
+   "height": 160,
+   "path": "sprites/1bit/hero_icon_40.png",
+   "width": 160
+  },
+  "hero_knight": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/1bit/hero_knight.png",
+   "width": 512
+  },
+  "hero_mage": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/1bit/hero_mage.png",
+   "width": 512
+  },
+  "hero_monk": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/1bit/hero_monk.png",
+   "width": 512
+  },
+  "hero_ninja": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/1bit/hero_ninja.png",
+   "width": 512
+  },
+  "hero_paladin": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/1bit/hero_paladin.png",
+   "width": 512
+  },
+  "hero_ranger": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/1bit/hero_ranger.png",
+   "width": 512
+  },
+  "hero_rogue": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/1bit/hero_rogue.png",
+   "width": 512
+  },
+  "hero_warlock": {
+   "frameHeight": 256,
+   "frameWidth": 256,
+   "frames": 2,
+   "height": 256,
+   "path": "sprites/1bit/hero_warlock.png",
+   "width": 512
+  }
+ }
+}

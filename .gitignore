@@ -27,6 +27,9 @@ yarn-debug.*
 yarn-error.*
 docs
 
+assets/_src/
+**__pycache__**
+
 # macOS
 .DS_Store
 *.pem

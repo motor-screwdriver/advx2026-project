@@ -38,6 +38,9 @@ export function DebugMenu() {
   const routes = FLAGS.raids
     ? [...ROUTES, { href: '/raid-lobby', label: strings.raid_title }]
     : ROUTES;
+  routes = FLAGS.artGallery
+    ? [...routes, { href: '/art-gallery', label: strings.gallery_title }]
+    : routes;
   return (
     <View style={styles.menu}>
       <Text style={styles.heading}>{strings.debug_title}</Text>

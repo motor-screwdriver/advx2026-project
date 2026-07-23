@@ -134,6 +134,8 @@ export const strings = {
   raid_body: '2-5 heroes around one campfire (Supabase, P2).',
   raid_disabled: 'Disabled: FLAGS.raids = false.',
 
+  gallery_title: 'Art Gallery',
+  gallery_body: 'QA wall: every pipeline asset, straight from assets/manifest.ts.',
   // Common
   common_back: 'Back',
   common_confirm: 'Confirm',
