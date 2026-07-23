@@ -123,14 +123,19 @@ function RevealStage({ loot, pop, onTake }: RevealProps) {
   return (
     <View style={styles.stage}>
       <Animated.View style={{ transform: [{ scale: pop }] }}>
-        <PixelPanel style={[styles.lootCard, { borderColor: rarityColor }]} contentStyle={styles.lootContent}>
+        <PixelPanel
+          style={[styles.lootCard, { borderColor: rarityColor }]}
+          contentStyle={styles.lootContent}
+        >
           <View style={[styles.rarityTag, { backgroundColor: rarityColor }]}>
             <Text style={styles.rarityText}>{strings[RARITY_KEYS[loot.rarity]]}</Text>
           </View>
           {icon && <PixelSprite sprite={icon} size={48} animated={false} />}
           <Text style={styles.lootName}>{lootName}</Text>
           {artifactDesc && <Text style={styles.desc}>{artifactDesc}</Text>}
-          <Text style={styles.dim}>{loot.artifactId ? strings.chest_in_bag : strings.chest_earned}</Text>
+          <Text style={styles.dim}>
+            {loot.artifactId ? strings.chest_in_bag : strings.chest_earned}
+          </Text>
         </PixelPanel>
       </Animated.View>
       <PixelButton label={strings.chest_take} onPress={onTake} />

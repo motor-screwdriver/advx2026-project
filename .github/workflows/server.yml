@@ -1,0 +1,79 @@
+name: Deploy Backend
+
+# Deploys the raids backend (Go + Postgres) to the single shared dev/prod
+# server via Actions → Deploy Backend → Run workflow. Deliberately minimal:
+# no registry, no git on the server — we copy backend/ + compose.yaml over
+# SSH and rebuild in place.
+#
+# Required GitHub repo secrets:
+#   DEPLOY_HOST       server IP / hostname
+#   DEPLOY_USER       SSH username
+#   DEPLOY_PASSWORD   SSH password
+#   POSTGRES_PASSWORD Postgres password (kept constant so the data volume stays readable)
+# Server prerequisites: Docker + docker compose plugin, port 8080 reachable.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy backend + compose to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
+          source: 'backend/,compose.yaml'
+          target: '~/8bit-sleep'
+          overwrite: true
+
+      - name: Build
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          PG_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
+          envs: PG_PASSWORD
+          script: |
+            set -e
+            cd ~/8bit-sleep
+            printf 'POSTGRES_PASSWORD=%s\n' "$PG_PASSWORD" > .env
+            docker compose build
+
+      - name: Restart
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
+          script: |
+            set -e
+            cd ~/8bit-sleep
+            docker compose up -d
+            docker compose ps
+
+      - name: Health-check
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
+          script: |
+            set -e
+            cd ~/8bit-sleep
+            for i in $(seq 1 15); do
+              if curl -fsS http://localhost:8080/health >/dev/null; then
+                echo "backend healthy"
+                exit 0
+              fi
+              sleep 2
+            done
+            echo "backend did not become healthy" >&2
+            docker compose logs --tail=50 backend
+            exit 1

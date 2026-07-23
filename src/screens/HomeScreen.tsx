@@ -1,32 +1,32 @@
-import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router'
+import React, { useEffect, useState } from 'react'
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { playMusic } from '../systems/audio';
-import { DayNightBackground } from '../ui/DayNightBackground';
-import { FloatingButton } from '../ui/FloatingButton';
-import { HeartRow } from '../ui/HeartRow';
-import { HeroSprite } from '../ui/HeroSprite';
-import { PixelBar } from '../ui/PixelBar';
-import { PixelButton } from '../ui/PixelButton';
-import { strings } from '../ui/strings';
-import { theme } from '../ui/theme';
-import { getDayPhase, type DayPhase } from '../ui/timeOfDay';
-import { useGame } from '../ui/useGame';
-import { useHeroWalk } from '../ui/useHeroWalk';
-import { DebugMenu } from './DebugMenu';
+import { playMusic } from '../systems/audio'
+import { DayNightBackground } from '../ui/DayNightBackground'
+import { FloatingButton } from '../ui/FloatingButton'
+import { HeartRow } from '../ui/HeartRow'
+import { HeroSprite } from '../ui/HeroSprite'
+import { PixelBar } from '../ui/PixelBar'
+import { PixelButton } from '../ui/PixelButton'
+import { strings } from '../ui/strings'
+import { theme } from '../ui/theme'
+import { getDayPhase, type DayPhase } from '../ui/timeOfDay'
+import { useGame } from '../ui/useGame'
+import { useHeroWalk } from '../ui/useHeroWalk'
+import { DebugMenu } from './DebugMenu'
 
-const MAX_HP = 7;
-const HERO_SIZE = 184;
+const MAX_HP = 7
+const HERO_SIZE = 184
 
 export function HomeScreen() {
-  const { state } = useGame();
-  return state.hero ? <HeroHome /> : <NoHeroHome />;
+  const { state } = useGame()
+  return state.hero ? <HeroHome /> : <NoHeroHome />
 }
 
 function NoHeroHome() {
-  const router = useRouter();
+  const router = useRouter()
   return (
     <HomeScene phase={getDayPhase()}>
       <View style={styles.emptyBox}>
@@ -38,31 +38,35 @@ function NoHeroHome() {
         />
       </View>
     </HomeScene>
-  );
+  )
+}
+
+/** Cozy day theme while awake; hushed night theme once tucked in. */
+function usePhaseMusic(asleep: boolean) {
+  useEffect(() => {
+    playMusic(asleep ? 'music_night' : 'music_day')
+  }, [asleep])
 }
 
 function HeroHome() {
-  const router = useRouter();
-  const { state, pendingBedTime, sleepNow, wakeNow } = useGame();
-  const hero = state.hero!;
-  const asleep = pendingBedTime !== null;
+  const router = useRouter()
+  const { state, pendingBedTime, sleepNow, wakeNow } = useGame()
+  const hero = state.hero!
+  const asleep = pendingBedTime !== null
 
-  // Cozy day theme while awake; hushed night theme once tucked in.
-  useEffect(() => {
-    playMusic(asleep ? 'music_night' : 'music_day');
-  }, [asleep]);
+  usePhaseMusic(asleep)
 
-  const walk = useHeroWalk(asleep);
+  const walk = useHeroWalk(asleep)
 
   const onContextTap = () => {
     if (!asleep) {
-      sleepNow();
-      return;
+      sleepNow()
+      return
     }
-    const evaluation = wakeNow();
-    const hpAfter = Math.min(Math.max(state.hp + evaluation.hpDelta, 0), MAX_HP);
-    router.push(hpAfter === 0 ? '/death' : '/morning-scene');
-  };
+    const evaluation = wakeNow()
+    const hpAfter = Math.min(Math.max(state.hp + evaluation.hpDelta, 0), MAX_HP)
+    router.push(hpAfter === 0 ? '/death' : '/morning-scene')
+  }
 
   return (
     <HomeScene phase={getDayPhase()} traveling={asleep}>
@@ -86,21 +90,40 @@ function HeroHome() {
           label={asleep ? strings.home_wakeup : strings.home_sleep}
           onPress={onContextTap}
         />
-        <FloatingButton scale={2} delay={220} label={strings.home_nav_bag} onPress={() => router.push('/inventory')} />
-        <FloatingButton variant="round" scale={2} delay={440} label="⚙" onPress={() => router.push('/settings')} />
+        <FloatingButton
+          scale={2}
+          delay={220}
+          label={strings.home_nav_bag}
+          onPress={() => router.push('/inventory')}
+        />
+        <FloatingButton
+          variant="round"
+          scale={2}
+          delay={440}
+          label="⚙"
+          onPress={() => router.push('/settings')}
+        />
       </View>
       <DevTools />
     </HomeScene>
-  );
+  )
 }
 
-function HomeScene({ phase, traveling = false, children }: { phase: DayPhase; traveling?: boolean; children: React.ReactNode }) {
+function HomeScene({
+  phase,
+  traveling = false,
+  children,
+}: {
+  phase: DayPhase
+  traveling?: boolean
+  children: React.ReactNode
+}) {
   return (
     <View style={styles.root}>
       <DayNightBackground phase={phase} traveling={traveling} />
       <SafeAreaView style={styles.safe}>{children}</SafeAreaView>
     </View>
-  );
+  )
 }
 
 function TopBar({ hp, streak, level }: { hp: number; streak: number; level: number }) {
@@ -114,14 +137,14 @@ function TopBar({ hp, streak, level }: { hp: number; streak: number; level: numb
         </Text>
       </View>
     </View>
-  );
+  )
 }
 
 /** Dev-only launcher for the other screens; removed before release. */
 function DevTools() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
   if (!__DEV__) {
-    return null;
+    return null
   }
   return (
     <>
@@ -137,7 +160,7 @@ function DevTools() {
         </View>
       )}
     </>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -199,4 +222,4 @@ const styles = StyleSheet.create({
     paddingTop: theme.spacing(10),
     gap: theme.spacing(4),
   },
-});
+})

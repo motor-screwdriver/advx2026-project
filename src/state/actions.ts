@@ -3,7 +3,13 @@
  * the 250-line lint budget. Only called from store.ts.
  */
 import type { GameEvent, GameEventType } from '../contracts/events';
-import type { ArtifactId, ChestLoot, GameState, NightEvaluation, SleepWindow } from '../contracts/types';
+import type {
+  ArtifactId,
+  ChestLoot,
+  GameState,
+  NightEvaluation,
+  SleepWindow,
+} from '../contracts/types';
 import { rollChestLoot } from '../engine/chest';
 import { assignHero, heroName } from '../engine/hero';
 import {
@@ -110,7 +116,11 @@ export function runNightTurn(get: GetState, set: SetState, now: Date): NightEval
 }
 
 /** Roll a granted chest (Lucky Coin guarantees Rare+), then consume both. */
-export function openGrantedChest(get: GetState, set: SetState, rng: () => number): ChestLoot | null {
+export function openGrantedChest(
+  get: GetState,
+  set: SetState,
+  rng: () => number,
+): ChestLoot | null {
   const s = get();
   if (!s.pendingChest) {
     return null;

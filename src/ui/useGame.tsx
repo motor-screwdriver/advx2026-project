@@ -20,6 +20,10 @@ import type {
 } from '../contracts/types';
 import { useGameStore } from '../state/store';
 import type { EngineMeta } from '../state/store';
+// Dev D seam: systems bootstrap + real e-ink push (src/systems).
+import { initSystems, SystemsLayer } from '../systems';
+import { customizeWidgets as customizeEinkWidgets } from '../systems/eink';
+import { scanDeviceId as scanEinkDeviceId } from '../systems/nfc';
 
 export type DebugPreset = 'empty' | 'mid' | 'death';
 
@@ -38,7 +42,8 @@ interface GameApi {
   changeWindow: (window: SleepWindow) => void;
   resetProgress: () => void;
   toggleDemoMode: () => void;
-  sendTestCard: (deviceId: string, apiKey: string) => void;
+  customizeWidgets: (deviceId: string, apiKey: string) => void;
+  scanDeviceId: () => Promise<string | null>;
   loadDebugPreset: (preset: DebugPreset) => void;
 }
 
@@ -54,6 +59,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const lastEvaluation = useGameStore((s) => s.lastEvaluation);
   const pendingBedTime = useGameStore((s) => s.pendingBedTime);
   const hydrated = useGameStore((s) => s.hydrated);
+  React.useEffect(() => {
+    initSystems(); // Dev D: notifications, demo panel wiring, e-ink triggers
+  }, []);
   const api = useMemo<GameApi>(
     () => buildApi(game, lastEvaluation, pendingBedTime),
     [game, lastEvaluation, pendingBedTime],
@@ -61,7 +69,12 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   if (!hydrated) {
     return null; // wait for AsyncStorage rehydration, avoid an onboarding flash
   }
-  return <GameContext.Provider value={api}>{children}</GameContext.Provider>;
+  return (
+    <GameContext.Provider value={api}>
+      {children}
+      <SystemsLayer />
+    </GameContext.Provider>
+  );
 }
 
 function buildApi(
@@ -92,8 +105,12 @@ function buildApi(
     },
     resetProgress: () => useGameStore.getState().reset(),
     toggleDemoMode: () => useGameStore.getState().toggleDemoMode(),
-    // Dev D wires the real e-ink push; keep the callback shape stable.
-    sendTestCard: (deviceId, apiKey) => console.log('[eink] test card', deviceId, apiKey),
+    // Dev D: push both e-ink widgets now (silently no-ops while FLAGS.eink is off).
+    customizeWidgets: (deviceId, apiKey) => {
+      void customizeEinkWidgets(deviceId, apiKey);
+    },
+    // Dev D: native NFC scan of the Quote tag → parsed device ID (null in Expo Go).
+    scanDeviceId: () => scanEinkDeviceId(),
     loadDebugPreset,
   };
 }

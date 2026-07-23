@@ -68,10 +68,7 @@ export function SceneSun({ visual, phase }: { visual: PhaseVisual; phase: DayPha
     : { O: visual.orb, d: visual.orbShade, h: visual.ray };
   return (
     <View
-      style={[
-        styles.box,
-        { top: `${ORB_TOP[phase] * 100}%`, left: width * ORB_LEFT[phase] - C },
-      ]}
+      style={[styles.box, { top: `${ORB_TOP[phase] * 100}%`, left: width * ORB_LEFT[phase] - C }]}
       pointerEvents="none"
     >
       {!visual.moon && (
@@ -92,7 +89,13 @@ export function SceneSun({ visual, phase }: { visual: PhaseVisual; phase: DayPha
 }
 
 const styles = StyleSheet.create({
-  box: { position: 'absolute', width: BOX, height: BOX, alignItems: 'center', justifyContent: 'center' },
+  box: {
+    position: 'absolute',
+    width: BOX,
+    height: BOX,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   rays: { ...StyleSheet.absoluteFillObject },
   disc: { position: 'absolute', top: C - RADIUS, left: C - RADIUS },
 });

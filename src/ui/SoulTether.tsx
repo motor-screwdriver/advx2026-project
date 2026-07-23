@@ -1,7 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { ROUND_COUNT, ROUNDS_TO_WIN, isHit, roundZoneWidth, type GoldenZone } from './soulTetherLogic';
+import {
+  ROUND_COUNT,
+  ROUNDS_TO_WIN,
+  isHit,
+  roundZoneWidth,
+  type GoldenZone,
+} from './soulTetherLogic';
 import { strings } from './strings';
 import { theme } from './theme';
 

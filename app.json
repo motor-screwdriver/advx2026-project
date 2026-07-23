@@ -27,7 +27,13 @@
     },
     "plugins": [
       "expo-router",
-      "expo-audio"
+      "expo-audio",
+      [
+        "react-native-nfc-manager",
+        {
+          "nfcPermission": "Scan your Quote e-ink device to connect it to 8bit Sleep."
+        }
+      ]
     ]
   }
 }
