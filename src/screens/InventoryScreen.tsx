@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import type { ArtifactId } from '../contracts/types';
 import { PixelButton } from '../ui/PixelButton';
@@ -16,34 +16,61 @@ function humanize(id: string): string {
     .join(' ');
 }
 
+function artifactDesc(id: ArtifactId): string {
+  return strings[`artifact_${id}` as keyof typeof strings];
+}
+
 export function InventoryScreen() {
   const { state, equip } = useGame();
   const { equipped, artifacts } = state;
 
   return (
     <Screen title={strings.inventory_title}>
-      <View style={styles.slots}>
-        <Slot label={strings.inventory_armor} artifact={equipped.armor} />
-        <Slot label={strings.inventory_charm} artifact={equipped.charm} />
-      </View>
-      <Text style={styles.sectionTitle}>{strings.inventory_consumables}</Text>
-      {artifacts.length === 0 ? (
-        <Text style={styles.empty}>{strings.inventory_empty}</Text>
-      ) : (
-        artifacts.map((artifact, index) => (
-          <ArtifactRow key={`${artifact}-${index}`} artifact={artifact} onEquip={equip} />
-        ))
-      )}
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <Text style={styles.hint}>{strings.inventory_hint}</Text>
+        <View style={styles.slots}>
+          <Slot
+            label={strings.inventory_armor}
+            desc={strings.inventory_armor_desc}
+            artifact={equipped.armor}
+          />
+          <Slot
+            label={strings.inventory_charm}
+            desc={strings.inventory_charm_desc}
+            artifact={equipped.charm}
+          />
+        </View>
+        <Text style={styles.sectionTitle}>{strings.inventory_consumables}</Text>
+        {artifacts.length === 0 ? (
+          <Text style={styles.empty}>{strings.inventory_empty}</Text>
+        ) : (
+          artifacts.map((artifact, index) => (
+            <ArtifactRow
+              key={`${artifact}-${index}`}
+              artifact={artifact}
+              equipped={equipped}
+              onEquip={equip}
+            />
+          ))
+        )}
+      </ScrollView>
     </Screen>
   );
 }
 
-function Slot({ label, artifact }: { label: string; artifact: ArtifactId | null }) {
+interface SlotProps {
+  label: string;
+  desc: string;
+  artifact: ArtifactId | null;
+}
+
+function Slot({ label, desc, artifact }: SlotProps) {
   return (
-    <PixelPanel style={styles.slot}>
+    <PixelPanel style={styles.slot} contentStyle={styles.slotContent}>
       <Text style={styles.slotLabel}>{label}</Text>
+      <Text style={styles.slotDesc}>{desc}</Text>
       <Text style={artifact ? styles.slotValue : styles.slotEmpty}>
-        {artifact ? humanize(artifact) : '-'}
+        {artifact ? humanize(artifact) : strings.inventory_slot_empty}
       </Text>
     </PixelPanel>
   );
@@ -51,34 +78,58 @@ function Slot({ label, artifact }: { label: string; artifact: ArtifactId | null 
 
 interface RowProps {
   artifact: ArtifactId;
+  equipped: { armor: ArtifactId | null; charm: ArtifactId | null };
   onEquip: (slot: 'armor' | 'charm', artifact: ArtifactId) => void;
 }
 
-function ArtifactRow({ artifact, onEquip }: RowProps) {
+function ArtifactRow({ artifact, equipped, onEquip }: RowProps) {
+  const equippedIn = equipped.armor === artifact ? 'armor' : equipped.charm === artifact ? 'charm' : null;
   return (
-    <View style={styles.row}>
-      <Text style={styles.rowName}>{humanize(artifact)}</Text>
-      <View style={styles.rowActions}>
-        <PixelButton compact label="ARM" onPress={() => onEquip('armor', artifact)} />
-        <PixelButton compact label="CHM" onPress={() => onEquip('charm', artifact)} />
+    <PixelPanel contentStyle={styles.rowContent}>
+      <View style={styles.rowHeader}>
+        <Text style={styles.rowName}>{humanize(artifact)}</Text>
+        {equippedIn && (
+          <Text style={styles.badge}>
+            {strings.inventory_equipped}: {equippedIn === 'armor' ? strings.inventory_armor : strings.inventory_charm}
+          </Text>
+        )}
       </View>
-    </View>
+      <Text style={styles.rowDesc}>{artifactDesc(artifact)}</Text>
+      <View style={styles.rowActions}>
+        <PixelButton compact label={strings.inventory_to_armor} onPress={() => onEquip('armor', artifact)} />
+        <PixelButton compact label={strings.inventory_to_charm} onPress={() => onEquip('charm', artifact)} />
+      </View>
+    </PixelPanel>
   );
 }
 
 const styles = StyleSheet.create({
+  scroll: { gap: theme.spacing(4), paddingBottom: theme.spacing(6) },
+  hint: {
+    ...theme.type.label,
+    color: theme.colors.textDim,
+    textAlign: 'center',
+  },
   slots: {
     flexDirection: 'row',
     gap: theme.spacing(3),
   },
   slot: {
     flex: 1,
+  },
+  slotContent: {
     alignItems: 'center',
+    gap: theme.spacing(2),
   },
   slotLabel: {
+    ...theme.type.title,
+    color: theme.colors.text,
+    textTransform: 'uppercase',
+  },
+  slotDesc: {
     ...theme.type.label,
     color: theme.colors.textDim,
-    textTransform: 'uppercase',
+    textAlign: 'center',
   },
   slotValue: {
     ...theme.type.label,
@@ -98,7 +149,8 @@ const styles = StyleSheet.create({
     ...theme.type.body,
     color: theme.colors.textDim,
   },
-  row: {
+  rowContent: { gap: theme.spacing(2) },
+  rowHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -108,6 +160,14 @@ const styles = StyleSheet.create({
     ...theme.type.label,
     color: theme.colors.text,
     flex: 1,
+  },
+  badge: {
+    ...theme.type.label,
+    color: theme.colors.leaf,
+  },
+  rowDesc: {
+    ...theme.type.label,
+    color: theme.colors.textDim,
   },
   rowActions: {
     flexDirection: 'row',

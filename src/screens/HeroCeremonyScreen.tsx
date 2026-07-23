@@ -33,7 +33,6 @@ export function HeroCeremonyScreen() {
   }
 
   const heroName = strings[`hero_${hero.type}` as keyof typeof strings];
-  const passive = strings[`passive_${hero.type}` as keyof typeof strings];
 
   return (
     <Screen title={strings.ceremony_summoning}>
@@ -49,7 +48,7 @@ export function HeroCeremonyScreen() {
       <Animated.View style={[styles.reveal, { opacity: fade }]}>
         <Text style={styles.name}>{heroName}</Text>
         <Text style={styles.awakens}>{strings.ceremony_awakens}</Text>
-        <Text style={styles.passive}>{passive}</Text>
+        <Text style={styles.passive}>{strings.ceremony_flavor}</Text>
         <PixelButton label={strings.ceremony_begin} onPress={() => router.replace('/')} />
       </Animated.View>
     </Screen>

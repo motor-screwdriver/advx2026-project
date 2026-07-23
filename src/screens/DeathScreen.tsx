@@ -39,7 +39,13 @@ export function DeathScreen() {
         </View>
       </PixelPanel>
       {canResurrect() ? (
-        <PixelButton label={strings.death_resurrect_cta} onPress={() => router.push('/resurrection')} />
+        <View style={styles.goneBlock}>
+          <PixelButton
+            label={strings.death_resurrect_cta}
+            onPress={() => router.push('/resurrection')}
+          />
+          <Text style={styles.dim}>{strings.death_hint}</Text>
+        </View>
       ) : (
         <View style={styles.goneBlock}>
           <Text style={styles.dim}>{strings.death_no_charge}</Text>

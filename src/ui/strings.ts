@@ -19,6 +19,7 @@ export const strings = {
   // Hero ceremony
   ceremony_summoning: 'Summoning your hero...',
   ceremony_awakens: 'answers the call',
+  ceremony_flavor: 'Your sleep rhythm summoned it. All heroes are equal, only looks differ.',
   ceremony_begin: 'Begin',
 
   // Heroes (display names)
@@ -32,24 +33,31 @@ export const strings = {
   hero_mage: 'Mage',
   hero_warlock: 'Warlock',
 
-  // Hero passives
-  passive_monk: '+10% XP every night',
-  passive_ranger: 'Wake-up tolerance +15 min',
-  passive_druid: 'No oversleep penalty',
-  passive_rogue: 'Bedtime tolerance +15 min',
-  passive_knight: '+5% Rare loot chance',
-  passive_paladin: 'Wider golden zone in Soul Tether',
-  passive_ninja: '1 missed check-in per week auto-filled',
-  passive_mage: '1 TERRIBLE night per week: -1 HP instead of -2',
-  passive_warlock: '+5% Epic loot chance',
+  // Heroes gallery
+  heroes_title: 'Heroes',
+  heroes_intro: 'Your sleep window picks your hero. All heroes play the same, only looks differ.',
+  heroes_early: 'Lights out before 22:00',
+  heroes_normal: 'Lights out 22:00 - 23:59',
+  heroes_late: 'Lights out 00:00 or later',
+  heroes_dur_short: '7-8 h in bed',
+  heroes_dur_mid: '8-9 h in bed',
+  heroes_dur_long: '9+ h in bed',
+  heroes_current: 'Yours',
 
   // Home
   home_title: '8bit Sleep',
+  home_hearts: 'Hearts',
   home_streak: 'Perfect week',
   home_level: 'LV',
+  home_window: 'Sleep window',
   home_sleep: 'Sleep',
   home_wakeup: 'Wake up',
+  home_sleeping_hint: 'Hero is asleep. Tap "Wake up" when you get up!',
   home_no_hero: 'No hero yet. Complete the summoning first.',
+  home_nav_mosaic: 'MOSAIC',
+  home_nav_bag: 'BAG',
+  home_nav_heroes: 'HEROES',
+  home_nav_settings: 'SETTINGS',
 
   // Night outcomes
   outcome_perfect: 'PERFECT',
@@ -62,18 +70,25 @@ export const strings = {
   morning_title: 'Morning report',
   morning_continue: 'Continue',
   morning_missed: 'No check-in. The night went unrecorded.',
+  morning_line_perfect: 'A perfect night! Your hero is glowing.',
+  morning_line_good: 'A solid night. The hero is content.',
+  morning_line_bad: 'A rough night. The hero took damage.',
+  morning_line_terrible: 'A disastrous night. The hero barely made it.',
 
   // Death & resurrection
   death_title: 'You died',
   death_body: 'The hero falls. The hearts are empty.',
   death_resurrect_cta: 'Attempt resurrection',
+  death_hint: 'Soul Tether mini-game: tap when the cursor is in the golden zone.',
   death_gone: 'Your hero is gone.',
   death_new_hero: 'Summon a new hero',
   death_no_charge: 'Soul Tether is recharging (1 use per 7 days).',
 
   soul_title: 'Soul Tether',
   soul_round: 'Round',
-  soul_tap: 'TAP IN THE GOLDEN ZONE',
+  soul_instruction: 'Tap anywhere when the cursor is inside the golden zone.',
+  soul_goal: 'Land 2 hits out of 3 to revive your hero.',
+  soul_tap: 'Tap now!',
   soul_hit: 'Hit!',
   soul_miss: 'Miss...',
   soul_success: 'The tether holds. The hero returns.',
@@ -84,24 +99,46 @@ export const strings = {
   mosaic_level: 'Level',
   mosaic_streak: 'Streak',
   mosaic_perfect: 'Perfect',
+  mosaic_legend: 'Gold = perfect · Gray = good/bad · Black = terrible',
   mosaic_empty: 'No nights recorded yet. Sleep well tonight!',
 
   // Chest
   chest_title: 'Loot chest',
-  chest_tap: 'Tap to open',
-  chest_equip: 'Equip',
-  chest_close: 'Close',
+  chest_tap: 'Tap the chest to open it!',
+  chest_none: 'No chest yet. Earn one with a Perfect Week (7 clean nights).',
+  chest_earned: 'A reward for your Perfect Week.',
+  chest_in_bag: 'Equip it from the Bag on the home screen.',
+  chest_take: 'Take',
   rarity_common: 'Common',
   rarity_rare: 'Rare',
   rarity_epic: 'Epic',
 
   // Inventory
-  inventory_title: 'Inventory',
+  inventory_title: 'Bag',
+  inventory_hint:
+    'Equip one armor and one charm below. Consumables (like Iron Armor) work on their own — no need to equip them.',
   inventory_armor: 'Armor',
+  inventory_armor_desc: 'Armor slot — passive protection',
   inventory_charm: 'Charm',
-  inventory_consumables: 'Artifacts',
-  inventory_empty: 'Empty. Earn chests with perfect weeks.',
+  inventory_charm_desc: 'Charm slot — passive trinket',
+  inventory_slot_empty: 'Nothing equipped',
+  inventory_consumables: 'Items',
+  inventory_empty: 'Nothing yet. Win chests with Perfect Weeks.',
   inventory_equipped: 'Equipped',
+  inventory_to_armor: 'TO ARMOR',
+  inventory_to_charm: 'TO CHARM',
+
+  // Artifact descriptions
+  artifact_iron_armor: 'Absorbs one HP loss, then breaks. Works automatically.',
+  artifact_phoenix_feather: 'On death, auto-revives the hero at 3 HP. Works automatically.',
+  artifact_hourglass: 'Upgrades one bad night from the last 24 h to GOOD.',
+  artifact_lucky_coin: 'Your next chest is guaranteed Rare or better.',
+  artifact_second_wind: 'First TERRIBLE night each week: -1 HP instead of -2.',
+  artifact_coffee_amulet: 'Bedtime tolerance +30 min for 7 days. Coming soon.',
+  artifact_alarm_bell: 'Wake-up tolerance +30 min for 7 days. Coming soon.',
+  artifact_warm_blanket: 'No oversleep penalty while equipped. Coming soon.',
+  artifact_night_watch: 'One missed check-in per week is auto-filled. Coming soon.',
+  artifact_star_map: 'Evening hint for your ideal bedtime. Coming soon.',
 
   // Settings
   settings_title: 'Settings',
@@ -121,12 +158,14 @@ export const strings = {
 
   // Tutorial
   tutorial_title: 'How to play',
-  tutorial_card1_title: 'Sleep to live',
-  tutorial_card1_body: 'Your hero survives only while you sleep.',
-  tutorial_card2_title: 'Bad nights hurt',
-  tutorial_card2_body: 'Miss your window and the hero loses hearts.',
-  tutorial_card3_title: 'Perfect weeks pay',
-  tutorial_card3_body: '7 clean nights: level up and a loot chest.',
+  tutorial_card1_title: '1. Tap Sleep at night',
+  tutorial_card1_body: 'Going to bed? One tap on Sleep and your hero dozes off with you.',
+  tutorial_card2_title: '2. Wake up on time',
+  tutorial_card2_body:
+    'Tap Wake up in the morning. Nights close to your window heal and earn XP. Short or messy nights cost hearts.',
+  tutorial_card3_title: '3. Survive the week',
+  tutorial_card3_body:
+    '7 clean nights in a row: level up plus a loot chest. At 0 hearts your hero dies. One resurrection per 7 days.',
   tutorial_done: 'Got it',
 
   // Raid (P2, behind FLAGS.raids)
