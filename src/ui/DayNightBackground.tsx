@@ -98,8 +98,8 @@ export function DayNightBackground({
         style={StyleSheet.absoluteFill}
       />
       {v.stars && <Stars color={v.orb} />}
-      <SceneSun visual={v} phase={phase} />
-      <SceneClouds visual={v} />
+      <SceneSun phase={phase} />
+      <SceneClouds phase={phase} />
       <Hills
         color={v.hillBack}
         base={40}
@@ -116,7 +116,7 @@ export function DayNightBackground({
         phase={1.4}
         bottom={GRASS_HEIGHT - 4}
       />
-      <SceneGrass visual={v} traveling={traveling} />
+      <SceneGrass phase={phase} traveling={traveling} />
     </View>
   )
 }
