@@ -22,10 +22,7 @@ export function PixelArt({ rows, cell, map, style }: Props) {
       {pixels.map((row, y) => (
         <View key={y} style={{ flexDirection: 'row' }}>
           {row.map((ch, x) => (
-            <View
-              key={x}
-              style={{ width: cell, height: cell, backgroundColor: map[ch] }}
-            />
+            <View key={x} style={{ width: cell, height: cell, backgroundColor: map[ch] }} />
           ))}
         </View>
       ))}

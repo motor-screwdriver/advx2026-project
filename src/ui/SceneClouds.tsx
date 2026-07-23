@@ -31,10 +31,7 @@ function Cloud({ def, tint, shade }: { def: CloudDef; tint: string; shade: strin
   const x = useDrift(-cloudW, width + 20, def.stepPx, def.fps);
   return (
     <Animated.View
-      style={[
-        styles.cloud,
-        { top: height * def.top, transform: [{ translateX: x }] },
-      ]}
+      style={[styles.cloud, { top: height * def.top, transform: [{ translateX: x }] }]}
     >
       <PixelArt rows={def.rows} cell={def.cell} map={{ W: tint, s: shade }} />
     </Animated.View>

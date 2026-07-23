@@ -67,11 +67,7 @@ export interface StreakUpdate {
  * Perfect Week (spec §4.1): 7 consecutive nights without HP loss → level up.
  * Any HP loss resets the streak; a MISSED night neither builds nor breaks it.
  */
-export function updateStreak(
-  streak: number,
-  hpDelta: number,
-  outcome: NightOutcome,
-): StreakUpdate {
+export function updateStreak(streak: number, hpDelta: number, outcome: NightOutcome): StreakUpdate {
   if (hpDelta < 0) {
     return { streak: 0, leveledUp: false };
   }

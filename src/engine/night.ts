@@ -32,10 +32,7 @@ export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
 
-export function missedEvaluation(
-  bedTime: number | null,
-  wakeTime: number | null,
-): NightEvaluation {
+export function missedEvaluation(bedTime: number | null, wakeTime: number | null): NightEvaluation {
   return { bedTime, wakeTime, score: 0, outcome: 'MISSED', hpDelta: 0, xp: 0, pixel: 'BLACK' };
 }
 

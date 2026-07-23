@@ -43,8 +43,18 @@ export function OnboardingScreen() {
         <Text style={styles.introText}>{strings.onboarding_intro_3}</Text>
       </View>
       <View style={styles.wheels}>
-        <WheelColumn label={strings.onboarding_bedtime} values={BED_VALUES} value={bedMin} onChange={setBedMin} />
-        <WheelColumn label={strings.onboarding_wakeup} values={WAKE_VALUES} value={wakeMin} onChange={setWakeMin} />
+        <WheelColumn
+          label={strings.onboarding_bedtime}
+          values={BED_VALUES}
+          value={bedMin}
+          onChange={setBedMin}
+        />
+        <WheelColumn
+          label={strings.onboarding_wakeup}
+          values={WAKE_VALUES}
+          value={wakeMin}
+          onChange={setWakeMin}
+        />
       </View>
       <Text style={styles.duration}>
         {strings.onboarding_duration}: {formatDuration(wakeMin - bedMin)}

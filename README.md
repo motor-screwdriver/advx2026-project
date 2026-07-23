@@ -33,18 +33,18 @@ and no function 60 lines — ESLint enforces both.
 
 ## Folder ownership (one developer per folder)
 
-| Folder | Owner | Contents |
-|---|---|---|
+| Folder           | Owner              | Contents                                                                               |
+| ---------------- | ------------------ | -------------------------------------------------------------------------------------- |
 | `src/contracts/` | **shared, frozen** | `types.ts`, `events.ts`, `flags.ts`, `mock.ts`. Changed only after a full-team huddle. |
-| `src/engine/` | Dev B | Pure game logic + tests. No React/Expo imports. |
-| `src/state/` | Dev B | Zustand store, persistence. |
-| `src/screens/` | Dev A | All screens. Reach the engine only via `state`/`contracts`. |
-| `src/ui/` | Dev A | Reusable components, `theme.ts`, `strings.ts` (all user-facing text). |
-| `src/systems/` | Dev D | Notifications, demo mode, sharing, e-ink. |
-| `src/sync/` | Dev D | Supabase raids (P2). Empty for now. |
-| `app/` | Dev A | Expo Router routes — thin wrappers over `src/screens/`. |
-| `assets/` | Dev C | Sprites, scenes, audio, fonts. |
-| `tools/` | Dev C | Asset pipeline scripts (pixelation, palette). |
+| `src/engine/`    | Dev B              | Pure game logic + tests. No React/Expo imports.                                        |
+| `src/state/`     | Dev B              | Zustand store, persistence.                                                            |
+| `src/screens/`   | Dev A              | All screens. Reach the engine only via `state`/`contracts`.                            |
+| `src/ui/`        | Dev A              | Reusable components, `theme.ts`, `strings.ts` (all user-facing text).                  |
+| `src/systems/`   | Dev D              | Notifications, demo mode, sharing, e-ink.                                              |
+| `src/sync/`      | Dev D              | Supabase raids (P2). Empty for now.                                                    |
+| `app/`           | Dev A              | Expo Router routes — thin wrappers over `src/screens/`.                                |
+| `assets/`        | Dev C              | Sprites, scenes, audio, fonts.                                                         |
+| `tools/`         | Dev C              | Asset pipeline scripts (pixelation, palette).                                          |
 
 Import boundaries are enforced by `eslint-plugin-boundaries` (see
 `eslint.config.js`): contracts imports nothing, engine never imports UI,

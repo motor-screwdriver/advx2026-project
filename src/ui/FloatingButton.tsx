@@ -20,7 +20,13 @@ interface Props {
 }
 
 /** A button that hovers above the ground in stepped pixel motion with a shadow. */
-export function FloatingButton({ label, onPress, variant = 'default', delay = 0, scale = 1 }: Props) {
+export function FloatingButton({
+  label,
+  onPress,
+  variant = 'default',
+  delay = 0,
+  scale = 1,
+}: Props) {
   const bob = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     let i = Math.round(delay / (1000 / BOB_FPS)) % BOB.length;
@@ -32,7 +38,11 @@ export function FloatingButton({ label, onPress, variant = 'default', delay = 0,
   }, [bob, delay]);
 
   const round = variant === 'round';
-  const rectSize = { paddingHorizontal: 14 * scale, paddingVertical: 10 * scale, minWidth: 56 * scale };
+  const rectSize = {
+    paddingHorizontal: 14 * scale,
+    paddingVertical: 10 * scale,
+    minWidth: 56 * scale,
+  };
   const roundSize = { width: 34 * scale, height: 34 * scale, borderRadius: 17 * scale };
   const textSize = round
     ? { fontSize: 18 * scale }

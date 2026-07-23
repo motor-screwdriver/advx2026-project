@@ -18,19 +18,9 @@ export const CLOUD_BIG = [
   ' ssssssssssss ',
 ] as const;
 
-export const CLOUD_SMALL = [
-  '  WWWW  ',
-  ' WWWWWW ',
-  'WWWWWWWW',
-  'sWWWWWWs',
-  ' ssssss ',
-] as const;
+export const CLOUD_SMALL = ['  WWWW  ', ' WWWWWW ', 'WWWWWWWW', 'sWWWWWWs', ' ssssss '] as const;
 
-export const CLOUD_WISP = [
-  '  WWWWW ',
-  ' WWWWWWW',
-  ' sWWWWs ',
-] as const;
+export const CLOUD_WISP = ['  WWWWW ', ' WWWWWWW', ' sWWWWs '] as const;
 
 /** Slightly irregular disc so the edge reads pixel-round, not geometric. */
 export const SUN = [
@@ -73,11 +63,4 @@ export const TUFT = [
   ' DBDBDBD ',
 ] as const;
 
-export const FLOWER = [
-  ' p p ',
-  'ppypp',
-  ' ppp ',
-  '  g  ',
-  '  g  ',
-  ' Dg  ',
-] as const;
+export const FLOWER = [' p p ', 'ppypp', ' ppp ', '  g  ', '  g  ', ' Dg  '] as const;

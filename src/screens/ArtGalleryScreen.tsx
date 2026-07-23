@@ -44,15 +44,7 @@ function SpriteSection({
   );
 }
 
-function SpriteRow({
-  name,
-  entry,
-  paper,
-}: {
-  name: string;
-  entry: SpriteEntry;
-  paper: boolean;
-}) {
+function SpriteRow({ name, entry, paper }: { name: string; entry: SpriteEntry; paper: boolean }) {
   const width = Math.min(entry.width, MAX_WIDTH);
   const height = Math.round((width * entry.height) / entry.width);
   return (

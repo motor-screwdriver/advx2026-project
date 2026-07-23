@@ -11,14 +11,38 @@ import { useCycle } from './usePixelMotion';
 const HCOL = 10;
 /** Pseudo-random star field (x,y fractions of the sky), split into 3 blink groups. */
 const STARS: readonly [number, number][] = [
-  [0.08, 0.06], [0.19, 0.12], [0.27, 0.04], [0.36, 0.15], [0.44, 0.08],
-  [0.52, 0.03], [0.61, 0.13], [0.68, 0.07], [0.76, 0.16], [0.83, 0.05],
-  [0.91, 0.11], [0.13, 0.2], [0.31, 0.23], [0.49, 0.19], [0.66, 0.25],
-  [0.79, 0.21], [0.88, 0.28], [0.05, 0.3], [0.24, 0.32], [0.57, 0.31], [0.72, 0.34],
+  [0.08, 0.06],
+  [0.19, 0.12],
+  [0.27, 0.04],
+  [0.36, 0.15],
+  [0.44, 0.08],
+  [0.52, 0.03],
+  [0.61, 0.13],
+  [0.68, 0.07],
+  [0.76, 0.16],
+  [0.83, 0.05],
+  [0.91, 0.11],
+  [0.13, 0.2],
+  [0.31, 0.23],
+  [0.49, 0.19],
+  [0.66, 0.25],
+  [0.79, 0.21],
+  [0.88, 0.28],
+  [0.05, 0.3],
+  [0.24, 0.32],
+  [0.57, 0.31],
+  [0.72, 0.34],
 ];
 const TWINKLE = [1, 0.85, 0.5, 0.85] as const;
 
-function Hills(props: { color: string; base: number; amp: number; waves: number; phase: number; bottom: number }) {
+function Hills(props: {
+  color: string;
+  base: number;
+  amp: number;
+  waves: number;
+  phase: number;
+  bottom: number;
+}) {
   const { width } = useWindowDimensions();
   const cols = Math.ceil(width / HCOL) + 1;
   return (
@@ -69,8 +93,22 @@ export function DayNightBackground({ phase }: { phase: DayPhase }) {
       {v.stars && <Stars color={v.orb} />}
       <SceneSun visual={v} phase={phase} />
       <SceneClouds visual={v} />
-      <Hills color={v.hillBack} base={40} amp={24} waves={2.2} phase={0} bottom={GRASS_HEIGHT - 12} />
-      <Hills color={v.hillFront} base={28} amp={30} waves={3.1} phase={1.4} bottom={GRASS_HEIGHT - 4} />
+      <Hills
+        color={v.hillBack}
+        base={40}
+        amp={24}
+        waves={2.2}
+        phase={0}
+        bottom={GRASS_HEIGHT - 12}
+      />
+      <Hills
+        color={v.hillFront}
+        base={28}
+        amp={30}
+        waves={3.1}
+        phase={1.4}
+        bottom={GRASS_HEIGHT - 4}
+      />
       <SceneGrass visual={v} />
     </View>
   );

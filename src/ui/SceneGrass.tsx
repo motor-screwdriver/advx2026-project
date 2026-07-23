@@ -69,7 +69,17 @@ function SwayTuft({ left, bright, dark }: { left: number; bright: string; dark: 
 }
 
 /** A clump of thin blades that shear back and forth like grass in the wind. */
-function BladeGroup({ left, fps, bright, main }: { left: number; fps: number; bright: string; main: string }) {
+function BladeGroup({
+  left,
+  fps,
+  bright,
+  main,
+}: {
+  left: number;
+  fps: number;
+  bright: string;
+  main: string;
+}) {
   const sway = useCycle(SWAY, fps);
   const skewX = sway.interpolate({ inputRange: [-2, 2], outputRange: ['-6deg', '6deg'] });
   const idx = Math.round(left / BLADE_GAP);
@@ -102,7 +112,11 @@ export function SceneGrass({ visual }: { visual: PhaseVisual }) {
         <Specks width={width} dark={visual.grassDark} bright={visual.grassBlade} />
         {flowers.map((f, i) => (
           <View key={`f${i}`} style={{ position: 'absolute', bottom: SOIL + 8, left: f * width }}>
-            <PixelArt rows={FLOWER} cell={4} map={{ p: visual.flower, y: '#ffe9a8', g: visual.grassDark, D: visual.grassBlade }} />
+            <PixelArt
+              rows={FLOWER}
+              cell={4}
+              map={{ p: visual.flower, y: '#ffe9a8', g: visual.grassDark, D: visual.grassBlade }}
+            />
           </View>
         ))}
       </View>
@@ -117,7 +131,12 @@ export function SceneGrass({ visual }: { visual: PhaseVisual }) {
         />
       ))}
       {tufts.map((t, i) => (
-        <SwayTuft key={`t${i}`} left={t * width} bright={visual.grassBlade} dark={visual.grassDark} />
+        <SwayTuft
+          key={`t${i}`}
+          left={t * width}
+          bright={visual.grassBlade}
+          dark={visual.grassDark}
+        />
       ))}
     </View>
   );

@@ -2,7 +2,8 @@ import { applyResurrection, canResurrect, RESURRECT_HP } from '../resurrection';
 import { makeGame } from './fixtures';
 
 const NOW = new Date('2026-07-22T08:00:00Z');
-const daysAgo = (days: number) => new Date(NOW.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
+const daysAgo = (days: number) =>
+  new Date(NOW.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
 
 describe('canResurrect (7-day cooldown)', () => {
   it('is available when never used', () => {

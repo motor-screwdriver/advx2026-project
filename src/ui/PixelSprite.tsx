@@ -22,7 +22,14 @@ interface Props {
  * strip and clip to a single frame with a translated <Image> inside an
  * overflow-hidden window — no extra deps, crisp for our pre-upscaled art.
  */
-export function PixelSprite({ sprite, size = 64, frame = 0, animated = false, fps = 2, style }: Props) {
+export function PixelSprite({
+  sprite,
+  size = 64,
+  frame = 0,
+  animated = false,
+  fps = 2,
+  style,
+}: Props) {
   const { frames, frameWidth, frameHeight } = sprite;
   const [index, setIndex] = useState(0);
 

@@ -90,7 +90,8 @@ interface RowProps {
 }
 
 function ArtifactRow({ artifact, equipped, onEquip }: RowProps) {
-  const equippedIn = equipped.armor === artifact ? 'armor' : equipped.charm === artifact ? 'charm' : null;
+  const equippedIn =
+    equipped.armor === artifact ? 'armor' : equipped.charm === artifact ? 'charm' : null;
   return (
     <PixelPanel contentStyle={styles.rowContent}>
       <View style={styles.rowHeader}>
@@ -98,14 +99,23 @@ function ArtifactRow({ artifact, equipped, onEquip }: RowProps) {
         <Text style={styles.rowName}>{humanize(artifact)}</Text>
         {equippedIn && (
           <Text style={styles.badge}>
-            {strings.inventory_equipped}: {equippedIn === 'armor' ? strings.inventory_armor : strings.inventory_charm}
+            {strings.inventory_equipped}:{' '}
+            {equippedIn === 'armor' ? strings.inventory_armor : strings.inventory_charm}
           </Text>
         )}
       </View>
       <Text style={styles.rowDesc}>{artifactDesc(artifact)}</Text>
       <View style={styles.rowActions}>
-        <PixelButton compact label={strings.inventory_to_armor} onPress={() => onEquip('armor', artifact)} />
-        <PixelButton compact label={strings.inventory_to_charm} onPress={() => onEquip('charm', artifact)} />
+        <PixelButton
+          compact
+          label={strings.inventory_to_armor}
+          onPress={() => onEquip('armor', artifact)}
+        />
+        <PixelButton
+          compact
+          label={strings.inventory_to_charm}
+          onPress={() => onEquip('charm', artifact)}
+        />
       </View>
     </PixelPanel>
   );

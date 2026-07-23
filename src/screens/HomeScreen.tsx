@@ -86,8 +86,19 @@ function HeroHome() {
           label={asleep ? strings.home_wakeup : strings.home_sleep}
           onPress={onContextTap}
         />
-        <FloatingButton scale={2} delay={220} label={strings.home_nav_bag} onPress={() => router.push('/inventory')} />
-        <FloatingButton variant="round" scale={2} delay={440} label="⚙" onPress={() => router.push('/settings')} />
+        <FloatingButton
+          scale={2}
+          delay={220}
+          label={strings.home_nav_bag}
+          onPress={() => router.push('/inventory')}
+        />
+        <FloatingButton
+          variant="round"
+          scale={2}
+          delay={440}
+          label="⚙"
+          onPress={() => router.push('/settings')}
+        />
       </View>
       <DevTools />
     </HomeScene>
