@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { PixelButton } from '../ui/PixelButton';
 import { PixelPanel } from '../ui/PixelPanel';
@@ -8,60 +8,94 @@ import { Screen } from '../ui/Screen';
 import { strings } from '../ui/strings';
 import { theme } from '../ui/theme';
 
-const CARDS = [
-  { title: strings.tutorial_card1_title, body: strings.tutorial_card1_body, tint: theme.colors.leaf },
-  { title: strings.tutorial_card2_title, body: strings.tutorial_card2_body, tint: theme.colors.heartFull },
-  { title: strings.tutorial_card3_title, body: strings.tutorial_card3_body, tint: theme.colors.gold },
+// 5x5 pixel icons drawn from views, matching the game's chunky look.
+const MOON = ['.XX..', 'XX...', 'X....', 'XX...', '.XX..'];
+const SUN = ['..X..', '.XXX.', 'XXXXX', '.XXX.', '..X..'];
+const CHEST = ['XXXXX', 'X.X.X', 'XXXXX', 'X...X', 'XXXXX'];
+
+const RULES = [
+  {
+    icon: MOON,
+    tint: theme.colors.gold,
+    title: strings.tutorial_card1_title,
+    body: strings.tutorial_card1_body,
+  },
+  {
+    icon: SUN,
+    tint: theme.colors.leaf,
+    title: strings.tutorial_card2_title,
+    body: strings.tutorial_card2_body,
+  },
+  {
+    icon: CHEST,
+    tint: theme.colors.gold,
+    title: strings.tutorial_card3_title,
+    body: strings.tutorial_card3_body,
+  },
 ] as const;
 
+/** Three rules, all visible at once — no swipe hunting. */
 export function TutorialScreen() {
   const router = useRouter();
-  const { width } = useWindowDimensions();
-  const pageWidth = width - theme.spacing(4) * 2;
-
   return (
     <Screen title={strings.tutorial_title}>
-      <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false}>
-        {CARDS.map((card, index) => (
-          <View key={card.title} style={[styles.page, { width: pageWidth }]}>
-            <PixelPanel style={styles.card}>
-              <View style={[styles.image, { backgroundColor: card.tint }]} />
-              <Text style={styles.cardTitle}>{card.title}</Text>
-              <Text style={styles.cardBody}>{card.body}</Text>
-              {index === CARDS.length - 1 && (
-                <PixelButton label={strings.tutorial_done} onPress={() => router.replace('/')} />
-              )}
-            </PixelPanel>
+      {RULES.map((rule) => (
+        <PixelPanel key={rule.title} contentStyle={styles.card}>
+          <PixelIcon pattern={rule.icon} tint={rule.tint} />
+          <View style={styles.cardText}>
+            <Text style={styles.cardTitle}>{rule.title}</Text>
+            <Text style={styles.cardBody}>{rule.body}</Text>
           </View>
-        ))}
-      </ScrollView>
+        </PixelPanel>
+      ))}
+      <View style={styles.footer}>
+        <PixelButton label={strings.tutorial_done} onPress={() => router.replace('/')} />
+      </View>
     </Screen>
   );
 }
 
+function PixelIcon({ pattern, tint }: { pattern: readonly string[]; tint: string }) {
+  return (
+    <View style={styles.icon}>
+      {pattern.map((row, y) => (
+        <View key={y} style={styles.iconRow}>
+          {row.split('').map((cell, x) => (
+            <View key={x} style={[styles.cell, cell === 'X' && { backgroundColor: tint }]} />
+          ))}
+        </View>
+      ))}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-  page: {
-    paddingHorizontal: theme.spacing(1),
-  },
   card: {
+    flexDirection: 'row',
     alignItems: 'center',
-    minHeight: 320,
+    gap: theme.spacing(4),
   },
-  image: {
-    width: 96,
-    height: 96,
-    borderWidth: theme.borderWidth * 2,
+  cardText: {
+    flex: 1,
+    gap: theme.spacing(2),
+  },
+  cardTitle: {
+    ...theme.type.body,
+    color: theme.colors.gold,
+  },
+  cardBody: {
+    ...theme.type.label,
+    color: theme.colors.textDim,
+    textTransform: 'none',
+  },
+  footer: { marginTop: 'auto' },
+  icon: {
+    padding: theme.spacing(2),
+    backgroundColor: theme.colors.inset,
+    borderWidth: theme.borderWidth,
     borderColor: theme.colors.outline,
     borderRadius: theme.borderRadius,
   },
-  cardTitle: {
-    ...theme.type.title,
-    color: theme.colors.gold,
-    textAlign: 'center',
-  },
-  cardBody: {
-    ...theme.type.body,
-    color: theme.colors.textDim,
-    textAlign: 'center',
-  },
+  iconRow: { flexDirection: 'row' },
+  cell: { width: 8, height: 8 },
 });

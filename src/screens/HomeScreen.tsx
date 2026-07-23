@@ -10,6 +10,7 @@ import { Screen } from '../ui/Screen';
 import { strings } from '../ui/strings';
 import { theme } from '../ui/theme';
 import { useGame } from '../ui/useGame';
+import { formatClock } from '../ui/window';
 import { DebugMenu } from './DebugMenu';
 
 const MAX_HP = 7;
@@ -35,7 +36,6 @@ function NoHeroHome() {
 function HeroHome() {
   const router = useRouter();
   const { state, pendingBedTime, sleepNow, wakeNow } = useGame();
-  const hero = state.hero!;
 
   const onContextTap = () => {
     if (pendingBedTime === null) {
@@ -49,40 +49,57 @@ function HeroHome() {
 
   return (
     <Screen title={strings.home_title}>
-      <PixelPanel>
-        <View style={styles.heroRow}>
-          <HeroSprite type={hero.type} size={72} />
-          <View style={styles.heroMeta}>
-            <Text style={styles.heroName}>
-              {strings[`hero_${hero.type}` as keyof typeof strings]}
-            </Text>
-            <Text style={styles.level}>
-              {strings.home_level} {hero.level}
-            </Text>
-          </View>
-        </View>
-        <HeartRow hp={state.hp} />
-        <Text style={styles.streak}>
-          {strings.home_streak}: {state.perfectWeekStreak}/{MAX_HP}
-        </Text>
-      </PixelPanel>
+      <HeroPanel />
       <PixelButton
         label={pendingBedTime === null ? strings.home_sleep : strings.home_wakeup}
         onPress={onContextTap}
       />
+      {pendingBedTime !== null && <Text style={styles.hint}>{strings.home_sleeping_hint}</Text>}
       <View style={styles.navRow}>
         <Link href="/mosaic" asChild>
-          <PixelButton compact label="MOS" />
+          <PixelButton compact label={strings.home_nav_mosaic} />
         </Link>
         <Link href="/inventory" asChild>
-          <PixelButton compact label="INV" />
+          <PixelButton compact label={strings.home_nav_bag} />
+        </Link>
+        <Link href="/heroes" asChild>
+          <PixelButton compact label={strings.home_nav_heroes} />
         </Link>
         <Link href="/settings" asChild>
-          <PixelButton compact label="SET" />
+          <PixelButton compact label={strings.home_nav_settings} />
         </Link>
       </View>
       <DebugMenu />
     </Screen>
+  );
+}
+
+function HeroPanel() {
+  const { state } = useGame();
+  const hero = state.hero!;
+  return (
+    <PixelPanel>
+      <View style={styles.heroRow}>
+        <HeroSprite type={hero.type} size={72} />
+        <View style={styles.heroMeta}>
+          <Text style={styles.heroName}>{strings[`hero_${hero.type}` as keyof typeof strings]}</Text>
+          <Text style={styles.level}>
+            {strings.home_level} {hero.level}
+          </Text>
+          {state.window && (
+            <Text style={styles.window}>
+              {strings.home_window}: {formatClock(state.window.bedMin)} -{' '}
+              {formatClock(state.window.wakeMin)}
+            </Text>
+          )}
+        </View>
+      </View>
+      <Text style={styles.caption}>{strings.home_hearts}</Text>
+      <HeartRow hp={state.hp} />
+      <Text style={styles.streak}>
+        {strings.home_streak}: {state.perfectWeekStreak}/{MAX_HP}
+      </Text>
+    </PixelPanel>
   );
 }
 
@@ -107,6 +124,21 @@ const styles = StyleSheet.create({
     ...theme.type.body,
     color: theme.colors.gold,
   },
+  window: {
+    ...theme.type.label,
+    color: theme.colors.textDim,
+  },
+  caption: {
+    ...theme.type.label,
+    color: theme.colors.textDim,
+    textAlign: 'center',
+    textTransform: 'uppercase',
+  },
+  hint: {
+    ...theme.type.label,
+    color: theme.colors.gold,
+    textAlign: 'center',
+  },
   streak: {
     ...theme.type.body,
     color: theme.colors.leaf,
@@ -114,6 +146,7 @@ const styles = StyleSheet.create({
   },
   navRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'center',
     gap: theme.spacing(3),
   },

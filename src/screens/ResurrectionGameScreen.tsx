@@ -13,7 +13,7 @@ type Phase = 'playing' | 'won' | 'lost';
 
 export function ResurrectionGameScreen() {
   const router = useRouter();
-  const { state, resurrect, startNewHero } = useGame();
+  const { resurrect, startNewHero } = useGame();
   const [phase, setPhase] = useState<Phase>('playing');
 
   const onResult = (success: boolean) => {
@@ -34,9 +34,7 @@ export function ResurrectionGameScreen() {
 
   return (
     <Screen title={strings.soul_title}>
-      {phase === 'playing' && (
-        <SoulTether isPaladin={state.hero?.type === 'paladin'} onResult={onResult} />
-      )}
+      {phase === 'playing' && <SoulTether onResult={onResult} />}
       {phase !== 'playing' && (
         <>
           <Text style={[styles.result, phase === 'lost' && styles.lost]}>

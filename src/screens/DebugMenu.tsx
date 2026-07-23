@@ -22,6 +22,7 @@ const ROUTES: DebugRoute[] = [
   { href: '/mosaic', label: strings.mosaic_title },
   { href: '/chest', label: strings.chest_title },
   { href: '/inventory', label: strings.inventory_title },
+  { href: '/heroes', label: strings.heroes_title },
   { href: '/tutorial', label: strings.tutorial_title },
   { href: '/settings', label: strings.settings_title },
 ];

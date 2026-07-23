@@ -31,6 +31,7 @@ export function MosaicScreen() {
           <Stat label={strings.mosaic_streak} value={String(state.perfectWeekStreak)} />
           <Stat label={strings.mosaic_perfect} value={`${perfectPct}%`} />
         </View>
+        <Text style={styles.legend}>{strings.mosaic_legend}</Text>
       </PixelPanel>
       {state.nights.length === 0 ? (
         <Text style={styles.empty}>{strings.mosaic_empty}</Text>
@@ -64,6 +65,12 @@ const styles = StyleSheet.create({
   stats: {
     flexDirection: 'row',
     justifyContent: 'space-around',
+  },
+  legend: {
+    ...theme.type.label,
+    color: theme.colors.textDim,
+    textAlign: 'center',
+    marginTop: theme.spacing(3),
   },
   stat: {
     alignItems: 'center',
