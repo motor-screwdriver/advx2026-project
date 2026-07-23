@@ -1,50 +1,61 @@
-import { Link, useRouter } from 'expo-router';
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { Animated, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { playMusic } from '../systems/audio';
+import { DayNightBackground } from '../ui/DayNightBackground';
+import { FloatingButton } from '../ui/FloatingButton';
 import { HeartRow } from '../ui/HeartRow';
 import { HeroSprite } from '../ui/HeroSprite';
+import { PixelBar } from '../ui/PixelBar';
 import { PixelButton } from '../ui/PixelButton';
-import { PixelPanel } from '../ui/PixelPanel';
-import { Screen } from '../ui/Screen';
 import { strings } from '../ui/strings';
 import { theme } from '../ui/theme';
+import { getDayPhase, type DayPhase } from '../ui/timeOfDay';
 import { useGame } from '../ui/useGame';
-import { formatClock } from '../ui/window';
+import { useHeroWalk } from '../ui/useHeroWalk';
 import { DebugMenu } from './DebugMenu';
 
 const MAX_HP = 7;
+const HERO_SIZE = 184;
 
 export function HomeScreen() {
   const { state } = useGame();
-  if (!state.hero) {
-    return <NoHeroHome />;
-  }
-  return <HeroHome />;
+  return state.hero ? <HeroHome /> : <NoHeroHome />;
 }
 
 function NoHeroHome() {
   const router = useRouter();
   return (
-    <Screen title={strings.home_title}>
-      <Text style={styles.empty}>{strings.home_no_hero}</Text>
-      <PixelButton label={strings.onboarding_begin} onPress={() => router.replace('/onboarding')} />
-    </Screen>
+    <HomeScene phase={getDayPhase()}>
+      <View style={styles.emptyBox}>
+        <Text style={styles.empty}>{strings.home_no_hero}</Text>
+        <FloatingButton
+          variant="primary"
+          label={strings.onboarding_begin}
+          onPress={() => router.replace('/onboarding')}
+        />
+      </View>
+    </HomeScene>
   );
 }
 
 function HeroHome() {
   const router = useRouter();
   const { state, pendingBedTime, sleepNow, wakeNow } = useGame();
+  const hero = state.hero!;
+  const asleep = pendingBedTime !== null;
 
   // Cozy day theme while awake; hushed night theme once tucked in.
   useEffect(() => {
-    playMusic(pendingBedTime === null ? 'music_day' : 'music_night');
-  }, [pendingBedTime]);
+    playMusic(asleep ? 'music_night' : 'music_day');
+  }, [asleep]);
+
+  const walk = useHeroWalk(asleep);
 
   const onContextTap = () => {
-    if (pendingBedTime === null) {
+    if (!asleep) {
       sleepNow();
       return;
     }
@@ -54,106 +65,143 @@ function HeroHome() {
   };
 
   return (
-    <Screen title={strings.home_title}>
-      <HeroPanel />
-      <PixelButton
-        label={pendingBedTime === null ? strings.home_sleep : strings.home_wakeup}
-        onPress={onContextTap}
-      />
-      {pendingBedTime !== null && <Text style={styles.hint}>{strings.home_sleeping_hint}</Text>}
-      <View style={styles.navRow}>
-        <Link href="/mosaic" asChild>
-          <PixelButton compact label={strings.home_nav_mosaic} />
-        </Link>
-        <Link href="/inventory" asChild>
-          <PixelButton compact label={strings.home_nav_bag} />
-        </Link>
-        <Link href="/heroes" asChild>
-          <PixelButton compact label={strings.home_nav_heroes} />
-        </Link>
-        <Link href="/settings" asChild>
-          <PixelButton compact label={strings.home_nav_settings} />
-        </Link>
+    <HomeScene phase={getDayPhase()}>
+      <TopBar hp={state.hp} streak={state.perfectWeekStreak} level={hero.level} />
+      <View style={styles.heroWrap}>
+        <Animated.View style={[styles.heroInner, { transform: walk.transform }]}>
+          {asleep && !walk.walking && <Text style={styles.zzz}>z z Z</Text>}
+          <HeroSprite
+            type={hero.type}
+            size={HERO_SIZE}
+            fps={walk.walking ? 6 : 2}
+            gold={state.perfectWeekStreak >= MAX_HP}
+          />
+        </Animated.View>
       </View>
-      <DebugMenu />
-    </Screen>
+      <View style={styles.dock}>
+        <FloatingButton
+          variant="primary"
+          scale={2}
+          delay={0}
+          label={asleep ? strings.home_wakeup : strings.home_sleep}
+          onPress={onContextTap}
+        />
+        <FloatingButton scale={2} delay={220} label={strings.home_nav_bag} onPress={() => router.push('/inventory')} />
+        <FloatingButton variant="round" scale={2} delay={440} label="⚙" onPress={() => router.push('/settings')} />
+      </View>
+      <DevTools />
+    </HomeScene>
   );
 }
 
-function HeroPanel() {
-  const { state } = useGame();
-  const hero = state.hero!;
+function HomeScene({ phase, children }: { phase: DayPhase; children: React.ReactNode }) {
   return (
-    <PixelPanel>
-      <View style={styles.heroRow}>
-        <HeroSprite type={hero.type} size={72} gold={state.perfectWeekStreak >= MAX_HP} />
-        <View style={styles.heroMeta}>
-          <Text style={styles.heroName}>{strings[`hero_${hero.type}` as keyof typeof strings]}</Text>
-          <Text style={styles.level}>
-            {strings.home_level} {hero.level}
-          </Text>
-          {state.window && (
-            <Text style={styles.window}>
-              {strings.home_window}: {formatClock(state.window.bedMin)} -{' '}
-              {formatClock(state.window.wakeMin)}
-            </Text>
-          )}
-        </View>
+    <View style={styles.root}>
+      <DayNightBackground phase={phase} />
+      <SafeAreaView style={styles.safe}>{children}</SafeAreaView>
+    </View>
+  );
+}
+
+function TopBar({ hp, streak, level }: { hp: number; streak: number; level: number }) {
+  return (
+    <View style={styles.topRow}>
+      <HeartRow hp={hp} />
+      <View style={styles.streakBox}>
+        <PixelBar value={streak} max={MAX_HP} />
+        <Text style={styles.level}>
+          {strings.home_level} {level}
+        </Text>
       </View>
-      <Text style={styles.caption}>{strings.home_hearts}</Text>
-      <HeartRow hp={state.hp} />
-      <Text style={styles.streak}>
-        {strings.home_streak}: {state.perfectWeekStreak}/{MAX_HP}
-      </Text>
-    </PixelPanel>
+    </View>
+  );
+}
+
+/** Dev-only launcher for the other screens; removed before release. */
+function DevTools() {
+  const [open, setOpen] = useState(false);
+  if (!__DEV__) {
+    return null;
+  }
+  return (
+    <>
+      <Pressable style={styles.devTab} onPress={() => setOpen(true)}>
+        <Text style={styles.devText}>DEV</Text>
+      </Pressable>
+      {open && (
+        <View style={styles.devOverlay}>
+          <ScrollView contentContainerStyle={styles.devScroll}>
+            <DebugMenu />
+            <PixelButton label={strings.common_back} onPress={() => setOpen(false)} />
+          </ScrollView>
+        </View>
+      )}
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  empty: {
-    ...theme.type.body,
-    color: theme.colors.textDim,
-    textAlign: 'center',
-  },
-  heroRow: {
+  root: { flex: 1, backgroundColor: theme.colors.bg },
+  safe: { flex: 1 },
+  topRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: theme.spacing(4),
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    paddingHorizontal: theme.spacing(4),
+    paddingTop: theme.spacing(2),
   },
-  heroMeta: { gap: theme.spacing(2) },
-  heroName: {
-    ...theme.type.title,
+  streakBox: { alignItems: 'flex-end', gap: theme.spacing(1) },
+  level: {
+    ...theme.type.label,
     color: theme.colors.text,
   },
-  level: {
+  heroWrap: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingBottom: 176,
+  },
+  heroInner: { alignItems: 'center', gap: theme.spacing(2) },
+  zzz: {
     ...theme.type.body,
-    color: theme.colors.gold,
+    color: theme.colors.text,
+    letterSpacing: 3,
   },
-  window: {
-    ...theme.type.label,
-    color: theme.colors.textDim,
-  },
-  caption: {
-    ...theme.type.label,
-    color: theme.colors.textDim,
-    textAlign: 'center',
-    textTransform: 'uppercase',
-  },
-  hint: {
-    ...theme.type.label,
-    color: theme.colors.gold,
-    textAlign: 'center',
-  },
-  streak: {
-    ...theme.type.body,
-    color: theme.colors.leaf,
-    textAlign: 'center',
-  },
-  navRow: {
+  dock: {
+    position: 'absolute',
+    left: theme.spacing(4),
+    right: theme.spacing(4),
+    bottom: theme.spacing(11),
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: theme.spacing(3),
+    alignItems: 'flex-end',
+    justifyContent: 'space-around',
+  },
+  emptyBox: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: theme.spacing(5) },
+  empty: {
+    ...theme.type.body,
+    color: theme.colors.text,
+    textAlign: 'center',
+  },
+  devTab: {
+    position: 'absolute',
+    top: theme.spacing(20),
+    right: theme.spacing(2),
+    paddingHorizontal: theme.spacing(2),
+    paddingVertical: theme.spacing(1),
+    backgroundColor: theme.colors.inset,
+    borderWidth: theme.borderWidth,
+    borderColor: theme.colors.outline,
+    borderRadius: theme.borderRadius,
+    opacity: 0.7,
+  },
+  devText: { ...theme.type.label, color: theme.colors.textDim },
+  devOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(20, 13, 8, 0.94)',
+  },
+  devScroll: {
+    padding: theme.spacing(4),
+    paddingTop: theme.spacing(10),
+    gap: theme.spacing(4),
   },
 });
