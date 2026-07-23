@@ -1,0 +1,4 @@
+allowBuilds:
+  unrs-resolver: false
+minimumReleaseAgeExclude:
+  - ts-jest@29.4.12
