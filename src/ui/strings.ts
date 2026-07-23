@@ -148,9 +148,15 @@ export const strings = {
   settings_on: 'ON',
   settings_off: 'OFF',
   settings_eink: 'E-ink device',
+  settings_scan_nfc: 'Scan Quote (NFC)',
+  settings_scanning: 'Hold phone to Quote...',
   settings_device_id: 'Device ID',
+  settings_device_id_hint:
+    'Tap Scan, then hold your phone to the Quote - the device ID is read and filled in for you.',
   settings_api_key: 'API key',
-  settings_test_card: 'Send test card',
+  settings_api_key_hint:
+    'Get a key once in the Dot app (Open Platform > API keys > Create), then paste the dot_app_... token here.',
+  settings_customize: 'Customize widgets!',
   settings_reset: 'Reset progress',
   settings_reset_confirm: 'Reset ALL progress?',
   settings_version: 'v0.1.0',

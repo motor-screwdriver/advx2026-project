@@ -9,7 +9,7 @@ import { mockGameState } from '../contracts/mock';
 import type { GameState } from '../contracts/types';
 import { useGameStore } from '../state/store';
 import { captureCardBase64, captureIconBase64 } from './einkCard';
-import { getEinkConfig, setEinkConfig, type EinkConfig } from './einkConfig';
+import { getEinkConfig, parseDeviceId, setEinkConfig, type EinkConfig } from './einkConfig';
 
 const API_BASE = 'https://dot.mindreset.tech/api/authV2/open/device';
 const APP_LINK = 'eightbitsleep://'; // app.json scheme — NFC tap opens the app
@@ -23,6 +23,7 @@ async function postToDevice(
   path: 'image' | 'text',
   body: Record<string, unknown>,
 ): Promise<boolean> {
+  const started = Date.now();
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -36,9 +37,18 @@ async function postToDevice(
       signal: controller.signal,
     });
     clearTimeout(timeout);
+    const ms = Date.now() - started;
+    if (res.ok) {
+      console.log(`[eink] ${path} card pushed to ${config.deviceId} (HTTP ${res.status}, ${ms}ms)`);
+    } else {
+      console.log(`[eink] ${path} card rejected by Dot: HTTP ${res.status} ${res.statusText} (${ms}ms)`);
+    }
     return res.ok;
   } catch (error) {
-    console.log('[eink] push skipped (silent):', error);
+    const ms = Date.now() - started;
+    const timedOut = error instanceof Error && error.name === 'AbortError';
+    const reason = timedOut ? `timeout after ${REQUEST_TIMEOUT_MS}ms` : String(error);
+    console.log(`[eink] ${path} card push failed (silent): ${reason} (${ms}ms)`);
     return false;
   }
 }
@@ -49,8 +59,13 @@ export async function pushHeroCard(state: GameState, config?: EinkConfig): Promi
     return false;
   }
   const cfg = config ?? (await getEinkConfig());
+  if (!cfg) {
+    console.log('[eink] hero card skipped — no device config saved');
+    return false;
+  }
   const image = await captureCardBase64();
-  if (!cfg || !image) {
+  if (!image) {
+    console.log('[eink] hero card skipped — off-screen render/capture returned empty');
     return false;
   }
   return postToDevice(cfg, 'image', {
@@ -68,8 +83,13 @@ export async function pushStatsCard(state: GameState, config?: EinkConfig): Prom
     return false;
   }
   const cfg = config ?? (await getEinkConfig());
+  if (!cfg) {
+    console.log('[eink] stats card skipped — no device config saved');
+    return false;
+  }
   const icon = await captureIconBase64();
-  if (!cfg || !icon) {
+  if (!icon) {
+    console.log('[eink] stats card skipped — icon render/capture returned empty');
     return false;
   }
   return postToDevice(cfg, 'text', {
@@ -92,43 +112,55 @@ export function scheduleEinkPush(state: GameState): void {
   }
   debounceTimer = setTimeout(() => {
     debounceTimer = null;
+    console.log('[eink] debounce elapsed — pushing hero + stats cards');
     void pushHeroCard(state);
     void pushStatsCard(state);
   }, DEBOUNCE_MS);
 }
 
 /**
- * Settings "Send test card" (booth setup verification): persists the entered
- * config and pushes both cards with current state (mock hero on fresh installs).
+ * Settings "Customize widgets!" (booth setup + first sync): persists the
+ * entered config and pushes both the Image and Text widgets with current state
+ * (mock hero on fresh installs). Ongoing edits auto-sync via scheduleEinkPush.
  */
-export async function sendTestCard(deviceId?: string, apiKey?: string): Promise<boolean> {
+export async function customizeWidgets(deviceId?: string, apiKey?: string): Promise<boolean> {
   if (!FLAGS.eink) {
     console.log('[eink] FLAGS.eink is false — flip it in contracts/flags.ts to push');
     return false;
   }
-  const config = deviceId && apiKey ? { deviceId, apiKey } : await getEinkConfig();
+  const config =
+    deviceId && apiKey
+      ? { deviceId: parseDeviceId(deviceId), apiKey: apiKey.trim() }
+      : await getEinkConfig();
   if (!config) {
     console.log('[eink] no device config — enter device ID + API key first');
     return false;
   }
   await setEinkConfig(config);
+  console.log(`[eink] customizing widgets on ${config.deviceId}…`);
   const live = useGameStore.getState().game;
   const state = live.hero ? live : mockGameState();
   const [card, stats] = await Promise.all([
     pushHeroCard(state, config),
     pushStatsCard(state, config),
   ]);
+  console.log(`[eink] widget update — image: ${card ? 'ok' : 'fail'}, text: ${stats ? 'ok' : 'fail'}`);
   return card && stats;
 }
 
 function statsMessage(state: GameState): string {
   const last = state.nights[state.nights.length - 1];
   const nightLine = last
-    ? `Last night: ${last.outcome} (${last.hpDelta >= 0 ? '+' : ''}${last.hpDelta} HP)`
-    : 'No nights yet';
+    ? `LAST NIGHT   ${last.outcome} (${last.hpDelta >= 0 ? '+' : ''}${last.hpDelta} HP)`
+    : 'LAST NIGHT   —';
   const perfect = state.nights.filter((night) => night.outcome === 'PERFECT').length;
   const rate = state.nights.length ? Math.round((perfect / state.nights.length) * 100) : 0;
-  return `${nightLine}\nPerfect week: ${state.perfectWeekStreak}/7\nPerfect rate: ${rate}%`;
+  return [
+    nightLine,
+    '----------------------',
+    `PERFECT WEEK   ${state.perfectWeekStreak} / 7`,
+    `PERFECT RATE   ${rate}%`,
+  ].join('\n');
 }
 
 function statsDate(state: GameState): string {

@@ -80,18 +80,39 @@ function WindowPanel({ window }: { window: SleepWindow | null }) {
 }
 
 function EinkPanel() {
-  const { sendTestCard } = useGame();
+  const { customizeWidgets, scanDeviceId } = useGame();
   const [deviceId, setDeviceId] = useState('');
   const [apiKey, setApiKey] = useState('');
+  const [scanning, setScanning] = useState(false);
+  const scan = async () => {
+    setScanning(true);
+    try {
+      const id = await scanDeviceId();
+      if (id) {
+        setDeviceId(id);
+      }
+    } finally {
+      setScanning(false);
+    }
+  };
   return (
     <PixelPanel>
       <Text style={styles.label}>{strings.settings_eink}</Text>
+      <PixelButton
+        compact
+        label={scanning ? strings.settings_scanning : strings.settings_scan_nfc}
+        onPress={() => void scan()}
+        disabled={scanning}
+      />
+      <Text style={styles.hint}>{strings.settings_device_id_hint}</Text>
       <TextInput
         style={styles.input}
         placeholder={strings.settings_device_id}
         placeholderTextColor={theme.colors.textDim}
         value={deviceId}
         onChangeText={setDeviceId}
+        autoCapitalize="none"
+        autoCorrect={false}
       />
       <TextInput
         style={styles.input}
@@ -99,12 +120,15 @@ function EinkPanel() {
         placeholderTextColor={theme.colors.textDim}
         value={apiKey}
         onChangeText={setApiKey}
+        autoCapitalize="none"
+        autoCorrect={false}
         secureTextEntry
       />
+      <Text style={styles.hint}>{strings.settings_api_key_hint}</Text>
       <PixelButton
         compact
-        label={strings.settings_test_card}
-        onPress={() => sendTestCard(deviceId, apiKey)}
+        label={strings.settings_customize}
+        onPress={() => customizeWidgets(deviceId, apiKey)}
       />
     </PixelPanel>
   );
@@ -133,6 +157,11 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.outline,
     borderRadius: theme.borderRadius,
     padding: theme.spacing(3),
+  },
+  hint: {
+    ...theme.type.label,
+    color: theme.colors.textDim,
+    textTransform: 'none',
   },
   version: {
     ...theme.type.label,

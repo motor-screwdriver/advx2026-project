@@ -4,7 +4,7 @@ export const FLAGS = {
   chests: true,
   raids: false,
   healthSync: false,
-  eink: false,
+  eink: true,
   selfieFace: false,
   artGallery: true,
 } as const;
