@@ -16,6 +16,7 @@ import { DemoPanel } from './DemoPanel'
 import { scheduleEinkPush } from './eink'
 import { EinkCardHost } from './einkCard'
 import { configureNotificationHandler, syncNotifications } from './notifications'
+import { buildWidgetData, syncHomeWidgets } from './widgets'
 
 let initialized = false
 
@@ -54,6 +55,18 @@ function onStoreChange(state: GameStore, prev: GameStore): void {
     g.equipped !== p.equipped
   if (lastEvent !== prevLastEvent || cardChanged) {
     scheduleEinkPush(g)
+  }
+  // Android home-screen widgets mirror everything on the home TopBar + hero,
+  // plus the asleep flag (2x1 toggle halves swap which side is lit).
+  const widgetChanged =
+    g.hero !== p.hero ||
+    g.hp !== p.hp ||
+    g.nights !== p.nights ||
+    g.perfectWeekStreak !== p.perfectWeekStreak ||
+    g.onboardingDone !== p.onboardingDone ||
+    state.pendingBedTime !== prev.pendingBedTime
+  if (widgetChanged) {
+    void syncHomeWidgets(buildWidgetData(g, state.pendingBedTime))
   }
 }
 
