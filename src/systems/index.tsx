@@ -16,6 +16,7 @@ import { DemoPanel } from './DemoPanel'
 import { scheduleEinkPush } from './eink'
 import { EinkCardHost } from './einkCard'
 import { configureNotificationHandler, syncNotifications } from './notifications'
+import { syncWakeReminder } from './wakeReminder'
 
 let initialized = false
 
@@ -26,6 +27,7 @@ export function initSystems(): void {
   initialized = true
   configureNotificationHandler()
   void resyncNotifications()
+  void syncWakeReminder()
   useGameStore.subscribe(onStoreChange)
   // Re-arm the schedule when the user comes back (morning summary re-arms).
   AppState.addEventListener('change', (status) => {
@@ -40,6 +42,10 @@ function onStoreChange(state: GameStore, prev: GameStore): void {
   const p = prev.game
   if (g.window !== p.window || g.nights !== p.nights) {
     void resyncNotifications()
+  }
+  // Window edits mid-session move the reminder's morning-guard minute too.
+  if (state.pendingBedTime !== prev.pendingBedTime || g.window !== p.window) {
+    void syncWakeReminder()
   }
   const lastEvent = state.events[state.events.length - 1]
   const prevLastEvent = prev.events[prev.events.length - 1]
