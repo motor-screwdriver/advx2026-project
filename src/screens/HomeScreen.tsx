@@ -1,5 +1,5 @@
-import { useRouter } from 'expo-router'
-import React, { useEffect, useState } from 'react'
+import { useFocusEffect, useRouter } from 'expo-router'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -58,11 +58,26 @@ function HeroHome() {
 
   const walk = useHeroWalk(asleep)
 
+  // The wake push keeps Home mounted below the stack, and its Pressables stay
+  // live during the transition — re-entrant taps caused phantom wakes and
+  // self-sleeps. Locked until the screen refocuses (dismissTo('/') resurfaces
+  // this same instance).
+  const tapLock = useRef(false)
+  useFocusEffect(
+    useCallback(() => {
+      tapLock.current = false
+    }, []),
+  )
+
   const onContextTap = () => {
+    if (tapLock.current) {
+      return
+    }
     if (!asleep) {
       sleepNow()
       return
     }
+    tapLock.current = true
     const evaluation = wakeNow()
     const hpAfter = Math.min(Math.max(state.hp + evaluation.hpDelta, 0), MAX_HP)
     router.push(hpAfter === 0 ? '/death' : '/morning-scene')
