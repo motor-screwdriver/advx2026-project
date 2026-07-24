@@ -25,7 +25,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     web: {
       ...config.web,
       // No server-side routes any more: /api/oracle is the Go service,
-      // so the web build is plain static files behind Caddy.
+      // so the web build is plain static files.
       output: 'static',
     },
   }
