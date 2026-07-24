@@ -255,7 +255,7 @@ export const strings = {
   guide_scoring_streak: '7 clean nights in a row: level up + loot chest. At 0 HP the hero dies.',
   guide_reminders_title: 'Reminders',
   guide_reminders_body:
-    'Bedtime push 1 h before your window. Wake reminder whenever you unlock the phone while the hero sleeps. Morning summary 15 min after wake time. Toggle in Settings.',
+    'Bedtime push 1 h before your window. Wake reminder pinned in the shade while the hero sleeps. Morning summary 15 min after wake time. Toggle in Settings.',
 
   // Common
   common_back: 'Back',
