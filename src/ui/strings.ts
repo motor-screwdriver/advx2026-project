@@ -234,6 +234,29 @@ export const strings = {
 
   gallery_title: 'Art Gallery',
   gallery_body: 'QA wall: every pipeline asset, straight from assets/manifest.ts.',
+
+  // Sleep journal
+  journal_title: 'Sleep journal',
+  journal_empty: 'No nights recorded yet. Your story starts tonight!',
+  journal_no_checkin: 'No check-in recorded',
+  journal_score: 'Score',
+
+  // Guide ("How it works" memo)
+  guide_title: 'How it works',
+  guide_window_title: 'Your sleep window',
+  guide_window_body:
+    'The bed and wake times your hero judges every night by. Stay close for a perfect score.',
+  guide_scoring_title: 'Night score',
+  guide_scoring_start: 'Every night starts at 100 points.',
+  guide_scoring_penalties:
+    'Late or early bed/wake-up: up to -30 each. Short sleep: up to -40. Oversleeping the window by 2 h or more: -10.',
+  guide_scoring_bands:
+    '85+ PERFECT: +1 HP, 100 XP. 60+ GOOD: 60 XP. 40+ BAD: -1 HP, 25 XP. Below 40 TERRIBLE: -2 HP.',
+  guide_scoring_streak: '7 clean nights in a row: level up + loot chest. At 0 HP the hero dies.',
+  guide_reminders_title: 'Reminders',
+  guide_reminders_body:
+    'Bedtime push 1 h before your window. Wake reminder whenever you unlock the phone while the hero sleeps. Morning summary 15 min after wake time. Toggle in Settings.',
+
   // Common
   common_back: 'Back',
   common_confirm: 'Confirm',

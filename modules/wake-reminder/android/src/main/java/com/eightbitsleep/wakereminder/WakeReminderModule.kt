@@ -15,9 +15,9 @@ class WakeReminderModule : Module() {
       appContext.reactContext?.let { registerUnlockReceiver(it.applicationContext) }
     }
 
-    Function("setSleepReminderActive") { active: Boolean, earliestNotifyClockMin: Int ->
+    Function("setSleepReminderActive") { active: Boolean ->
       appContext.reactContext?.let {
-        SleepReminder.setActive(it.applicationContext, active, earliestNotifyClockMin)
+        SleepReminder.setActive(it.applicationContext, active)
       }
     }
   }

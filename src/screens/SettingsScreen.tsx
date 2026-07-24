@@ -1,9 +1,11 @@
 import { useRouter } from 'expo-router'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 
 import { FLAGS } from '../contracts/flags'
 import type { SleepWindow } from '../contracts/types'
+import { getNotificationsEnabled, setNotificationsEnabled } from '../systems/notifications'
+import { syncWakeReminder } from '../systems/wakeReminder'
 import { PixelButton } from '../ui/PixelButton'
 import { PixelPanel } from '../ui/PixelPanel'
 import { Screen } from '../ui/Screen'
@@ -15,10 +17,24 @@ import { formatClock } from '../ui/window'
 const DEMO_TAP_COUNT = 5
 const DEMO_TAP_WINDOW_MS = 1500
 
+/** Persisted notifications toggle (drives bedtime/wake/morning reminders). */
+function useNotificationsToggle(): [boolean, () => void] {
+  const [on, setOn] = useState(true)
+  useEffect(() => {
+    void getNotificationsEnabled().then(setOn)
+  }, [])
+  const toggle = () => {
+    const next = !on
+    setOn(next)
+    void setNotificationsEnabled(next).then(syncWakeReminder)
+  }
+  return [on, toggle]
+}
+
 export function SettingsScreen() {
   const router = useRouter()
   const { state, resetProgress, toggleDemoMode } = useGame()
-  const [notificationsOn, setNotificationsOn] = useState(true)
+  const [notificationsOn, toggleNotifications] = useNotificationsToggle()
   const taps = useRef<number[]>([])
 
   const confirmReset = () =>
@@ -55,7 +71,7 @@ export function SettingsScreen() {
           <PixelButton
             compact
             label={notificationsOn ? strings.settings_on : strings.settings_off}
-            onPress={() => setNotificationsOn((on) => !on)}
+            onPress={toggleNotifications}
           />
         </View>
       </PixelPanel>
