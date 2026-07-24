@@ -125,8 +125,6 @@ func (s *Server) handleOracle(w http.ResponseWriter, r *http.Request) {
 			log.Printf("oracle 400 client=%s: %v", clientID(r), err)
 			writeJSON(w, http.StatusBadRequest, errorResponse{Error: inputErr.msg})
 		case errors.As(err, &unavailableErr):
-			// The generic body hides the cause from the user; log the real
-			// upstream error (e.g. "OpenRouter 402: ...") so it is diagnosable.
 			log.Printf("oracle 503 client=%s: %v", clientID(r), err)
 			writeJSON(w, http.StatusServiceUnavailable, errorResponse{Error: "The oracle is unavailable."})
 		default:

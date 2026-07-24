@@ -1,23 +1,12 @@
 #!/usr/bin/env bash
-# Deploy the 8bit Sleep server to the production host. Runs in CI; needs:
-#   DEPLOY_HOST, DEPLOY_USER, DEPLOY_PASSWORD   (SSH access, GH secrets)
-#   OPENROUTER_API_KEY                          (written to the server's env, GH secret)
-# Optional: DEPLOY_DOMAIN (default <DEPLOY_HOST>.sslip.io), AI_MODEL, AI_MAX_TOKENS.
-#
-# Expects to run from the repo root after:
-#   (cd server && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o 8bit-sleep-server .)
-#   pnpm exec expo export --platform web   # static client in dist/
 set -euo pipefail
 
 : "${DEPLOY_HOST:?}" "${DEPLOY_USER:?}" "${DEPLOY_PASSWORD:?}" "${OPENROUTER_API_KEY:?}"
 DOMAIN="${DEPLOY_DOMAIN:-${DEPLOY_HOST}.sslip.io}"
 ORIGIN="https://${DOMAIN}"
 APP_DIR=/opt/8bit-sleep
-# openrouter/free routes to a random free model (no per-token cost); override
-# via the AI_MODEL env/secret. Free models share one account-wide daily cap.
 AI_MODEL="${AI_MODEL:-openrouter/free}"
 AI_MAX_TOKENS="${AI_MAX_TOKENS:-600}"
-# 8080 is taken by a dockerized backend on the host; 8091 is the default here.
 PORT="${PORT:-8091}"
 
 SSH_OPTS="-o StrictHostKeyChecking=accept-new -o ConnectTimeout=15"

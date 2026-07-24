@@ -54,11 +54,6 @@ jobs:
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          # Model is configurable: set an AI_MODEL repo secret to override.
-          # Default openrouter/free routes to a random free model (no per-token
-          # cost). All free models share one account-wide daily cap: 50/day at $0
-          # balance, 1000/day after a one-time $10 deposit (free calls never spend
-          # it). At the cap every free model 429s -> server 503.
           AI_MODEL: ${{ secrets.AI_MODEL || 'openrouter/free' }}
           AI_MAX_TOKENS: '600'
         run: tools/deploy/deploy.sh

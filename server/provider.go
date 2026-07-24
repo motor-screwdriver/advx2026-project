@@ -15,9 +15,6 @@ import (
 )
 
 const openRouterURL = "https://openrouter.ai/api/v1/chat/completions"
-// defaultModel is OpenRouter's free-models router: it routes each request to a
-// random available free model, so there is no per-token cost (only the
-// account-wide free-models-per-day cap). Override with AI_MODEL.
 const defaultModel = "openrouter/free"
 const defaultMaxTokens = 300
 
