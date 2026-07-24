@@ -1,16 +1,16 @@
-import { Link } from 'expo-router';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Link } from 'expo-router'
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
 
-import { FLAGS } from '../contracts/flags';
-import { PixelButton } from '../ui/PixelButton';
-import { strings } from '../ui/strings';
-import { theme } from '../ui/theme';
-import { useGame, type DebugPreset } from '../ui/useGame';
+import { FLAGS } from '../contracts/flags'
+import { PixelButton } from '../ui/PixelButton'
+import { strings } from '../ui/strings'
+import { theme } from '../ui/theme'
+import { useGame, type DebugPreset } from '../ui/useGame'
 
 interface DebugRoute {
-  href: string;
-  label: string;
+  href: string
+  label: string
 }
 
 const ROUTES: DebugRoute[] = [
@@ -25,23 +25,20 @@ const ROUTES: DebugRoute[] = [
   { href: '/heroes', label: strings.heroes_title },
   { href: '/tutorial', label: strings.tutorial_title },
   { href: '/settings', label: strings.settings_title },
-];
+]
 
 const PRESETS: { preset: DebugPreset; label: string }[] = [
   { preset: 'empty', label: strings.debug_empty },
   { preset: 'mid', label: strings.debug_mid },
   { preset: 'death', label: strings.debug_death },
-];
+]
 
 /** Temporary M0-M1 navigation + state presets. Removed before release. */
 export function DebugMenu() {
-  const { loadDebugPreset } = useGame();
-  let routes = FLAGS.raids
-    ? [...ROUTES, { href: '/raid-lobby', label: strings.raid_title }]
-    : ROUTES;
-  routes = FLAGS.artGallery
-    ? [...routes, { href: '/art-gallery', label: strings.gallery_title }]
-    : routes;
+  const { loadDebugPreset } = useGame()
+  const routes = FLAGS.artGallery
+    ? [...ROUTES, { href: '/art-gallery', label: strings.gallery_title }]
+    : ROUTES
   return (
     <View style={styles.menu}>
       <Text style={styles.heading}>{strings.debug_title}</Text>
@@ -59,7 +56,7 @@ export function DebugMenu() {
         ))}
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -76,4 +73,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: theme.spacing(2),
   },
-});
+})

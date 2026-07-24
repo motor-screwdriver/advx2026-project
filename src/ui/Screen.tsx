@@ -1,27 +1,44 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React from 'react'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { theme } from './theme';
+import { theme } from './theme'
 
 interface Props {
-  title?: string;
-  children: React.ReactNode;
+  title?: string
+  /** Wrap the body in a vertical ScrollView for long/overflowing content. */
+  scroll?: boolean
+  children: React.ReactNode
 }
 
 /** Base screen: safe area, dark bg, optional gold title with rule. */
-export function Screen({ title, children }: Props) {
+export function Screen({ title, scroll = false, children }: Props) {
+  const body = title ? (
+    <>
+      <View style={styles.header}>
+        <Text style={styles.title}>{title}</Text>
+        <View style={styles.rule} />
+      </View>
+      {children}
+    </>
+  ) : (
+    children
+  )
   return (
     <SafeAreaView style={styles.safe}>
-      {title ? (
-        <View style={styles.header}>
-          <Text style={styles.title}>{title}</Text>
-          <View style={styles.rule} />
-        </View>
-      ) : null}
-      {children}
+      {scroll ? (
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollBody}
+          showsVerticalScrollIndicator={false}
+        >
+          {body}
+        </ScrollView>
+      ) : (
+        body
+      )}
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -30,6 +47,12 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.bg,
     padding: theme.spacing(4),
     gap: theme.spacing(4),
+  },
+  scroll: { flex: 1, marginHorizontal: -theme.spacing(4), marginVertical: -theme.spacing(4) },
+  scrollBody: {
+    padding: theme.spacing(4),
+    gap: theme.spacing(4),
+    paddingBottom: theme.spacing(8),
   },
   header: {
     alignItems: 'center',
@@ -45,4 +68,4 @@ const styles = StyleSheet.create({
     height: theme.borderWidth,
     backgroundColor: theme.colors.gold,
   },
-});
+})

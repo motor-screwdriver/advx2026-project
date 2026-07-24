@@ -1,6 +1,6 @@
-const expoConfig = require('eslint-config-expo/flat');
-const prettierConfig = require('eslint-config-prettier');
-const boundaries = require('eslint-plugin-boundaries');
+const expoConfig = require('eslint-config-expo/flat')
+const prettierConfig = require('eslint-config-prettier')
+const boundaries = require('eslint-plugin-boundaries')
 
 // Module ownership map (see docs "пайплайн разработки команды"): one dev per
 // folder; contracts are frozen and import nothing; engine stays UI-free;
@@ -12,28 +12,27 @@ const ELEMENTS = [
   { type: 'ui', pattern: 'src/ui/**/*', partialMatch: false },
   { type: 'screens', pattern: 'src/screens/**/*', partialMatch: false },
   { type: 'systems', pattern: 'src/systems/**/*', partialMatch: false },
-  { type: 'sync', pattern: 'src/sync/**/*', partialMatch: false },
   { type: 'app', pattern: 'app/**/*', partialMatch: false },
-];
+]
 
 const disallowAnyOf = (types) => ({
   disallow: { to: { element: { types: { anyOf: types } } } },
-});
+})
 
 const BOUNDARY_POLICIES = [
   {
     from: { element: { type: 'contracts' } },
-    ...disallowAnyOf(['engine', 'state', 'ui', 'screens', 'systems', 'sync', 'app']),
+    ...disallowAnyOf(['engine', 'state', 'ui', 'screens', 'systems', 'app']),
   },
   {
     from: { element: { type: 'engine' } },
-    ...disallowAnyOf(['ui', 'screens', 'systems', 'sync', 'app']),
+    ...disallowAnyOf(['ui', 'screens', 'systems', 'app']),
   },
-  { from: { element: { type: 'screens' } }, ...disallowAnyOf(['engine', 'sync']) },
-  { from: { element: { type: 'app' } }, ...disallowAnyOf(['engine', 'state', 'systems', 'sync']) },
-];
+  { from: { element: { type: 'screens' } }, ...disallowAnyOf(['engine']) },
+  { from: { element: { type: 'app' } }, ...disallowAnyOf(['engine', 'state', 'systems']) },
+]
 
-const expoEntries = Array.isArray(expoConfig) ? expoConfig : expoConfig.default;
+const expoEntries = Array.isArray(expoConfig) ? expoConfig : expoConfig.default
 
 module.exports = [
   ...expoEntries,
@@ -64,4 +63,4 @@ module.exports = [
   },
   prettierConfig,
   { ignores: ['node_modules/**', '.expo/**', 'dist/**', 'coverage/**'] },
-];
+]

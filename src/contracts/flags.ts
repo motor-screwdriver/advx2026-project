@@ -2,11 +2,10 @@
 export const FLAGS = {
   levels: true,
   chests: true,
-  raids: false,
   healthSync: false,
   eink: true,
   selfieFace: false,
   artGallery: true,
-} as const;
+} as const
 
-export type FlagName = keyof typeof FLAGS;
+export type FlagName = keyof typeof FLAGS
