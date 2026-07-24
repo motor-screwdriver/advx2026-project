@@ -314,6 +314,22 @@
       "path": "pixellab/icons/cos_scarf.png",
       "width": 64
     },
+    "guide_moon_crest": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "pixellab/icons/guide_moon_crest.png",
+      "width": 64
+    },
+    "guide_sleep_book": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "pixellab/icons/guide_sleep_book.png",
+      "width": 64
+    },
     "heart_armor": {
       "frameHeight": 64,
       "frameWidth": 64,
@@ -461,6 +477,14 @@
       "height": 192,
       "path": "pixellab/sprites/gravestone.png",
       "width": 192
+    },
+    "guide_luma": {
+      "frameHeight": 256,
+      "frameWidth": 256,
+      "frames": 2,
+      "height": 256,
+      "path": "pixellab/sprites/guide_luma.png",
+      "width": 512
     },
     "hero_druid": {
       "frameHeight": 256,

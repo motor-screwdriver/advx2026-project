@@ -1,0 +1,59 @@
+name: Deploy server
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  EXPO_NO_TELEMETRY: 1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      # Optional: set when a real domain replaces the sslip.io one.
+      DEPLOY_DOMAIN: ${{ secrets.DEPLOY_DOMAIN }}
+    steps:
+      # Baked into the web client; deploy.sh derives the same origin for its
+      # health check, so there is one source of truth (DEPLOY_HOST).
+      - name: Resolve API origin
+        run: echo "EXPO_PUBLIC_API_ORIGIN=https://${DEPLOY_DOMAIN:-${DEPLOY_HOST}.sslip.io}" >> "$GITHUB_ENV"
+
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.26'
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Test Go backend
+        run: go vet ./... && go test ./...
+        working-directory: server
+
+      - name: Build Go backend (linux/amd64, static)
+        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags='-s -w' -o 8bit-sleep-server .
+        working-directory: server
+
+      - name: Export static web client
+        run: pnpm exec expo export --platform web
+
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Deploy to production
+        env:
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          AI_MODEL: google/gemma-4-26b-a4b-it:free
+          AI_MAX_TOKENS: '600'
+        run: tools/deploy/deploy.sh

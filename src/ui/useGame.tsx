@@ -8,73 +8,73 @@
  * earned (Perfect Week), where the mock always rolled loot. ChestScreen
  * already handles a null loot state.
  */
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext, useMemo } from 'react'
 
-import { mockGameState } from '../contracts/mock';
+import { mockGameState } from '../contracts/mock'
 import type {
   ArtifactId,
   ChestLoot,
   GameState,
   NightEvaluation,
   SleepWindow,
-} from '../contracts/types';
-import { useGameStore } from '../state/store';
-import type { EngineMeta } from '../state/store';
+} from '../contracts/types'
+import type { EngineMeta } from '../state/store'
+import { useGameStore } from '../state/store'
 // Dev D seam: systems bootstrap + real e-ink push (src/systems).
-import { initSystems, SystemsLayer } from '../systems';
-import { customizeWidgets as customizeEinkWidgets } from '../systems/eink';
-import { scanDeviceId as scanEinkDeviceId } from '../systems/nfc';
+import { initSystems, SystemsLayer } from '../systems'
+import { customizeWidgets as customizeEinkWidgets } from '../systems/eink'
+import { scanDeviceId as scanEinkDeviceId } from '../systems/nfc'
 
-export type DebugPreset = 'empty' | 'mid' | 'death';
+export type DebugPreset = 'empty' | 'mid' | 'death'
 
 interface GameApi {
-  state: GameState;
-  lastEvaluation: NightEvaluation | null;
-  pendingBedTime: number | null;
-  completeOnboarding: (window: SleepWindow) => void;
-  sleepNow: () => void;
-  wakeNow: () => NightEvaluation;
-  canResurrect: () => boolean;
-  resurrect: () => void;
-  startNewHero: () => void;
-  openChest: () => ChestLoot | null;
-  equip: (slot: 'armor' | 'charm', artifact: ArtifactId) => void;
-  changeWindow: (window: SleepWindow) => void;
-  resetProgress: () => void;
-  toggleDemoMode: () => void;
-  customizeWidgets: (deviceId: string, apiKey: string) => void;
-  scanDeviceId: () => Promise<string | null>;
-  loadDebugPreset: (preset: DebugPreset) => void;
+  state: GameState
+  lastEvaluation: NightEvaluation | null
+  pendingBedTime: number | null
+  completeOnboarding: (window: SleepWindow) => void
+  sleepNow: () => void
+  wakeNow: () => NightEvaluation
+  canResurrect: () => boolean
+  resurrect: () => void
+  startNewHero: () => void
+  openChest: () => ChestLoot | null
+  equip: (slot: 'armor' | 'charm', artifact: ArtifactId) => void
+  changeWindow: (window: SleepWindow) => boolean
+  resetProgress: () => void
+  toggleDemoMode: () => void
+  customizeWidgets: (deviceId: string, apiKey: string) => void
+  scanDeviceId: () => Promise<string | null>
+  loadDebugPreset: (preset: DebugPreset) => void
 }
 
-const GameContext = createContext<GameApi | null>(null);
+const GameContext = createContext<GameApi | null>(null)
 
 const EMPTY_META: EngineMeta = {
   windowChangedAt: null,
   secondWindUsedAt: null,
-};
+}
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
-  const game = useGameStore((s) => s.game);
-  const lastEvaluation = useGameStore((s) => s.lastEvaluation);
-  const pendingBedTime = useGameStore((s) => s.pendingBedTime);
-  const hydrated = useGameStore((s) => s.hydrated);
+  const game = useGameStore((s) => s.game)
+  const lastEvaluation = useGameStore((s) => s.lastEvaluation)
+  const pendingBedTime = useGameStore((s) => s.pendingBedTime)
+  const hydrated = useGameStore((s) => s.hydrated)
   React.useEffect(() => {
-    initSystems(); // Dev D: notifications, demo panel wiring, e-ink triggers
-  }, []);
+    initSystems() // Dev D: notifications, demo panel wiring, e-ink triggers
+  }, [])
   const api = useMemo<GameApi>(
     () => buildApi(game, lastEvaluation, pendingBedTime),
     [game, lastEvaluation, pendingBedTime],
-  );
+  )
   if (!hydrated) {
-    return null; // wait for AsyncStorage rehydration, avoid an onboarding flash
+    return null // wait for AsyncStorage rehydration, avoid an onboarding flash
   }
   return (
     <GameContext.Provider value={api}>
       {children}
       <SystemsLayer />
     </GameContext.Provider>
-  );
+  )
 }
 
 function buildApi(
@@ -87,52 +87,50 @@ function buildApi(
     lastEvaluation,
     pendingBedTime,
     completeOnboarding: (window) => {
-      useGameStore.getState().setWindow(window);
-      useGameStore.getState().assignHeroForWindow();
+      useGameStore.getState().setWindow(window)
+      useGameStore.getState().assignHeroForWindow()
     },
     sleepNow: () => useGameStore.getState().checkIn('bed'),
     wakeNow: () => {
-      useGameStore.getState().checkIn('wake');
-      return useGameStore.getState().evaluateCurrentNight();
+      useGameStore.getState().checkIn('wake')
+      return useGameStore.getState().evaluateCurrentNight()
     },
     canResurrect: () => useGameStore.getState().canResurrect(),
     resurrect: () => useGameStore.getState().applyResurrection(true),
     startNewHero: () => useGameStore.getState().startNewHero(),
     openChest: () => useGameStore.getState().openChest(),
     equip: (slot, artifact) => useGameStore.getState().equip(slot, artifact),
-    changeWindow: (window) => {
-      useGameStore.getState().changeWindow(window);
-    },
+    changeWindow: (window) => useGameStore.getState().changeWindow(window),
     resetProgress: () => useGameStore.getState().reset(),
     toggleDemoMode: () => useGameStore.getState().toggleDemoMode(),
     // Dev D: push both e-ink widgets now (silently no-ops while FLAGS.eink is off).
     customizeWidgets: (deviceId, apiKey) => {
-      void customizeEinkWidgets(deviceId, apiKey);
+      void customizeEinkWidgets(deviceId, apiKey)
     },
     // Dev D: native NFC scan of the Quote tag → parsed device ID (null in Expo Go).
     scanDeviceId: () => scanEinkDeviceId(),
     loadDebugPreset,
-  };
+  }
 }
 
 /** Dev presets for screen work: real GameState shapes through the real store. */
 function loadDebugPreset(preset: DebugPreset): void {
   if (preset === 'empty') {
-    useGameStore.getState().reset();
+    useGameStore.getState().reset()
   }
   if (preset === 'mid') {
     // pendingChest so the Chest screen has something to open.
-    useGameStore.setState({ game: mockGameState(), meta: EMPTY_META, pendingChest: true });
+    useGameStore.setState({ game: mockGameState(), meta: EMPTY_META, pendingChest: true })
   }
   if (preset === 'death') {
-    useGameStore.setState({ game: { ...mockGameState(), hp: 0 }, meta: EMPTY_META });
+    useGameStore.setState({ game: { ...mockGameState(), hp: 0 }, meta: EMPTY_META })
   }
 }
 
 export function useGame(): GameApi {
-  const api = useContext(GameContext);
+  const api = useContext(GameContext)
   if (!api) {
-    throw new Error('useGame must be used inside <GameProvider>');
+    throw new Error('useGame must be used inside <GameProvider>')
   }
-  return api;
+  return api
 }

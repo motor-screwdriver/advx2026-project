@@ -29,7 +29,7 @@ export function SettingsScreen() {
         style: 'destructive',
         onPress: () => {
           resetProgress()
-          router.replace('/onboarding')
+          router.replace('/oracle')
         },
       },
     ])
@@ -45,7 +45,10 @@ export function SettingsScreen() {
 
   return (
     <Screen title={strings.settings_title} scroll>
-      <WindowPanel window={state.window} />
+      <WindowPanel
+        window={state.window}
+        onChange={() => router.push({ pathname: '/onboarding', params: { mode: 'change' } })}
+      />
       <PixelPanel>
         <View style={styles.row}>
           <Text style={styles.label}>{strings.settings_notifications}</Text>
@@ -67,14 +70,14 @@ export function SettingsScreen() {
   )
 }
 
-function WindowPanel({ window }: { window: SleepWindow | null }) {
+function WindowPanel({ window, onChange }: { window: SleepWindow | null; onChange: () => void }) {
   return (
     <PixelPanel>
       <Text style={styles.label}>{strings.settings_window}</Text>
       <Text style={styles.value}>
         {window ? `${formatClock(window.bedMin)} - ${formatClock(window.wakeMin)}` : '-'}
       </Text>
-      <PixelButton compact disabled label={strings.settings_change} />
+      <PixelButton compact label={strings.settings_change} onPress={onChange} />
     </PixelPanel>
   )
 }

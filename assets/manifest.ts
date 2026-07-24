@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 // GENERATED FILE — produced by tools/pixelate.py / tools/generate_audio.py.
 // Do not edit by hand; rerun the pipeline instead. This manifest is the ONLY
 // supported way for UI code to reference game assets (PROMPT C §6).
@@ -38,6 +39,14 @@ export const SPRITES = {
     frames: 1,
     frameWidth: 192,
     frameHeight: 192,
+  },
+  guide_luma: {
+    source: require('./pixellab/sprites/guide_luma.png'),
+    width: 512,
+    height: 256,
+    frames: 2,
+    frameWidth: 256,
+    frameHeight: 256,
   },
   hero_druid: {
     source: require('./pixellab/sprites/hero_druid.png'),
@@ -698,6 +707,22 @@ export const ICONS = {
   },
   cos_scarf: {
     source: require('./pixellab/icons/cos_scarf.png'),
+    width: 64,
+    height: 64,
+    frames: 1,
+    frameWidth: 64,
+    frameHeight: 64,
+  },
+  guide_moon_crest: {
+    source: require('./pixellab/icons/guide_moon_crest.png'),
+    width: 64,
+    height: 64,
+    frames: 1,
+    frameWidth: 64,
+    frameHeight: 64,
+  },
+  guide_sleep_book: {
+    source: require('./pixellab/icons/guide_sleep_book.png'),
     width: 64,
     height: 64,
     frames: 1,

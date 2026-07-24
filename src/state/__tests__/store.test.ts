@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import mockAsyncStorage from '@react-native-async-storage/async-storage/jest/async-storage-mock'
 import { useGameStore } from '../store'
 
-jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage)
+jest.mock('@react-native-async-storage/async-storage', () =>
+  jest.requireActual('@react-native-async-storage/async-storage/jest/async-storage-mock'),
+)
 
 const WINDOW = { bedMin: 690, wakeMin: 1140 } // 23:30 → 07:00 → rogue
 const DAY1 = new Date('2026-07-15T08:00:00Z')

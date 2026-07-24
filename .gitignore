@@ -44,3 +44,7 @@ assets/_src/
 # generated native folders
 /ios
 /android
+
+# Go backend toolchain and build artifacts
+tools/.go/
+/server/8bit-sleep-server

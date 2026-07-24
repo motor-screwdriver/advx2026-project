@@ -6,7 +6,7 @@
  */
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
-import { createJSONStorage, persist } from 'zustand/middleware'
+import { createJSONStorage, persist, type StateStorage } from 'zustand/middleware'
 
 import type { GameEvent } from '../contracts/events'
 import type {
@@ -27,6 +27,16 @@ import {
   tryResurrect,
   tryUseHourglass,
 } from './actions'
+
+type ProcessLike = { env?: Record<string, string | undefined> }
+const nodeEnv = (globalThis as typeof globalThis & { process?: ProcessLike }).process?.env?.NODE_ENV
+const isServerRender = typeof window === 'undefined' && nodeEnv !== 'test'
+const serverStorage: StateStorage = {
+  getItem: async () => null,
+  setItem: async () => undefined,
+  removeItem: async () => undefined,
+}
+const gameStorage = createJSONStorage(() => (isServerRender ? serverStorage : AsyncStorage))
 
 /** Weekly charges and cooldowns that are not part of the frozen GameState. */
 export interface EngineMeta {
@@ -144,7 +154,7 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: '8bit-sleep/game',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: gameStorage,
       partialize: (s) => ({
         game: s.game,
         meta: s.meta,
@@ -154,7 +164,9 @@ export const useGameStore = create<GameStore>()(
         lastEvaluation: s.lastEvaluation,
       }),
       onRehydrateStorage: () => () => {
-        useGameStore.setState({ hydrated: true })
+        if (!isServerRender) {
+          useGameStore.setState({ hydrated: true })
+        }
       },
     },
   ),
