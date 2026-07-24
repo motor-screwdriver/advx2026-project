@@ -141,7 +141,7 @@ func TestNightlineConversionClearsSuggestions(t *testing.T) {
 		"message":     "Then let the night hold you gently, scholar of two crafts.",
 		"suggestions": []any{"should be dropped"},
 		"bedTime":     "23:00",
-		"wakeTime":    "09:00",
+		"wakeTime":    "07:00",
 		"reason":      "It guards your office mornings and leaves the evening for your quests.",
 	})
 	response, err := buildOracleResponse(context.Background(), bodyWithTurns(conversation), factoryFor(provider))
@@ -152,8 +152,8 @@ func TestNightlineConversionClearsSuggestions(t *testing.T) {
 	if rec == nil {
 		t.Fatal("expected a recommendation")
 	}
-	if rec.BedMin != 660 || rec.WakeMin != 1260 {
-		t.Fatalf("recommendation = %+v, want bedMin 660 wakeMin 1260", rec)
+	if rec.BedMin != 660 || rec.WakeMin != 1140 {
+		t.Fatalf("recommendation = %+v, want bedMin 660 wakeMin 1140", rec)
 	}
 	if len(response.Reply.Suggestions) != 0 {
 		t.Fatalf("suggestions should be cleared, got %v", response.Reply.Suggestions)
@@ -220,6 +220,62 @@ func TestImpossibleAndMalformedWindowsDropped(t *testing.T) {
 	}
 	if response.Reply.Recommendation != nil {
 		t.Fatalf("malformed window should be dropped, got %+v", response.Reply.Recommendation)
+	}
+}
+
+// Luma's window is restricted: bedtime 20:00-00:00, wake 04:00-10:00 (inclusive).
+// Anything outside is dropped, even when the 7-12h duration rule would pass.
+func TestOracleWindowBounds(t *testing.T) {
+	dropped := []struct {
+		name string
+		bed  string
+		wake string
+	}{
+		{"bedtime before 20:00", "19:45", "04:00"},
+		{"bedtime after midnight", "00:30", "08:00"},
+		{"wake before 04:00", "20:00", "03:30"},
+		{"wake after 10:00", "23:30", "10:30"},
+	}
+	for _, tc := range dropped {
+		provider := providerWith(map[string]any{
+			"message": "Try this.", "suggestions": []any{},
+			"bedTime": tc.bed, "wakeTime": tc.wake, "reason": "No.",
+		})
+		response, err := buildOracleResponse(context.Background(), bodyWithTurns(conversation), factoryFor(provider))
+		if err != nil {
+			t.Fatalf("%s: unexpected error: %v", tc.name, err)
+		}
+		if response.Reply.Recommendation != nil {
+			t.Fatalf("%s: window %s-%s should be dropped, got %+v", tc.name, tc.bed, tc.wake, response.Reply.Recommendation)
+		}
+	}
+
+	kept := []struct {
+		name    string
+		bed     string
+		wake    string
+		bedMin  int
+		wakeMin int
+	}{
+		{"earliest bedtime and wake", "20:00", "04:00", 480, 960},
+		{"latest bedtime and wake", "00:00", "10:00", 720, 1320},
+	}
+	for _, tc := range kept {
+		provider := providerWith(map[string]any{
+			"message": "Try this.", "suggestions": []any{},
+			"bedTime": tc.bed, "wakeTime": tc.wake, "reason": "No.",
+		})
+		response, err := buildOracleResponse(context.Background(), bodyWithTurns(conversation), factoryFor(provider))
+		if err != nil {
+			t.Fatalf("%s: unexpected error: %v", tc.name, err)
+		}
+		rec := response.Reply.Recommendation
+		if rec == nil {
+			t.Fatalf("%s: boundary window %s-%s should be kept", tc.name, tc.bed, tc.wake)
+		}
+		if rec.BedMin != tc.bedMin || rec.WakeMin != tc.wakeMin {
+			t.Fatalf("%s: recommendation = %+v, want bedMin %d wakeMin %d", tc.name, rec, tc.bedMin, tc.wakeMin)
+		}
 	}
 }
 
