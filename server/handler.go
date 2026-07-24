@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log"
 	"net"
 	"net/http"
 	"strings"
@@ -123,8 +124,10 @@ func (s *Server) handleOracle(w http.ResponseWriter, r *http.Request) {
 		case errors.As(err, &inputErr):
 			writeJSON(w, http.StatusBadRequest, errorResponse{Error: inputErr.msg})
 		case errors.As(err, &unavailableErr):
+			log.Printf("oracle unavailable: %v", err)
 			writeJSON(w, http.StatusServiceUnavailable, errorResponse{Error: "The oracle is unavailable."})
 		default:
+			log.Printf("oracle error: %v", err)
 			writeJSON(w, http.StatusInternalServerError, errorResponse{Error: "The oracle is unavailable."})
 		}
 		return

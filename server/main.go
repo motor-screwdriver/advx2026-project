@@ -8,14 +8,18 @@ import (
 )
 
 func main() {
+	host := os.Getenv("HOST")
+	if host == "" {
+		host = "127.0.0.1"
+	}
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8091"
+		port = "8080"
 	}
 	if os.Getenv("OPENROUTER_API_KEY") == "" {
 		log.Println("warning: OPENROUTER_API_KEY is not set; /api/oracle will answer 503")
 	}
-	addr := "127.0.0.1:" + port
+	addr := host + ":" + port
 	// WriteTimeout must outlast the upstream provider timeout (60s).
 	server := &http.Server{
 		Addr:              addr,
