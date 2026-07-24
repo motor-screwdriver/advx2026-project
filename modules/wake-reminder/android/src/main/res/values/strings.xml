@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="wake_channel_name">Wake reminder</string>
+  <string name="wake_title">Morning, hero!</string>
+  <string name="wake_body">The night quest is over — mark your wake-up to claim the loot.</string>
+  <string name="wake_action">Wake up</string>
+</resources>
