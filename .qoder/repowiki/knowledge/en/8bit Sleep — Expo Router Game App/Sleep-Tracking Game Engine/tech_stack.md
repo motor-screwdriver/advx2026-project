@@ -1,0 +1,1 @@
+TypeScript with no runtime framework — pure functions operating on plain objects. Deterministic testing via injectable `rng()` parameters (e.g. in `rollChestLoot`) and injectable `Date` arguments (e.g. `nowNightLine`, `applyHourglass`, `canResurrection`).

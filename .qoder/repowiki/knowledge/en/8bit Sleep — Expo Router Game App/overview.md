@@ -1,0 +1,1 @@
+Monorepo root for the 8bit Sleep game, wiring an Expo Router React Native app whose screens, Zustand store, pure game engine, device integrations, pixel-art UI components, and Python asset pipeline are organized as sibling modules.

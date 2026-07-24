@@ -1,0 +1,3 @@
+- Each route file exports a default function component named `*Route` that immediately returns its corresponding `*Screen` component imported from `../src/screens/*`.
+- Global app initialization (fonts loading, providers, navigator configuration) is centralized in `_layout.tsx` rather than repeated per route.
+- Navigation decisions that depend on game state (e.g., onboarding redirect) are handled at the `index.tsx` entry point using `Redirect` from expo-router instead of imperative navigation calls.

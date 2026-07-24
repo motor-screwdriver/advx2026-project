@@ -1,0 +1,1 @@
+Pluggable device and OS integrations for the game — e-ink Dot Quote pushes, local bedtime/morning notifications, NFC device scanning, and a hidden demo panel that simulates nights through the real store.

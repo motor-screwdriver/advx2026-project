@@ -1,0 +1,10 @@
+schema_version: 1
+module_path: tools
+title: 8bit Sleep Art & Audio Pipeline Tools
+scope:
+  - tools/
+source_files: []
+depends_on: []
+related_to:
+  - path: game_engine
+  - path: ui_components

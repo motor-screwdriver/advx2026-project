@@ -1,0 +1,6 @@
+- All visual styling goes through the shared `theme` object — colors via `theme.colors.*`, spacing via `theme.spacing(units)`, typography via `theme.type.*`, and borders via `theme.borderWidth` / `theme.borderRadius`.
+- Components are declared as named function exports with a `Props` interface defined immediately above, and use `StyleSheet.create` for all style objects.
+- Animation hooks return an `Animated.Value` managed by `useRef` and driven by `setInterval` with `Animated.Value.setValue` (not `.start`) to avoid React re-renders, keeping motion on the native driver.
+- Pure domain logic is split into separate `.ts` files (e.g. `soulTetherLogic.ts`, `window.ts`, `timeOfDay.ts`) containing only functions and constants, while the corresponding `.tsx` component handles only rendering and event wiring.
+- Game state access is always through the `useGame()` context hook rather than direct store imports, keeping screens decoupled from the engine implementation.
+- Hand-authored pixel art is stored as `as const` string arrays of equal-length rows in dedicated modules (`sceneBitmaps.ts`) and consumed by `PixelArt` with per-phase color maps.

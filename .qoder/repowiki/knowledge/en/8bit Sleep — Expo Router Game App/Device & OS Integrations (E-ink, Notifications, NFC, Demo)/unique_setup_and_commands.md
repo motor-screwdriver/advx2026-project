@@ -1,0 +1,1 @@
+E-ink and NFC features require a custom dev/production build (not Expo Go) because `react-native-view-shot`, `expo-notifications`, and `react-native-nfc-manager` cannot load in Expo Go. The `healthSync` spike is intentionally disabled (`FLAGS.healthSync = false`) and returns null; enabling it would require platform-specific entitlements (iOS HealthKit / Android Health Connect).

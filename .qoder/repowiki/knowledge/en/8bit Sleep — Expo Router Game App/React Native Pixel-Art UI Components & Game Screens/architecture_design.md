@@ -1,0 +1,7 @@
+The module is organized into three layers:
+
+- **Theme & tokens** (`theme.ts`, `fonts.ts`): a single design-token object exposing colors, type scale, spacing function, and the Press Start 2P font name; fonts are loaded via Expo's `useFonts` with graceful fallback.
+- **Reusable primitives** (`PixelSprite.tsx`, `PixelButton.tsx`, `PixelPanel.tsx`, `PixelBar.tsx`, `HeartRow.tsx`, `FloatingButton.tsx`, `WheelPicker.tsx`, `Screen.tsx`): stateless React Native components built exclusively from `theme` tokens, using `StyleSheet.create` for static styles and `Pressable`/`Image`/`Text` for interactions.
+- **Scene & animation layer** (`PixelArt.tsx`, `sceneBitmaps.ts`, `SceneBanner.tsx`, `SceneClouds.tsx`, `SceneGrass.tsx`, `SceneSun.tsx`, `DayNightBackground.tsx`, `HeroSprite.tsx`, `animations.ts`, `usePixelMotion.ts`, `timeOfDay.ts`): hand-authored ASCII bitmaps rendered as pixel art, animated via React Native's `Animated` API with discrete `setValue` ticks to achieve chunky pixel motion without re-rendering the React tree.
+- **Game integration** (`useGame.tsx`, `SoulTether.tsx`, `soulTetherLogic.ts`, `window.ts`): `GameProvider` wraps the app in a React Context exposing a `GameApi` that proxies calls to the Zustand store in `../state/store`; pure logic files (`soulTetherLogic.ts`, `window.ts`, `timeOfDay.ts`) keep business rules separate from rendering.
+  Dependency direction is strictly inward: components depend on `theme` and `useGame`, never on screen-level state or external systems directly. Tests live under `__tests__/` alongside their source modules.

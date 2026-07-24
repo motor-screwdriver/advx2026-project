@@ -1,0 +1,1 @@
+Zustand with `zustand/middleware`'s `persist` and `createJSONStorage` backed by `@react-native-async-storage/async-storage` for cross-platform persistence. TypeScript-only contracts define the frozen M0 API surface.
