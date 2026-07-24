@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#eab54d"
+    android:padding="2dp">
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:gravity="center_vertical"
+      android:background="#221812"
+      android:padding="12dp">
+
+    <ImageView
+        android:id="@+id/wake_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:contentDescription="@string/wake_channel_name" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical">
+
+      <TextView
+          android:id="@+id/wake_title"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/wake_title"
+          android:textColor="#eab54d"
+          android:textSize="14sp"
+          android:textStyle="bold" />
+
+      <TextView
+          android:id="@+id/wake_body"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="4dp"
+          android:text="@string/wake_body"
+          android:textColor="#f5e6c8"
+          android:textSize="12sp" />
+    </LinearLayout>
+  </LinearLayout>
+
+  <Button
+      android:id="@+id/wake_button"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="12dp"
+      android:layout_marginEnd="12dp"
+      android:layout_marginBottom="10dp"
+      android:backgroundTint="#eab54d"
+      android:text="@string/wake_action"
+      android:textColor="#221812"
+      android:textStyle="bold" />
+</LinearLayout>
