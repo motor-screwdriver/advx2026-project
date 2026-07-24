@@ -1,9 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
+// The AsyncStorage mock is registered globally in jest.setup.ts.
 import { useGameStore } from '../store'
-
-jest.mock('@react-native-async-storage/async-storage', () =>
-  jest.requireActual('@react-native-async-storage/async-storage/jest/async-storage-mock'),
-)
 
 const WINDOW = { bedMin: 690, wakeMin: 1140 } // 23:30 → 07:00 → rogue
 const DAY1 = new Date('2026-07-15T08:00:00Z')
@@ -49,6 +45,25 @@ describe('onboarding and night flow', () => {
     expect(s.pendingBedTime).toBeNull()
     expect(s.lastEvaluation?.outcome).toBe('PERFECT')
     expect(s.events.map((e) => e.type)).toContain('NIGHT_EVALUATED')
+  })
+})
+
+describe('rapid-tap guards (re-entrant sleep/wake)', () => {
+  it('ignores a wake check-in when not asleep and records no phantom night', () => {
+    onboard()
+    playNight(690, 1140, DAY1)
+    useGameStore.getState().checkIn('wake', 800) // stale double-tap after the turn
+    const s = useGameStore.getState()
+    expect(s.pendingWakeTime).toBeNull()
+    expect(s.evaluateCurrentNight(DAY1).hpDelta).toBe(0) // nothing pending → neutral no-op
+    expect(useGameStore.getState().game.nights).toHaveLength(1)
+  })
+
+  it('ignores a second bed check-in while already asleep', () => {
+    onboard()
+    useGameStore.getState().checkIn('bed', 690)
+    useGameStore.getState().checkIn('bed', 700) // double tap must not move the bedtime
+    expect(useGameStore.getState().pendingBedTime).toBe(690)
   })
 })
 
