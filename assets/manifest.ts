@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 // GENERATED FILE — produced by tools/pixelate.py / tools/generate_audio.py.
 // Do not edit by hand; rerun the pipeline instead. This manifest is the ONLY
 // supported way for UI code to reference game assets (PROMPT C §6).
@@ -510,6 +509,14 @@ export const SPRITES_1BIT = {
 } as const satisfies Record<string, SpriteEntry>
 
 export const SCENES = {
+  book_page: {
+    source: require('./pixellab/scenes/book_page.png'),
+    width: 180,
+    height: 360,
+    frames: 1,
+    frameWidth: 180,
+    frameHeight: 360,
+  },
   scene_bad: {
     source: require('./pixellab/scenes/scene_bad.png'),
     width: 3072,
@@ -956,9 +963,154 @@ export const ATMO = {
     frameWidth: 256,
     frameHeight: 256,
   },
+  world_night_far: {
+    source: require('./pixellab/atmo/world_night_far.png'),
+    width: 768,
+    height: 128,
+    frames: 1,
+    frameWidth: 768,
+    frameHeight: 128,
+  },
+  world_night_mid: {
+    source: require('./pixellab/atmo/world_night_mid.png'),
+    width: 768,
+    height: 153,
+    frames: 1,
+    frameWidth: 768,
+    frameHeight: 153,
+  },
 } as const satisfies Record<string, SpriteEntry>
 
-export const DESIGN = {} as const satisfies Record<string, SpriteEntry>
+export const DESIGN = {
+  gen_book_page_right_crop: {
+    source: require('./design/gen/book_page_right_crop.png'),
+    width: 244,
+    height: 233,
+    frames: 1,
+    frameWidth: 244,
+    frameHeight: 233,
+  },
+  gen_booktransition_scene: {
+    source: require('./design/gen/booktransition_scene.png'),
+    width: 256,
+    height: 352,
+    frames: 1,
+    frameWidth: 256,
+    frameHeight: 352,
+  },
+  gen_chest_open_scene: {
+    source: require('./design/gen/chest_open_scene.png'),
+    width: 200,
+    height: 168,
+    frames: 1,
+    frameWidth: 200,
+    frameHeight: 168,
+  },
+  gen_heroes_bust_druid: {
+    source: require('./design/gen/heroes_bust_druid.png'),
+    width: 64,
+    height: 64,
+    frames: 1,
+    frameWidth: 64,
+    frameHeight: 64,
+  },
+  gen_heroes_bust_knight: {
+    source: require('./design/gen/heroes_bust_knight.png'),
+    width: 64,
+    height: 64,
+    frames: 1,
+    frameWidth: 64,
+    frameHeight: 64,
+  },
+  gen_heroes_bust_mage: {
+    source: require('./design/gen/heroes_bust_mage.png'),
+    width: 64,
+    height: 64,
+    frames: 1,
+    frameWidth: 64,
+    frameHeight: 64,
+  },
+  gen_heroes_bust_monk: {
+    source: require('./design/gen/heroes_bust_monk.png'),
+    width: 64,
+    height: 64,
+    frames: 1,
+    frameWidth: 64,
+    frameHeight: 64,
+  },
+  gen_heroes_bust_ninja: {
+    source: require('./design/gen/heroes_bust_ninja.png'),
+    width: 64,
+    height: 64,
+    frames: 1,
+    frameWidth: 64,
+    frameHeight: 64,
+  },
+  gen_heroes_bust_paladin: {
+    source: require('./design/gen/heroes_bust_paladin.png'),
+    width: 64,
+    height: 64,
+    frames: 1,
+    frameWidth: 64,
+    frameHeight: 64,
+  },
+  gen_heroes_bust_ranger: {
+    source: require('./design/gen/heroes_bust_ranger.png'),
+    width: 64,
+    height: 64,
+    frames: 1,
+    frameWidth: 64,
+    frameHeight: 64,
+  },
+  gen_heroes_bust_rogue: {
+    source: require('./design/gen/heroes_bust_rogue.png'),
+    width: 64,
+    height: 64,
+    frames: 1,
+    frameWidth: 64,
+    frameHeight: 64,
+  },
+  gen_heroes_bust_warlock: {
+    source: require('./design/gen/heroes_bust_warlock.png'),
+    width: 64,
+    height: 64,
+    frames: 1,
+    frameWidth: 64,
+    frameHeight: 64,
+  },
+  gen_tether_scene: {
+    source: require('./design/gen/tether_scene.png'),
+    width: 200,
+    height: 200,
+    frames: 1,
+    frameWidth: 200,
+    frameHeight: 200,
+  },
+  gen_tutorial_p1: {
+    source: require('./design/gen/tutorial_p1.png'),
+    width: 160,
+    height: 160,
+    frames: 1,
+    frameWidth: 160,
+    frameHeight: 160,
+  },
+  gen_tutorial_p2: {
+    source: require('./design/gen/tutorial_p2.png'),
+    width: 160,
+    height: 160,
+    frames: 1,
+    frameWidth: 160,
+    frameHeight: 160,
+  },
+  gen_tutorial_p3: {
+    source: require('./design/gen/tutorial_p3.png'),
+    width: 160,
+    height: 160,
+    frames: 1,
+    frameWidth: 160,
+    frameHeight: 160,
+  },
+} as const satisfies Record<string, SpriteEntry>
 
 export const AUDIO = {
   music_day: { source: require('./audio/music_day.wav'), durationSec: 14.4, loop: true },

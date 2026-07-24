@@ -4,16 +4,17 @@ import { StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { playMusic } from '../systems/audio'
+import { BookView } from '../ui/BookView'
 import { DayNightBackground } from '../ui/DayNightBackground'
 import { GearButton } from '../ui/GearButton'
 import { HeartRow } from '../ui/HeartRow'
 import { HeroSprite } from '../ui/HeroSprite'
+import { NightWorld } from '../ui/NightWorld'
 import { strings } from '../ui/strings'
 import { GoldButton, TavernBar, WoodButton, WoodPanel, tavernColors } from '../ui/tavern'
 import { theme } from '../ui/theme'
 import { getDayPhase, type DayPhase } from '../ui/timeOfDay'
 import { useGame } from '../ui/useGame'
-import { useHeroWalk } from '../ui/useHeroWalk'
 import { DevTools } from './DevTools'
 
 const MAX_HP = 7
@@ -58,7 +59,6 @@ function HeroHome() {
   const asleep = pendingBedTime !== null
 
   usePhaseMusic(asleep)
-  const walk = useHeroWalk(asleep)
 
   // The wake/sleep pushes keep Home mounted below the stack, and its buttons
   // stay live during the transition — re-entrant taps caused phantom wakes and
@@ -92,20 +92,52 @@ function HeroHome() {
   }
 
   return (
-    <HomeScene phase={getDayPhase()} traveling={asleep}>
-      <TopBar hp={state.hp} streak={state.perfectWeekStreak} level={hero.level} />
-      <View style={styles.heroWrap}>
+    <View style={styles.root}>
+      <HeroStage asleep={asleep} state={state} />
+      <SafeAreaView style={styles.safe} pointerEvents="box-none">
+        {asleep ? (
+          <TopBar hp={state.hp} streak={state.perfectWeekStreak} level={hero.level} />
+        ) : null}
+        <View style={styles.stageSpacer} pointerEvents="none" />
+        <Dock asleep={asleep} onToggleSleep={asleep ? onWake : onSleep} />
+        <DevTools />
+      </SafeAreaView>
+    </View>
+  )
+}
+
+/** Awake: the inked character-sheet book. Asleep: the hero walking the living night world. */
+function HeroStage({
+  asleep,
+  state,
+}: {
+  asleep: boolean
+  state: ReturnType<typeof useGame>['state']
+}) {
+  const hero = state.hero!
+  if (!asleep) {
+    return (
+      <BookView
+        heroType={hero.type}
+        hp={state.hp}
+        level={hero.level}
+        streak={state.perfectWeekStreak}
+      />
+    )
+  }
+  return (
+    <View style={StyleSheet.absoluteFill}>
+      <NightWorld />
+      <View style={styles.walkSlot} pointerEvents="none">
         <HeroSprite
           type={hero.type}
           size={HERO_SIZE}
-          walking={walk.walking}
-          fps={walk.walking ? 6 : 2}
+          walking
+          fps={6}
           gold={state.perfectWeekStreak >= MAX_HP}
         />
       </View>
-      <Dock asleep={asleep} onToggleSleep={asleep ? onWake : onSleep} />
-      <DevTools />
-    </HomeScene>
+    </View>
   )
 }
 
@@ -179,10 +211,10 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: theme.colors.bg },
   safe: {
     flex: 1,
-    paddingHorizontal: theme.spacing(3),
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-    gap: theme.spacing(3),
+    paddingHorizontal: theme.screenPad,
+    paddingTop: theme.screenPad,
+    paddingBottom: theme.screenPad,
+    gap: theme.screenPad,
   },
   topPanelWell: { gap: theme.spacing(3) },
   xpRow: {
@@ -217,12 +249,8 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
   },
   xpBarWrap: { flex: 1 },
-  heroWrap: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingBottom: theme.spacing(6),
-  },
+  stageSpacer: { flex: 1 },
+  walkSlot: { position: 'absolute', left: 0, right: 0, bottom: '16%', alignItems: 'center' },
   dockWell: {
     flexDirection: 'row',
     alignItems: 'center',

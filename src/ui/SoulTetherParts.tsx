@@ -1,5 +1,5 @@
 import React from 'react'
-import { Animated, Image, StyleSheet, Text, View } from 'react-native'
+import { Animated, Image, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 
 import { ICONS, type SpriteEntry } from '../../assets/manifest'
 import { PixelSprite } from './PixelSprite'
@@ -33,9 +33,15 @@ const SCENE: SpriteEntry = {
 
 /** The wraith-and-tether illustration in a dark wood-edged panel. */
 export function TetherScene() {
+  const { width: winW } = useWindowDimensions()
+  // TavernFrame: outer padding 8 + border 2 + inner padding 12 on each side.
+  const frameW = winW - 2 * (theme.spacing(2) + 2 + theme.spacing(3))
+  // sceneEdge: border 1 + padding 4 on each side.
+  const wellW = frameW - 2 * (1 + 4)
+  const wellH = Math.round((wellW * SCENE.height) / SCENE.width)
   return (
     <View style={styles.sceneEdge}>
-      <View style={[styles.sceneWell, { aspectRatio: SCENE.width / SCENE.height }]}>
+      <View style={[styles.sceneWell, { width: wellW, height: wellH }]}>
         <Image source={SCENE.source} style={styles.scene} resizeMode="cover" />
       </View>
     </View>
@@ -121,7 +127,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: tavernColors.dark,
   },
-  sceneWell: { width: '100%', overflow: 'hidden', backgroundColor: '#0b0705' },
+  sceneWell: { overflow: 'hidden', backgroundColor: '#0b0705' },
   scene: { width: '100%', height: '100%' },
   pips: { flexDirection: 'row', justifyContent: 'center', gap: theme.spacing(4) },
   pip: {

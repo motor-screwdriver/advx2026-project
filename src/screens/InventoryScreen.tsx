@@ -7,7 +7,14 @@ import { ICONS } from '../../assets/manifest'
 import type { ArtifactId } from '../contracts/types'
 import { PixelSprite } from '../ui/PixelSprite'
 import { strings } from '../ui/strings'
-import { ScreenTitle, tavernColors, TavernFrame, WoodButton, WoodPanel } from '../ui/tavern'
+import {
+  ScreenTitle,
+  tavernColors,
+  TavernFrame,
+  tavernLayout,
+  WoodButton,
+  WoodPanel,
+} from '../ui/tavern'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
 
@@ -74,7 +81,7 @@ export function InventoryScreen() {
               ))
             )}
           </WoodPanel>
-          <WoodButton label={copy.close} onPress={() => router.back()} style={styles.close} />
+          <WoodButton label={copy.close} onPress={() => router.back()} />
         </ScrollView>
       </TavernFrame>
     </SafeAreaView>
@@ -162,7 +169,7 @@ function ArtifactRow({ artifact, count, equipped, onEquip, showDivider }: RowPro
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#150d08' },
-  stack: { gap: theme.spacing(4), paddingBottom: theme.spacing(2) },
+  stack: { gap: tavernLayout.sectionGap, paddingBottom: theme.spacing(2) },
   slots: { flexDirection: 'row', gap: theme.spacing(3) },
   slotColumn: { flex: 1, gap: theme.spacing(2) },
   slotLabel: {
@@ -219,5 +226,4 @@ const styles = StyleSheet.create({
   rowCount: { ...theme.type.body, color: theme.colors.text },
   rowActions: { flexDirection: 'row', gap: theme.spacing(2) },
   rowButton: { flex: 1 },
-  close: { marginHorizontal: theme.spacing(6) },
 })

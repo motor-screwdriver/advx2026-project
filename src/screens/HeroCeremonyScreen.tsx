@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router'
-import React, { useEffect, useRef, useState } from 'react'
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useRef } from 'react'
+import { Animated, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 
 import type { HeroType } from '../contracts/types'
 import { makePop, makeShake, useFadeIn } from '../ui/animations'
@@ -9,7 +9,7 @@ import { HeroSprite } from '../ui/HeroSprite'
 import { PixelButton } from '../ui/PixelButton'
 import { Screen } from '../ui/Screen'
 import { strings } from '../ui/strings'
-import { TavernFrame, WoodPanel, tavernColors } from '../ui/tavern'
+import { tavernColors, TavernFrame, WoodPanel } from '../ui/tavern'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
 
@@ -26,15 +26,21 @@ function IllustrationBand({
   scale: Animated.Value
   shakeX: Animated.Value
 }) {
-  const [bandWidth, setBandWidth] = useState(0)
-  const heroSize = bandWidth > 0 ? bandWidth * 0.44 : 140
+  const { width: winW } = useWindowDimensions()
+  // TavernFrame: outer padding 8 + border 2 + inner padding 12 on each side.
+  const bandWidth = winW - 2 * (theme.spacing(2) + 2 + theme.spacing(3))
+  const bandHeight = bandWidth / 1.2
+  const circleWidth = bandWidth * 0.62
+  const heroSize = bandWidth * 0.44
 
   return (
     <Animated.View
-      style={[styles.band, { transform: [{ translateX: shakeX }] }]}
-      onLayout={(e) => setBandWidth(e.nativeEvent.layout.width)}
+      style={[
+        styles.band,
+        { width: bandWidth, height: bandHeight, transform: [{ translateX: shakeX }] },
+      ]}
     >
-      <View style={styles.circle} />
+      <View style={[styles.circle, { width: circleWidth, height: circleWidth / 2.6 }]} />
       <Animated.View style={[styles.heroWrap, { transform: [{ scale }] }]}>
         <HeroSprite type={heroType} size={heroSize} />
       </Animated.View>
@@ -137,16 +143,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   band: {
-    width: '100%',
-    aspectRatio: 1.2,
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
   circle: {
     position: 'absolute',
     bottom: '8%',
-    width: '62%',
-    aspectRatio: 2.6,
     borderRadius: 999,
     backgroundColor: tavernColors.goldEdge,
     borderWidth: 2,

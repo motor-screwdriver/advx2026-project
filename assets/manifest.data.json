@@ -127,6 +127,22 @@
       "height": 256,
       "path": "pixellab/atmo/sun_morning.png",
       "width": 256
+    },
+    "world_night_far": {
+      "frameHeight": 128,
+      "frameWidth": 768,
+      "frames": 1,
+      "height": 128,
+      "path": "pixellab/atmo/world_night_far.png",
+      "width": 768
+    },
+    "world_night_mid": {
+      "frameHeight": 153,
+      "frameWidth": 768,
+      "frames": 1,
+      "height": 153,
+      "path": "pixellab/atmo/world_night_mid.png",
+      "width": 768
     }
   },
   "audio": {
@@ -161,7 +177,136 @@
       "path": "audio/sfx_victory.wav"
     }
   },
-  "design": {},
+  "design": {
+    "gen_book_page_right_crop": {
+      "frameHeight": 233,
+      "frameWidth": 244,
+      "frames": 1,
+      "height": 233,
+      "path": "design/gen/book_page_right_crop.png",
+      "width": 244
+    },
+    "gen_booktransition_scene": {
+      "frameHeight": 352,
+      "frameWidth": 256,
+      "frames": 1,
+      "height": 352,
+      "path": "design/gen/booktransition_scene.png",
+      "width": 256
+    },
+    "gen_chest_open_scene": {
+      "frameHeight": 168,
+      "frameWidth": 200,
+      "frames": 1,
+      "height": 168,
+      "path": "design/gen/chest_open_scene.png",
+      "width": 200
+    },
+    "gen_heroes_bust_druid": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_druid.png",
+      "width": 64
+    },
+    "gen_heroes_bust_knight": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_knight.png",
+      "width": 64
+    },
+    "gen_heroes_bust_mage": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_mage.png",
+      "width": 64
+    },
+    "gen_heroes_bust_monk": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_monk.png",
+      "width": 64
+    },
+    "gen_heroes_bust_ninja": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_ninja.png",
+      "width": 64
+    },
+    "gen_heroes_bust_paladin": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_paladin.png",
+      "width": 64
+    },
+    "gen_heroes_bust_ranger": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_ranger.png",
+      "width": 64
+    },
+    "gen_heroes_bust_rogue": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_rogue.png",
+      "width": 64
+    },
+    "gen_heroes_bust_warlock": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_warlock.png",
+      "width": 64
+    },
+    "gen_tether_scene": {
+      "frameHeight": 200,
+      "frameWidth": 200,
+      "frames": 1,
+      "height": 200,
+      "path": "design/gen/tether_scene.png",
+      "width": 200
+    },
+    "gen_tutorial_p1": {
+      "frameHeight": 160,
+      "frameWidth": 160,
+      "frames": 1,
+      "height": 160,
+      "path": "design/gen/tutorial_p1.png",
+      "width": 160
+    },
+    "gen_tutorial_p2": {
+      "frameHeight": 160,
+      "frameWidth": 160,
+      "frames": 1,
+      "height": 160,
+      "path": "design/gen/tutorial_p2.png",
+      "width": 160
+    },
+    "gen_tutorial_p3": {
+      "frameHeight": 160,
+      "frameWidth": 160,
+      "frames": 1,
+      "height": 160,
+      "path": "design/gen/tutorial_p3.png",
+      "width": 160
+    }
+  },
   "icons": {
     "app_icon": {
       "frameHeight": 1024,
@@ -429,6 +574,14 @@
     }
   },
   "scenes": {
+    "book_page": {
+      "frameHeight": 360,
+      "frameWidth": 180,
+      "frames": 1,
+      "height": 360,
+      "path": "pixellab/scenes/book_page.png",
+      "width": 180
+    },
     "scene_bad": {
       "frameHeight": 576,
       "frameWidth": 1024,

@@ -26,9 +26,9 @@ export const colors = {
 
   rareBlue: '#57a8e8', // Rare loot frame
   epicViolet: '#a179e6', // Epic loot frame
-} as const;
+} as const
 
-export const GAME_FONT = 'press-start';
+export const GAME_FONT = 'press-start'
 
 /**
  * Type scale. Press Start 2P is a display font: legible from ~10px up,
@@ -38,7 +38,7 @@ export const type = {
   title: { fontFamily: GAME_FONT, fontSize: 18, lineHeight: 28, letterSpacing: 1 },
   body: { fontFamily: GAME_FONT, fontSize: 10, lineHeight: 18 },
   label: { fontFamily: GAME_FONT, fontSize: 8, lineHeight: 14, letterSpacing: 1 },
-} as const;
+} as const
 
 export const theme = {
   colors,
@@ -47,4 +47,6 @@ export const theme = {
   borderWidth: 1,
   borderRadius: 4,
   spacing: (units: number) => units * 4,
-} as const;
+  /** One consistent screen inset for every block/button margin (see DESIGN.md). */
+  screenPad: 16,
+} as const

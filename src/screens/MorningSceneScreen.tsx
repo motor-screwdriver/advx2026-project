@@ -8,7 +8,7 @@ import { playSfx } from '../systems/audio'
 import { PixelSprite } from '../ui/PixelSprite'
 import { RewardRow } from '../ui/RewardRow'
 import { strings } from '../ui/strings'
-import { GoldButton, tavernColors, TavernFrame, WoodPanel } from '../ui/tavern'
+import { GoldButton, tavernColors, TavernFrame, tavernLayout, WoodPanel } from '../ui/tavern'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
 
@@ -68,8 +68,8 @@ function SceneHero({
   title: { text: string; tone: Tone }
 }) {
   const { width } = useWindowDimensions()
-  // TavernFrame: outer padding 8 + border 2 + inner padding 12 on each side.
-  const sceneWidth = width - 2 * (theme.spacing(2) + 2 + theme.spacing(3))
+  // TavernFrame: outer padding 8 + border 2 + inner screenPad on each side.
+  const sceneWidth = width - 2 * (theme.spacing(2) + 2 + tavernLayout.screenPad)
   return (
     <View style={styles.sceneFrame}>
       <PixelSprite sprite={SCENES[SCENE_KEYS[outcome]]} size={sceneWidth} animated fps={3} />
@@ -156,13 +156,13 @@ export function MorningSceneScreen() {
 const styles = StyleSheet.create({
   stack: {
     flex: 1,
-    gap: theme.spacing(4),
+    gap: tavernLayout.sectionGap,
     justifyContent: 'center',
   },
   empty: {
     flex: 1,
     justifyContent: 'center',
-    gap: theme.spacing(4),
+    gap: tavernLayout.sectionGap,
   },
   dim: {
     ...theme.type.body,
