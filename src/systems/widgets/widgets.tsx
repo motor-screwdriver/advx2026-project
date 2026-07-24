@@ -61,7 +61,6 @@ export function SleepStatsWidget({ data }: { data: HomeWidgetData }) {
         </FlexWidget>
         <FlexWidget style={styles.streakBox}>
           <FlexWidget style={styles.streakTitle}>
-            <ImageWidget image={MOON} imageWidth={16} imageHeight={16} />
             <TextWidget text="SLEEP STREAK" style={styles.label} />
           </FlexWidget>
           <TextWidget text={String(data.sleepStreak)} style={styles.statBig} />
