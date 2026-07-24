@@ -10,15 +10,21 @@ import { strings } from '../ui/strings'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
 import { WheelPicker } from '../ui/WheelPicker'
-import { formatClock, formatDuration, isValidWindow } from '../ui/window'
+import { formatClock, formatDuration, MAX_SLEEP_MIN, MIN_SLEEP_MIN } from '../ui/window'
 
 const STEP = 15
 const range = (from: number, to: number) =>
   Array.from({ length: (to - from) / STEP + 1 }, (_, i) => from + i * STEP)
 
-// Bedtime 18:00..03:00, wake 00:00..12:00 (night-line minutes from noon).
-const BED_VALUES = range(360, 900)
-const WAKE_VALUES = range(720, 1440)
+// Bedtime 20:00..00:00, wake 04:00..10:00 (night-line minutes from noon).
+const BED_MIN = 480
+const BED_MAX = 720
+const WAKE_MIN = 960
+const WAKE_MAX = 1320
+const BED_VALUES = range(BED_MIN, BED_MAX)
+const WAKE_VALUES = range(WAKE_MIN, WAKE_MAX)
+
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 
 function minuteParam(
   value: string | string[] | undefined,
@@ -30,6 +36,25 @@ function minuteParam(
   return Number.isInteger(parsed) && parsed % STEP === 0 && parsed >= min && parsed <= max
     ? parsed
     : fallback
+}
+
+/** Warning text for an invalid window duration, or null when valid. */
+function windowWarning(bedMin: number, wakeMin: number): string | null {
+  const duration = wakeMin - bedMin
+  if (duration < MIN_SLEEP_MIN) {
+    return strings.onboarding_min_hours
+  }
+  if (duration > MAX_SLEEP_MIN) {
+    return strings.onboarding_max_hours
+  }
+  return null
+}
+
+function screenTitle(editing: boolean, adjusted: boolean): string {
+  if (editing) {
+    return strings.onboarding_change_title
+  }
+  return adjusted ? strings.onboarding_adjust_title : strings.onboarding_title
 }
 
 export function OnboardingScreen() {
@@ -44,15 +69,16 @@ export function OnboardingScreen() {
   const editing = params.mode === 'change'
   const adjusted = params.source === 'oracle'
   const initialBed = editing
-    ? (state.window?.bedMin ?? 690)
-    : minuteParam(params.bedMin, 690, 360, 900)
+    ? clamp(state.window?.bedMin ?? 690, BED_MIN, BED_MAX)
+    : minuteParam(params.bedMin, 690, BED_MIN, BED_MAX)
   const initialWake = editing
-    ? (state.window?.wakeMin ?? 1140)
-    : minuteParam(params.wakeMin, 1140, 720, 1440)
+    ? clamp(state.window?.wakeMin ?? 1140, WAKE_MIN, WAKE_MAX)
+    : minuteParam(params.wakeMin, 1140, WAKE_MIN, WAKE_MAX)
   const [bedMin, setBedMin] = useState(initialBed)
   const [wakeMin, setWakeMin] = useState(initialWake)
   const [blocked, setBlocked] = useState(false)
-  const valid = isValidWindow({ bedMin, wakeMin })
+  const warning = windowWarning(bedMin, wakeMin)
+  const valid = warning === null
 
   const begin = () => {
     if (editing) {
@@ -67,11 +93,7 @@ export function OnboardingScreen() {
     router.replace('/hero-ceremony')
   }
 
-  const title = editing
-    ? strings.onboarding_change_title
-    : adjusted
-      ? strings.onboarding_adjust_title
-      : strings.onboarding_title
+  const title = screenTitle(editing, adjusted)
   const compactIntro = editing ? strings.onboarding_change_body : strings.onboarding_adjust_body
 
   return (
@@ -81,6 +103,7 @@ export function OnboardingScreen() {
       bedMin={bedMin}
       wakeMin={wakeMin}
       valid={valid}
+      warning={warning}
       blocked={blocked}
       editing={editing}
       showBack={editing || adjusted}
@@ -98,6 +121,7 @@ interface OnboardingViewProps {
   bedMin: number
   wakeMin: number
   valid: boolean
+  warning: string | null
   blocked: boolean
   editing: boolean
   showBack: boolean
@@ -128,7 +152,7 @@ function OnboardingView(props: OnboardingViewProps) {
       <Text style={styles.duration}>
         {strings.onboarding_duration}: {formatDuration(props.wakeMin - props.bedMin)}
       </Text>
-      {!props.valid && <Text style={styles.warning}>{strings.onboarding_min_hours}</Text>}
+      {props.warning && <Text style={styles.warning}>{props.warning}</Text>}
       {props.blocked && <Text style={styles.warning}>{strings.onboarding_change_blocked}</Text>}
       <PixelButton
         label={props.editing ? strings.onboarding_save : strings.onboarding_begin}

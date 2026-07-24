@@ -140,7 +140,7 @@ func TestNightlineConversionClearsSuggestions(t *testing.T) {
 	provider := providerWith(map[string]any{
 		"message":     "Then let the night hold you gently, scholar of two crafts.",
 		"suggestions": []any{"should be dropped"},
-		"bedTime":     "01:00",
+		"bedTime":     "23:00",
 		"wakeTime":    "09:00",
 		"reason":      "It guards your office mornings and leaves the evening for your quests.",
 	})
@@ -152,8 +152,8 @@ func TestNightlineConversionClearsSuggestions(t *testing.T) {
 	if rec == nil {
 		t.Fatal("expected a recommendation")
 	}
-	if rec.BedMin != 780 || rec.WakeMin != 1260 {
-		t.Fatalf("recommendation = %+v, want bedMin 780 wakeMin 1260", rec)
+	if rec.BedMin != 660 || rec.WakeMin != 1260 {
+		t.Fatalf("recommendation = %+v, want bedMin 660 wakeMin 1260", rec)
 	}
 	if len(response.Reply.Suggestions) != 0 {
 		t.Fatalf("suggestions should be cleared, got %v", response.Reply.Suggestions)

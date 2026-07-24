@@ -4,6 +4,10 @@
  * still import a single flat object.
  */
 export const stringsExtra = {
+  // Onboarding duration warnings
+  onboarding_min_hours: 'Minimum 7 hours',
+  onboarding_max_hours: 'Maximum 12 hours',
+
   // Sleep journal
   journal_title: 'Sleep journal',
   journal_empty: 'No nights recorded yet. Your story starts tonight!',
