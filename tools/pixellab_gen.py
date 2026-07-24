@@ -100,9 +100,10 @@ def cmd_balance(_args):
 
 
 def cmd_image(args):
+    height = args.height if args.height is not None else args.size
     payload = {
         "description": args.description,
-        "image_size": {"width": args.size, "height": args.size},
+        "image_size": {"width": args.size, "height": height},
         "no_background": args.no_bg,
     }
     if args.negative:
@@ -162,7 +163,8 @@ def main():
 
     p_img = sub.add_parser("image", help="text-to-pixel-art (pixflux)")
     p_img.add_argument("description")
-    p_img.add_argument("--size", type=int, default=64, help="square side, 16-400 (default 64)")
+    p_img.add_argument("--size", type=int, default=64, help="width, 16-400 (default 64)")
+    p_img.add_argument("--height", type=int, help="height, 16-400 (default: same as --size)")
     p_img.add_argument("--no-bg", action="store_true", help="transparent background")
     p_img.add_argument("--negative", help="negative prompt")
     p_img.add_argument("--seed", type=int)

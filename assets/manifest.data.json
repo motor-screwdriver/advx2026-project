@@ -133,12 +133,12 @@
     "music_day": {
       "durationSec": 14.4,
       "loop": true,
-      "path": "audio/music_day.wav"
+      "path": "audio/main_theme.mp3"
     },
     "music_night": {
       "durationSec": 16.0,
       "loop": true,
-      "path": "audio/music_night.wav"
+      "path": "audio/main_theme.mp3"
     },
     "sfx_chest": {
       "durationSec": 0.8,
@@ -161,6 +161,7 @@
       "path": "audio/sfx_victory.wav"
     }
   },
+  "design": {},
   "icons": {
     "app_icon": {
       "frameHeight": 1024,
@@ -249,6 +250,22 @@
       "height": 64,
       "path": "pixellab/icons/art_warm_blanket.png",
       "width": 64
+    },
+    "book_cover": {
+      "frameHeight": 416,
+      "frameWidth": 320,
+      "frames": 1,
+      "height": 416,
+      "path": "pixellab/icons/book_cover.png",
+      "width": 320
+    },
+    "book_open": {
+      "frameHeight": 352,
+      "frameWidth": 400,
+      "frames": 1,
+      "height": 352,
+      "path": "pixellab/icons/book_open.png",
+      "width": 400
     },
     "cos_aura": {
       "frameHeight": 64,

@@ -16,6 +16,7 @@ import { DemoPanel } from './DemoPanel'
 import { scheduleEinkPush } from './eink'
 import { EinkCardHost } from './einkCard'
 import { configureNotificationHandler, syncNotifications } from './notifications'
+import { initWakeReminderListener, syncWakeReminder } from './wakeReminder'
 import { armWidgetLiveSync, buildWidgetData, syncHomeWidgets } from './widgets'
 
 let initialized = false
@@ -26,7 +27,9 @@ export function initSystems(): void {
   }
   initialized = true
   configureNotificationHandler()
+  initWakeReminderListener()
   void resyncNotifications()
+  void syncWakeReminder()
   useGameStore.subscribe(onStoreChange)
   // Widget taps in this shared context are redrawn by the subscription —
   // the headless click handler must not draw a second time (flicker).
@@ -44,6 +47,9 @@ function onStoreChange(state: GameStore, prev: GameStore): void {
   const p = prev.game
   if (g.window !== p.window || g.nights !== p.nights) {
     void resyncNotifications()
+  }
+  if (state.pendingBedTime !== prev.pendingBedTime) {
+    void syncWakeReminder()
   }
   const lastEvent = state.events[state.events.length - 1]
   const prevLastEvent = prev.events[prev.events.length - 1]

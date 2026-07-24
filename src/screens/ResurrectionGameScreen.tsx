@@ -1,67 +1,102 @@
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { useRouter } from 'expo-router'
+import React, { useState } from 'react'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { SCENES } from '../../assets/manifest';
-import { playSfx } from '../systems/audio';
-import { PixelButton } from '../ui/PixelButton';
-import { SceneBanner } from '../ui/SceneBanner';
-import { Screen } from '../ui/Screen';
-import { SoulTether } from '../ui/SoulTether';
-import { strings } from '../ui/strings';
-import { theme } from '../ui/theme';
-import { useGame } from '../ui/useGame';
+import { playSfx } from '../systems/audio'
+import { SoulTether } from '../ui/SoulTether'
+import { TetherScene } from '../ui/SoulTetherParts'
+import { strings } from '../ui/strings'
+import {
+  GoldButton,
+  Parchment,
+  ScreenTitle,
+  TavernFrame,
+  WoodButton,
+  WoodPanel,
+  tavernColors,
+} from '../ui/tavern'
+import { theme } from '../ui/theme'
+import { useGame } from '../ui/useGame'
 
-type Phase = 'playing' | 'won' | 'lost';
+type Phase = 'playing' | 'won' | 'lost'
+
+/** Header: riveted wood plaque with the title. */
+function Header() {
+  return (
+    <WoodPanel style={styles.headerPanel} contentStyle={styles.headerWell}>
+      <ScreenTitle title={strings.death_soul_tether} size={20} />
+    </WoodPanel>
+  )
+}
+
+/** Outcome: verdict on parchment plus the way out (revive or new hero). */
+function ResultPhase({ phase, onFinish }: { phase: Phase; onFinish: () => void }) {
+  return (
+    <View style={styles.game}>
+      <TetherScene />
+      <Parchment>
+        <Text style={[styles.resultText, phase === 'lost' && styles.resultLost]}>
+          {phase === 'won' ? strings.soul_success : strings.soul_fail}
+        </Text>
+      </Parchment>
+      {phase === 'won' ? (
+        <GoldButton label={strings.morning_continue} onPress={onFinish} />
+      ) : (
+        <WoodButton label={strings.death_new_hero} onPress={onFinish} />
+      )}
+    </View>
+  )
+}
 
 export function ResurrectionGameScreen() {
-  const router = useRouter();
-  const { resurrect, startNewHero } = useGame();
-  const [phase, setPhase] = useState<Phase>('playing');
+  const router = useRouter()
+  const { resurrect, startNewHero } = useGame()
+  const [phase, setPhase] = useState<Phase>('playing')
 
   const onResult = (success: boolean) => {
-    setPhase(success ? 'won' : 'lost');
+    setPhase(success ? 'won' : 'lost')
     if (success) {
-      resurrect();
-      playSfx('sfx_victory');
+      resurrect()
+      playSfx('sfx_victory')
     }
-  };
+  }
 
   const finish = () => {
     if (phase === 'won') {
-      router.dismissTo('/');
-      return;
+      router.dismissTo('/')
+      return
     }
-    startNewHero();
-    router.dismissTo('/hero-ceremony');
-  };
+    startNewHero()
+    router.dismissTo('/hero-ceremony')
+  }
 
   return (
-    <Screen title={strings.soul_title}>
-      <SceneBanner sprite={SCENES.scene_resurrection} />
-      {phase === 'playing' && <SoulTether onResult={onResult} />}
-      {phase !== 'playing' && (
-        <>
-          <Text style={[styles.result, phase === 'lost' && styles.lost]}>
-            {phase === 'won' ? strings.soul_success : strings.soul_fail}
-          </Text>
-          <PixelButton
-            label={phase === 'won' ? strings.morning_continue : strings.death_new_hero}
-            onPress={finish}
-          />
-        </>
-      )}
-    </Screen>
-  );
+    <SafeAreaView style={styles.safe}>
+      <TavernFrame>
+        <ScrollView contentContainerStyle={styles.stack} showsVerticalScrollIndicator={false}>
+          <Header />
+          {phase === 'playing' ? (
+            <SoulTether onResult={onResult} />
+          ) : (
+            <ResultPhase phase={phase} onFinish={finish} />
+          )}
+        </ScrollView>
+      </TavernFrame>
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
-  result: {
+  safe: { flex: 1, backgroundColor: '#150d08' },
+  stack: { gap: theme.spacing(3) },
+  headerPanel: { width: '100%' },
+  headerWell: { alignItems: 'center' },
+  game: { gap: theme.spacing(3) },
+  resultText: {
     ...theme.type.body,
-    color: theme.colors.leaf,
+    color: tavernColors.inkOnParchment,
     textAlign: 'center',
   },
-  lost: {
-    color: theme.colors.heartFull,
-  },
-});
+  resultLost: { color: tavernColors.danger },
+})

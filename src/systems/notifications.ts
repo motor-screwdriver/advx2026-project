@@ -36,11 +36,15 @@ let cachedModule: NotificationsModule | null | undefined
 
 function loadNotifications(): NotificationsModule | null {
   if (cachedModule === undefined) {
-    cachedModule =
-      Platform.OS === 'web' || isRunningInExpoGo()
-        ? null
-        : // eslint-disable-next-line @typescript-eslint/no-require-imports
-          (require('expo-notifications') as NotificationsModule)
+    try {
+      cachedModule =
+        Platform.OS === 'web' || isRunningInExpoGo()
+          ? null
+          : // eslint-disable-next-line @typescript-eslint/no-require-imports
+            (require('expo-notifications') as NotificationsModule)
+    } catch {
+      cachedModule = null
+    }
   }
   return cachedModule
 }

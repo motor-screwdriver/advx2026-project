@@ -649,6 +649,22 @@ export const ICONS = {
     frameWidth: 64,
     frameHeight: 64,
   },
+  book_cover: {
+    source: require('./pixellab/icons/book_cover.png'),
+    width: 320,
+    height: 416,
+    frames: 1,
+    frameWidth: 320,
+    frameHeight: 416,
+  },
+  book_open: {
+    source: require('./pixellab/icons/book_open.png'),
+    width: 400,
+    height: 352,
+    frames: 1,
+    frameWidth: 400,
+    frameHeight: 352,
+  },
   cos_aura: {
     source: require('./pixellab/icons/cos_aura.png'),
     width: 64,
@@ -942,9 +958,11 @@ export const ATMO = {
   },
 } as const satisfies Record<string, SpriteEntry>
 
+export const DESIGN = {} as const satisfies Record<string, SpriteEntry>
+
 export const AUDIO = {
-  music_day: { source: require('./audio/music_day.wav'), durationSec: 14.4, loop: true },
-  music_night: { source: require('./audio/music_night.wav'), durationSec: 16.0, loop: true },
+  music_day: { source: require('./audio/main_theme.mp3'), durationSec: 14.4, loop: true },
+  music_night: { source: require('./audio/main_theme.mp3'), durationSec: 16.0, loop: true },
   sfx_chest: { source: require('./audio/sfx_chest.wav'), durationSec: 0.8, loop: false },
   sfx_damage: {
     source: require('./audio/sfx_damage.wav'),

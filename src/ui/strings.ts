@@ -1,7 +1,10 @@
 /**
  * ALL user-facing text lives here (product language: English only).
  * Flat key-value, no i18n framework (NFR-08).
+ * Secondary screens and debug strings live in stringsExtra.ts (line cap).
  */
+import { stringsExtra } from './stringsExtra'
+
 export const strings = {
   appName: '8bit Sleep',
 
@@ -56,6 +59,7 @@ export const strings = {
   ceremony_awakens: 'answers the call',
   ceremony_flavor: 'Your sleep rhythm summoned it. All heroes are equal, only looks differ.',
   ceremony_begin: 'Begin',
+  ceremony_rare_loot: 'RARE LOOT',
 
   // Heroes (display names)
   hero_monk: 'Monk',
@@ -93,6 +97,11 @@ export const strings = {
   home_nav_bag: 'BAG',
   home_nav_heroes: 'HEROES',
   home_nav_settings: 'SETTINGS',
+  home_menu_tagline: 'THE NIGHTLY WATCH',
+
+  // Sleep transition (book carries you to the hero)
+  transition_carry: 'THE BOOK CARRIES YOU TO YOUR HERO...',
+  transition_tap: 'Tap to continue',
 
   // Night outcomes
   outcome_perfect: 'PERFECT',
@@ -100,6 +109,20 @@ export const strings = {
   outcome_bad: 'BAD',
   outcome_terrible: 'TERRIBLE',
   outcome_missed: 'MISSED',
+
+  // Banners (result headlines)
+  banner_perfect_night: 'PERFECT NIGHT',
+  banner_hero_fallen: 'YOUR HERO HAS FALLEN',
+  banner_hero_awakens: 'YOUR HERO AWAKENS',
+
+  // Reward rows
+  reward_hp: '+1 HP',
+  reward_xp: '+100 XP',
+  reward_gold_pixel: 'GOLD PIXEL EARNED',
+
+  // Stat chips
+  stat_streak: 'STREAK',
+  stat_perfect: 'PERFECT',
 
   // Morning scene
   morning_title: 'Morning report',
@@ -118,6 +141,9 @@ export const strings = {
   death_gone: 'Your hero is gone.',
   death_new_hero: 'Summon a new hero',
   death_no_charge: 'Soul Tether is recharging (1 use per 7 days).',
+  death_watch_ends: '0 HP - THE WATCH ENDS',
+  death_soul_tether: 'SOUL TETHER',
+  death_let_go: 'LET GO',
 
   soul_title: 'Soul Tether',
   soul_round: 'Round',
@@ -211,17 +237,14 @@ export const strings = {
 
   gallery_title: 'Art Gallery',
   gallery_body: 'QA wall: every pipeline asset, straight from assets/manifest.ts.',
+
   // Common
   common_back: 'Back',
   common_confirm: 'Confirm',
   common_cancel: 'Cancel',
 
-  // Debug (temporary, M0-M1)
-  debug_title: '-- Debug (temporary) --',
-  debug_presets: 'State presets',
-  debug_empty: 'Empty',
-  debug_mid: 'Mid-game',
-  debug_death: 'Death',
+  // Journal, guide and debug keys come from stringsExtra.
+  ...stringsExtra,
 } as const
 
 export type StringKey = keyof typeof strings
