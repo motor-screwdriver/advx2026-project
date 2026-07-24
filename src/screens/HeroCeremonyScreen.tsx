@@ -1,38 +1,38 @@
-import { useRouter } from 'expo-router';
-import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router'
+import React, { useEffect, useRef } from 'react'
+import { Animated, StyleSheet, Text, View } from 'react-native'
 
-import { makePop, makeShake, useFadeIn } from '../ui/animations';
-import { HeroSprite } from '../ui/HeroSprite';
-import { PixelButton } from '../ui/PixelButton';
-import { Screen } from '../ui/Screen';
-import { strings } from '../ui/strings';
-import { theme } from '../ui/theme';
-import { useGame } from '../ui/useGame';
+import { makePop, makeShake, useFadeIn } from '../ui/animations'
+import { HeroSprite } from '../ui/HeroSprite'
+import { PixelButton } from '../ui/PixelButton'
+import { Screen } from '../ui/Screen'
+import { strings } from '../ui/strings'
+import { theme } from '../ui/theme'
+import { useGame } from '../ui/useGame'
 
 /** Dramatic summon: circle, scale-pop + screen shake, name + passive. */
 export function HeroCeremonyScreen() {
-  const router = useRouter();
-  const { state } = useGame();
-  const scale = useRef(new Animated.Value(0)).current;
-  const shakeX = useRef(new Animated.Value(0)).current;
-  const fade = useFadeIn(600);
+  const router = useRouter()
+  const { state } = useGame()
+  const scale = useRef(new Animated.Value(0)).current
+  const shakeX = useRef(new Animated.Value(0)).current
+  const fade = useFadeIn(600)
 
   useEffect(() => {
-    makePop(scale).start(() => makeShake(shakeX).start());
-  }, [scale, shakeX]);
+    makePop(scale).start(() => makeShake(shakeX).start())
+  }, [scale, shakeX])
 
-  const hero = state.hero;
+  const hero = state.hero
   if (!hero) {
     return (
       <Screen title={strings.ceremony_summoning}>
         <View style={styles.filler} />
-        <PixelButton label={strings.common_back} onPress={() => router.replace('/onboarding')} />
+        <PixelButton label={strings.common_back} onPress={() => router.replace('/oracle')} />
       </Screen>
-    );
+    )
   }
 
-  const heroName = strings[`hero_${hero.type}` as keyof typeof strings];
+  const heroName = strings[`hero_${hero.type}` as keyof typeof strings]
 
   return (
     <Screen title={strings.ceremony_summoning}>
@@ -52,7 +52,7 @@ export function HeroCeremonyScreen() {
         <PixelButton label={strings.ceremony_begin} onPress={() => router.dismissTo('/')} />
       </Animated.View>
     </Screen>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -98,4 +98,4 @@ const styles = StyleSheet.create({
     color: theme.colors.leaf,
     textAlign: 'center',
   },
-});
+})

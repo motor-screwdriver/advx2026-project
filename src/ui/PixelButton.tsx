@@ -1,13 +1,13 @@
-import React from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import React from 'react'
+import { Pressable, StyleSheet, Text } from 'react-native'
 
-import { theme } from './theme';
+import { theme } from './theme'
 
 interface Props {
-  label: string;
-  onPress?: () => void;
-  compact?: boolean;
-  disabled?: boolean;
+  label: string
+  onPress?: () => void
+  compact?: boolean
+  disabled?: boolean
 }
 
 /**
@@ -17,6 +17,8 @@ interface Props {
 export function PixelButton({ label, onPress, compact, disabled }: Props) {
   return (
     <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ disabled: Boolean(disabled) }}
       onPress={disabled ? undefined : onPress}
       style={({ pressed }) => [
         styles.button,
@@ -27,7 +29,7 @@ export function PixelButton({ label, onPress, compact, disabled }: Props) {
     >
       <Text style={[styles.label, compact && styles.labelCompact]}>{label}</Text>
     </Pressable>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -61,4 +63,4 @@ const styles = StyleSheet.create({
     ...theme.type.label,
     color: theme.colors.gold,
   },
-});
+})

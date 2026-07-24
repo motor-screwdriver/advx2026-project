@@ -8,12 +8,18 @@ on:
 
 env:
   EXPO_NO_TELEMETRY: 1
+  DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+  # Optional: set when a real domain replaces the sslip.io one.
+  DEPLOY_DOMAIN: ${{ secrets.DEPLOY_DOMAIN }}
 
 jobs:
   android:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      # Baked into the native build so the app reaches the deployed Go backend.
+      - name: Resolve API origin
+        run: echo "EXPO_PUBLIC_API_ORIGIN=https://${DEPLOY_DOMAIN:-${DEPLOY_HOST}.sslip.io}" >> "$GITHUB_ENV"
       - name: Resolve version
         id: version
         run: |
@@ -63,6 +69,9 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v5
+      # Baked into the native build so the app reaches the deployed Go backend.
+      - name: Resolve API origin
+        run: echo "EXPO_PUBLIC_API_ORIGIN=https://${DEPLOY_DOMAIN:-${DEPLOY_HOST}.sslip.io}" >> "$GITHUB_ENV"
       - name: Resolve version
         id: version
         run: |

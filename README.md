@@ -34,6 +34,40 @@ Import boundaries are enforced by `eslint-plugin-boundaries` (see
 `eslint.config.js`): contracts imports nothing, engine never imports UI,
 screens never import `engine` directly.
 
+## AI oracle backend (Go)
+
+First-run onboarding is a conversation with Luma (tavern-style sleep oracle).
+The client POSTs chat turns to `/api/oracle`; the only backend is the Go
+service in `server/` (stdlib only, OpenRouter key + system prompt stay
+server-side). Wire contract: `src/contracts/aiOnboarding.ts`.
+
+Local client development runs against the deployed backend — set
+`EXPO_PUBLIC_API_ORIGIN` in `.env` (see `.env.example`). Backend changes:
+
+```bash
+cd server && go test ./...    # toolchain note: see below
+```
+
+## Deploy (CI only)
+
+`.github/workflows/deploy-server.yml` deploys on push to `main` (or manual
+dispatch): `go vet` + `go test`, cross-builds a static linux/amd64 binary,
+exports the static web client (`dist/`), then rsyncs both to the server and
+restarts systemd. Caddy terminates TLS (Let's Encrypt) and proxies `/api/*`
+to the Go service on `127.0.0.1:8091` (8091, not 8080 — that port belongs to
+another dockerized service on the host); static client lives in
+`/opt/8bit-sleep/client`, env in `/opt/8bit-sleep/server.env` (chmod 600).
+
+Required GitHub secrets: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_PASSWORD`,
+`OPENROUTER_API_KEY`; optional: `DEPLOY_DOMAIN` (when a real domain replaces
+the `<DEPLOY_HOST>.sslip.io` one). The API origin is derived from those in
+the workflows — no separate GitHub variable needed. The server needs ports
+80/443 open for the Let's Encrypt HTTP challenge. First deploy provisions
+Caddy + the systemd unit via `tools/deploy/setup-server.sh` (idempotent).
+
+A Go toolchain lives in `tools/.go/` locally (gitignored): prefix commands
+with `tools/.go/go/bin/` or add it to PATH.
+
 ## Git rules (trunk-based)
 
 - Everyone works on `main`. No branches, no pull requests.
