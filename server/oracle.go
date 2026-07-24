@@ -265,6 +265,9 @@ func buildOracleResponse(ctx context.Context, body any, newProvider func() (AiPr
 		return nil, err
 	}
 	log.Printf("oracle turns: id=%s count=%d", requestID(ctx), len(turns))
+	for i, turn := range turns {
+		log.Printf("oracle input: id=%s turn=%d role=%s chars=%d text=%q", requestID(ctx), i, turn.Role, len([]rune(turn.Text)), turn.Text)
+	}
 	provider, err := newProvider()
 	if err != nil {
 		return nil, toUnavailable(err)
