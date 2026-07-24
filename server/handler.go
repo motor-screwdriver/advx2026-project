@@ -125,10 +125,10 @@ func (s *Server) handleOracle(w http.ResponseWriter, r *http.Request) {
 			log.Printf("oracle 400 client=%s: %v", clientID(r), err)
 			writeJSON(w, http.StatusBadRequest, errorResponse{Error: inputErr.msg})
 		case errors.As(err, &unavailableErr):
-			log.Printf("oracle unavailable: %v", err)
+			log.Printf("oracle 503 client=%s: %v", clientID(r), err)
 			writeJSON(w, http.StatusServiceUnavailable, errorResponse{Error: "The oracle is unavailable."})
 		default:
-			log.Printf("oracle error: %v", err)
+			log.Printf("oracle 500 client=%s: %v", clientID(r), err)
 			writeJSON(w, http.StatusInternalServerError, errorResponse{Error: "The oracle is unavailable."})
 		}
 		return
