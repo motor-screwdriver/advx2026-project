@@ -516,6 +516,14 @@
       "path": "pixellab/icons/heart_full.png",
       "width": 64
     },
+    "ink_circle": {
+      "frameHeight": 79,
+      "frameWidth": 148,
+      "frames": 1,
+      "height": 79,
+      "path": "pixellab/icons/ink_circle.png",
+      "width": 148
+    },
     "logo": {
       "frameHeight": 1024,
       "frameWidth": 1024,
@@ -574,6 +582,62 @@
     }
   },
   "scenes": {
+    "book_menu_1": {
+      "frameHeight": 960,
+      "frameWidth": 540,
+      "frames": 1,
+      "height": 960,
+      "path": "book_menu/frame_1.png",
+      "width": 540
+    },
+    "book_menu_2": {
+      "frameHeight": 960,
+      "frameWidth": 540,
+      "frames": 1,
+      "height": 960,
+      "path": "book_menu/frame_2.png",
+      "width": 540
+    },
+    "book_menu_3": {
+      "frameHeight": 960,
+      "frameWidth": 540,
+      "frames": 1,
+      "height": 960,
+      "path": "book_menu/frame_3.png",
+      "width": 540
+    },
+    "book_menu_4": {
+      "frameHeight": 960,
+      "frameWidth": 540,
+      "frames": 1,
+      "height": 960,
+      "path": "book_menu/frame_4.png",
+      "width": 540
+    },
+    "book_menu_5": {
+      "frameHeight": 960,
+      "frameWidth": 540,
+      "frames": 1,
+      "height": 960,
+      "path": "book_menu/frame_5.png",
+      "width": 540
+    },
+    "book_menu_6": {
+      "frameHeight": 960,
+      "frameWidth": 540,
+      "frames": 1,
+      "height": 960,
+      "path": "book_menu/frame_6.png",
+      "width": 540
+    },
+    "book_menu_7": {
+      "frameHeight": 960,
+      "frameWidth": 540,
+      "frames": 1,
+      "height": 960,
+      "path": "book_menu/frame_7.png",
+      "width": 540
+    },
     "book_page": {
       "frameHeight": 360,
       "frameWidth": 180,

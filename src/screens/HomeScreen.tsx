@@ -6,22 +6,18 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { playMusic } from '../systems/audio'
 import { BookView } from '../ui/BookView'
 import { DayNightBackground } from '../ui/DayNightBackground'
-import { GearButton } from '../ui/GearButton'
-import { HeartRow } from '../ui/HeartRow'
 import { HeroSprite } from '../ui/HeroSprite'
 import { NightWorld } from '../ui/NightWorld'
 import { strings } from '../ui/strings'
-import { GoldButton, TavernBar, WoodButton, WoodPanel, tavernColors } from '../ui/tavern'
+import { GoldButton, WoodPanel } from '../ui/tavern'
 import { theme } from '../ui/theme'
 import { getDayPhase, type DayPhase } from '../ui/timeOfDay'
 import { useGame } from '../ui/useGame'
 import { DevTools } from './DevTools'
+import { Dock, TopBar } from './HomeNightDock'
 
 const MAX_HP = 7
 const HERO_SIZE = 184
-
-// Local copy (design-mockup label; not in strings.ts).
-const XP_LABEL = 'XP'
 
 export function HomeScreen() {
   const { state } = useGame()
@@ -93,27 +89,30 @@ function HeroHome() {
 
   return (
     <View style={styles.root}>
-      <HeroStage asleep={asleep} state={state} />
+      <HeroStage asleep={asleep} state={state} onSleep={onSleep} />
       <SafeAreaView style={styles.safe} pointerEvents="box-none">
         {asleep ? (
           <TopBar hp={state.hp} streak={state.perfectWeekStreak} level={hero.level} />
         ) : null}
         <View style={styles.stageSpacer} pointerEvents="none" />
-        <Dock asleep={asleep} onToggleSleep={asleep ? onWake : onSleep} />
+        {asleep ? <Dock onWake={onWake} /> : null}
         <DevTools />
       </SafeAreaView>
     </View>
   )
 }
 
-/** Awake: the inked character-sheet book. Asleep: the hero walking the living night world. */
+/** Awake: the inked character-sheet book (nav lives on the page). Asleep: the living night world. */
 function HeroStage({
   asleep,
   state,
+  onSleep,
 }: {
   asleep: boolean
   state: ReturnType<typeof useGame>['state']
+  onSleep: () => void
 }) {
+  const router = useRouter()
   const hero = state.hero!
   if (!asleep) {
     return (
@@ -122,6 +121,10 @@ function HeroStage({
         hp={state.hp}
         level={hero.level}
         streak={state.perfectWeekStreak}
+        onSleep={onSleep}
+        onBag={() => router.push('/inventory')}
+        onMosaic={() => router.push('/mosaic')}
+        onSettings={() => router.push('/settings')}
       />
     )
   }
@@ -158,55 +161,6 @@ function HomeScene({
   )
 }
 
-/** Riveted wood panel: hearts row on top, LV badge + XP bar below. */
-function TopBar({ hp, streak, level }: { hp: number; streak: number; level: number }) {
-  return (
-    <WoodPanel contentStyle={styles.topPanelWell}>
-      <HeartRow hp={hp} size={26} />
-      <View style={styles.xpRow}>
-        <View style={styles.lvBadge}>
-          <View style={styles.lvBadgeInner}>
-            <Text style={styles.lvText}>
-              {strings.home_level} {level}
-            </Text>
-          </View>
-        </View>
-        <Text style={styles.xpLabel}>{XP_LABEL}</Text>
-        <View style={styles.xpBarWrap}>
-          <TavernBar value={streak} max={MAX_HP} />
-        </View>
-      </View>
-    </WoodPanel>
-  )
-}
-
-/** Tavern dock: big gold SLEEP/WAKE UP, wood BAG + MOSAIC, round gear. */
-function Dock({ asleep, onToggleSleep }: { asleep: boolean; onToggleSleep: () => void }) {
-  const router = useRouter()
-  return (
-    <WoodPanel contentStyle={styles.dockWell}>
-      <GoldButton
-        style={styles.sleepBtn}
-        label={asleep ? strings.home_wakeup : strings.home_sleep}
-        onPress={onToggleSleep}
-      />
-      <View style={styles.dockSide}>
-        <WoodButton
-          compact
-          label={strings.home_nav_bag}
-          onPress={() => router.push('/inventory')}
-        />
-        <WoodButton
-          compact
-          label={strings.home_nav_mosaic}
-          onPress={() => router.push('/mosaic')}
-        />
-      </View>
-      <GearButton onPress={() => router.push('/settings')} />
-    </WoodPanel>
-  )
-}
-
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: theme.colors.bg },
   safe: {
@@ -216,48 +170,8 @@ const styles = StyleSheet.create({
     paddingBottom: theme.screenPad,
     gap: theme.screenPad,
   },
-  topPanelWell: { gap: theme.spacing(3) },
-  xpRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing(2.5),
-  },
-  lvBadge: {
-    backgroundColor: tavernColors.goldEdge,
-    borderWidth: 2,
-    borderColor: tavernColors.edge,
-    padding: 2,
-  },
-  lvBadgeInner: {
-    backgroundColor: '#20130b',
-    borderTopWidth: 2,
-    borderTopColor: tavernColors.goldLight,
-    borderBottomWidth: 2,
-    borderBottomColor: tavernColors.gold,
-    paddingHorizontal: theme.spacing(2.5),
-    paddingVertical: theme.spacing(1.5),
-  },
-  lvText: {
-    fontFamily: theme.fontFamily,
-    fontSize: 12,
-    lineHeight: 18,
-    letterSpacing: 1,
-    color: tavernColors.goldLight,
-  },
-  xpLabel: {
-    ...theme.type.body,
-    color: theme.colors.text,
-  },
-  xpBarWrap: { flex: 1 },
   stageSpacer: { flex: 1 },
   walkSlot: { position: 'absolute', left: 0, right: 0, bottom: '16%', alignItems: 'center' },
-  dockWell: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing(2.5),
-  },
-  sleepBtn: { flex: 1 },
-  dockSide: { width: 96, gap: theme.spacing(2) },
   emptyBox: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   emptyWell: { alignItems: 'center', gap: theme.spacing(5) },
   empty: {

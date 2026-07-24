@@ -30,6 +30,9 @@ export const colors = {
 
 export const GAME_FONT = 'press-start'
 
+/** Pixel blackletter (Jacquard 24) — the quill-written "ink on parchment" script. */
+export const SCRIPT_FONT = 'jacquard-24'
+
 /**
  * Type scale. Press Start 2P is a display font: legible from ~10px up,
  * painful below. Ratio ≥1.25 between steps; generous line heights.
@@ -44,6 +47,7 @@ export const theme = {
   colors,
   type,
   fontFamily: GAME_FONT,
+  scriptFontFamily: SCRIPT_FONT,
   borderWidth: 1,
   borderRadius: 4,
   spacing: (units: number) => units * 4,

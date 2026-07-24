@@ -1,6 +1,6 @@
 import { Image as ExpoImage } from 'expo-image'
-import React from 'react'
-import { StyleSheet, Text, View, useWindowDimensions } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native'
 
 import { SCENES, SPRITES_1BIT } from '../../assets/manifest'
 import type { HeroType } from '../contracts/types'
@@ -10,19 +10,28 @@ import { strings } from './strings'
 import { tavernColors } from './tavern'
 import { theme } from './theme'
 
-const PAGE = SCENES.book_page
-const ASPECT = PAGE.width / PAGE.height // 180 / 360 = 0.5, matches phone aspect
+// Candle-flicker backdrop: 7 hand-tuned frames of the blank book page whose
+// glow breathes (docs/book_menu, pixelated + published by tools/book_menu.py).
+const FRAMES = [
+  SCENES.book_menu_1,
+  SCENES.book_menu_2,
+  SCENES.book_menu_3,
+  SCENES.book_menu_4,
+  SCENES.book_menu_5,
+  SCENES.book_menu_6,
+  SCENES.book_menu_7,
+]
+const ASPECT = FRAMES[0].width / FRAMES[0].height // 540 / 960
+const FLICKER_MS = 130
 const MAX_HP = 7
+const INK = tavernColors.inkOnParchment
 
-// The art is one flat ornate page filling the frame: a gold illuminated
-// border with corner flourishes, a medallion at the top and a heraldic shield
-// at the bottom. These fractions of the book rect frame the clean cream area
-// between those ornaments (measured in tools/pixellab_book.py output) so the
-// stats + hero never collide with the decorations.
-const PAGE_L = 0.13
-const PAGE_W = 0.74
-const PAGE_T = 0.17
-const PAGE_H = 0.57
+// The right page of the book art. Fractions of the book rect framing the
+// clean parchment so hero, stats and buttons never spill onto wood or candle.
+const PAGE_L = 0.16
+const PAGE_W = 0.72
+const PAGE_T = 0.19
+const PAGE_H = 0.63
 
 interface Stats {
   hp: number
@@ -30,11 +39,28 @@ interface Stats {
   streak: number
 }
 
-/** HP pips + LV + XP + HP text, all drawn in ink on the parchment. */
+interface Nav {
+  onSleep?: () => void
+  onBag?: () => void
+  onMosaic?: () => void
+  onSettings?: () => void
+}
+
+/** Cycles 0..count-1 to page the flicker frames. */
+function useFlicker(count: number, ms: number) {
+  const [frame, setFrame] = useState(0)
+  useEffect(() => {
+    const id = setInterval(() => setFrame((f) => (f + 1) % count), ms)
+    return () => clearInterval(id)
+  }, [count, ms])
+  return frame
+}
+
+/** HP pips + LV + XP + HP text, quill-written in ink on the parchment. */
 function PageStats({ hp, level, streak, heart }: Stats & { heart: number }) {
   const pct = Math.max(0, Math.min(1, streak / MAX_HP))
   return (
-    <View style={styles.stats}>
+    <View style={styles.stats} pointerEvents="none">
       <View style={styles.hearts}>
         {Array.from({ length: MAX_HP }, (_, i) => (
           <PixelSprite
@@ -57,32 +83,66 @@ function PageStats({ hp, level, streak, heart }: Stats & { heart: number }) {
   )
 }
 
+/** A page "button": a quill-script entry on the page; ink only, no frame. */
+function InkButton({
+  label,
+  size,
+  onPress,
+}: {
+  label: string
+  size: number
+  onPress?: () => void
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={!onPress}
+      hitSlop={12}
+      style={({ pressed }) => [styles.inkBtn, pressed && styles.inkBtnPressed]}
+    >
+      <Text style={[styles.script, { fontSize: size, lineHeight: Math.round(size * 1.1) }]}>
+        {label}
+      </Text>
+    </Pressable>
+  )
+}
+
 /**
- * The awake "character sheet": one flat, richly illuminated parchment page
- * lying straight on the table and filling the screen — stats inked across the
- * top of the page, the hero sketched large in 1-bit ink below. The art is
- * generated near phone aspect, so cover-fitting it loses almost nothing;
- * content is positioned as fractions of the book rect so it always rides the
- * parchment regardless of screen aspect. Reused as the transition's opening
- * frame, then wiped away to reveal the living night world.
+ * The awake home: a living book page lit by a breathing candle (7 pixelated
+ * flicker frames cycled), with everything quill-written on the parchment at
+ * render time — the hero standing motionless in 1-bit ink, his HP/XP, and
+ * below them the nav entries in pixel blackletter script. Nav handlers are
+ * optional; without them (sleep transition opening frame) the entries render
+ * as plain ink.
  */
-export function BookView({ heroType, hp, level, streak }: Stats & { heroType: HeroType | null }) {
+export function BookView({
+  heroType,
+  hp,
+  level,
+  streak,
+  onSleep,
+  onBag,
+  onMosaic,
+  onSettings,
+}: Stats & Nav & { heroType: HeroType | null }) {
   const { width: W, height: H } = useWindowDimensions()
+  const frame = useFlicker(FRAMES.length, FLICKER_MS)
   const bookW = Math.max(W, H * ASPECT)
   const bookH = bookW / ASPECT
-  const heroSize = Math.min(bookW * 0.5, bookH * 0.28)
-  const heart = Math.round(bookW * 0.07)
+  const heroSize = Math.min(bookW * 0.42, bookH * 0.26)
+  const heart = Math.round(bookW * 0.055)
   return (
     <View style={styles.root}>
       <View style={{ width: bookW, height: bookH }}>
-        <ExpoImage
-          source={PAGE.source}
-          style={StyleSheet.absoluteFill}
-          contentFit="fill"
-          transition={300}
-        />
+        {FRAMES.map((f, i) => (
+          <ExpoImage
+            key={i}
+            source={f.source}
+            style={[StyleSheet.absoluteFill, { opacity: i === frame ? 1 : 0 }]}
+            contentFit="fill"
+          />
+        ))}
         <View
-          pointerEvents="none"
           style={[
             styles.page,
             {
@@ -94,10 +154,18 @@ export function BookView({ heroType, hp, level, streak }: Stats & { heroType: He
           ]}
         >
           <PageStats hp={hp} level={level} streak={streak} heart={heart} />
-          <View style={styles.heroWrap}>
+          <View style={styles.heroWrap} pointerEvents="none">
             {heroType ? (
-              <HeroSprite type={heroType} size={heroSize} animated fps={2} oneBit />
+              <HeroSprite type={heroType} size={heroSize} animated={false} oneBit />
             ) : null}
+          </View>
+          <View style={styles.buttons}>
+            <InkButton label={strings.home_sleep} size={44} onPress={onSleep} />
+            <View style={styles.btnRow}>
+              <InkButton label={strings.home_nav_bag} size={26} onPress={onBag} />
+              <InkButton label={strings.home_nav_mosaic} size={26} onPress={onMosaic} />
+              <InkButton label={strings.home_nav_settings} size={26} onPress={onSettings} />
+            </View>
           </View>
         </View>
       </View>
@@ -121,24 +189,31 @@ const styles = StyleSheet.create({
     gap: theme.spacing(1),
   },
   lv: {
-    fontFamily: theme.fontFamily,
-    fontSize: 14,
-    letterSpacing: 1,
-    color: tavernColors.inkOnParchment,
+    fontFamily: theme.scriptFontFamily,
+    fontSize: 30,
+    lineHeight: 32,
+    color: INK,
   },
+  // Hand-ruled ink bar: a hair of skew keeps it looking quill-drawn.
   xpTrack: {
-    width: '76%',
+    width: '70%',
     height: 10,
     borderWidth: 2,
-    borderColor: tavernColors.inkOnParchment,
+    borderColor: INK,
     backgroundColor: 'transparent',
+    transform: [{ rotate: '-0.6deg' }],
   },
-  xpFill: { height: '100%', backgroundColor: tavernColors.inkOnParchment },
+  xpFill: { height: '100%', backgroundColor: INK },
   hp: {
-    fontFamily: theme.fontFamily,
-    fontSize: 11,
-    letterSpacing: 1,
-    color: tavernColors.inkOnParchment,
+    fontFamily: theme.scriptFontFamily,
+    fontSize: 24,
+    lineHeight: 26,
+    color: INK,
   },
   heroWrap: { flex: 1, alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center' },
+  buttons: { alignSelf: 'stretch', alignItems: 'center', gap: theme.spacing(2) },
+  btnRow: { flexDirection: 'row', justifyContent: 'center', gap: theme.spacing(6) },
+  inkBtn: { alignItems: 'center', justifyContent: 'center' },
+  inkBtnPressed: { transform: [{ scale: 0.94 }] },
+  script: { fontFamily: theme.scriptFontFamily, color: INK, textAlign: 'center' },
 })

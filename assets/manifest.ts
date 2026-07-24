@@ -509,6 +509,62 @@ export const SPRITES_1BIT = {
 } as const satisfies Record<string, SpriteEntry>
 
 export const SCENES = {
+  book_menu_1: {
+    source: require('./book_menu/frame_1.png'),
+    width: 540,
+    height: 960,
+    frames: 1,
+    frameWidth: 540,
+    frameHeight: 960,
+  },
+  book_menu_2: {
+    source: require('./book_menu/frame_2.png'),
+    width: 540,
+    height: 960,
+    frames: 1,
+    frameWidth: 540,
+    frameHeight: 960,
+  },
+  book_menu_3: {
+    source: require('./book_menu/frame_3.png'),
+    width: 540,
+    height: 960,
+    frames: 1,
+    frameWidth: 540,
+    frameHeight: 960,
+  },
+  book_menu_4: {
+    source: require('./book_menu/frame_4.png'),
+    width: 540,
+    height: 960,
+    frames: 1,
+    frameWidth: 540,
+    frameHeight: 960,
+  },
+  book_menu_5: {
+    source: require('./book_menu/frame_5.png'),
+    width: 540,
+    height: 960,
+    frames: 1,
+    frameWidth: 540,
+    frameHeight: 960,
+  },
+  book_menu_6: {
+    source: require('./book_menu/frame_6.png'),
+    width: 540,
+    height: 960,
+    frames: 1,
+    frameWidth: 540,
+    frameHeight: 960,
+  },
+  book_menu_7: {
+    source: require('./book_menu/frame_7.png'),
+    width: 540,
+    height: 960,
+    frames: 1,
+    frameWidth: 540,
+    frameHeight: 960,
+  },
   book_page: {
     source: require('./pixellab/scenes/book_page.png'),
     width: 180,
@@ -775,6 +831,14 @@ export const ICONS = {
     frames: 1,
     frameWidth: 64,
     frameHeight: 64,
+  },
+  ink_circle: {
+    source: require('./pixellab/icons/ink_circle.png'),
+    width: 148,
+    height: 79,
+    frames: 1,
+    frameWidth: 148,
+    frameHeight: 79,
   },
   logo: {
     source: require('./pixellab/icons/logo.png'),
