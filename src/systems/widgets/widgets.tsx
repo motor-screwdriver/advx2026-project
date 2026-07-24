@@ -31,17 +31,13 @@ const C = {
   textDim: '#c2a176', // muted tan
   gold: '#eab54d', // honey gold
   night: '#16213c', // night-sky navy (widget scene)
-  nightDim: '#0d1322', // same sky, asleep-inactive
-  goldDim: '#8a6b2d', // honey gold, dimmed
   dayText: '#3a2a1c',
-  dayTextDim: '#5c4328',
 } as const
 
 const MOON = require('../../../assets/pixellab/atmo/moon_night.png')
 const SUN = require('../../../assets/pixellab/atmo/sun_day.png')
 const HEART_FULL = require('../../../assets/pixellab/icons/heart_full.png')
 const HEART_EMPTY = require('../../../assets/pixellab/icons/heart_empty.png')
-const CREST = require('../../../assets/pixellab/icons/art_iron_armor.png')
 
 /** 2x2: LEVEL + SLEEP STREAK header, hero sprite, LIVES heart bar. */
 export function SleepStatsWidget({ data }: { data: HomeWidgetData }) {
@@ -93,38 +89,24 @@ export function SleepStatsWidget({ data }: { data: HomeWidgetData }) {
   )
 }
 
-/** 2x1: night half = start sleep, sun half = wake up, armor crest divider.
- *  The half matching the current phase is lit, the other one rests dimmed. */
+/** 2x1: one state-aware button — moon "START SLEEP" while awake, sun
+ *  "WAKE UP" once the hero is tucked in. The tap deep-links the matching
+ *  check-in, the store subscription re-renders the widget into the new state. */
 export function SleepToggleWidget({ data }: { data: HomeWidgetData }) {
-  const nightHalf = {
-    ...styles.half,
-    backgroundColor: data.asleep ? C.night : C.nightDim,
-  }
-  const nightText = {
-    ...styles.toggleLabel,
-    color: data.asleep ? C.gold : C.textDim,
-  }
-  const dayHalf = {
-    ...styles.half,
-    backgroundColor: data.asleep ? C.goldDim : C.gold,
-  }
-  const dayText = {
-    ...styles.toggleLabel,
-    color: data.asleep ? C.dayTextDim : C.dayText,
-  }
+  const asleep = data.asleep
+  const backgroundColor = asleep ? C.gold : C.night
+  const color = asleep ? C.dayText : C.gold
   return (
-    <FlexWidget style={styles.toggleRoot}>
-      <FlexWidget clickAction="OPEN_URI" clickActionData={{ uri: SLEEP_URI }} style={nightHalf}>
-        <ImageWidget image={MOON} imageWidth={26} imageHeight={26} />
-        <TextWidget text={data.asleep ? 'IN BED' : 'START SLEEP'} style={nightText} />
-      </FlexWidget>
-      <FlexWidget style={styles.crest}>
-        <ImageWidget image={CREST} imageWidth={22} imageHeight={22} />
-      </FlexWidget>
-      <FlexWidget clickAction="OPEN_URI" clickActionData={{ uri: WAKE_URI }} style={dayHalf}>
-        <ImageWidget image={SUN} imageWidth={26} imageHeight={26} />
-        <TextWidget text="WAKE UP" style={dayText} />
-      </FlexWidget>
+    <FlexWidget
+      clickAction="OPEN_URI"
+      clickActionData={{ uri: asleep ? WAKE_URI : SLEEP_URI }}
+      style={{ ...styles.toggleRoot, backgroundColor }}
+    >
+      <ImageWidget image={asleep ? SUN : MOON} imageWidth={24} imageHeight={24} />
+      <TextWidget
+        text={asleep ? 'WAKE UP' : 'START SLEEP'}
+        style={{ ...styles.toggleLabel, color }}
+      />
     </FlexWidget>
   )
 }
@@ -177,24 +159,11 @@ const styles = {
     width: 'match_parent',
     height: 'match_parent',
     flexDirection: 'row',
-    backgroundColor: C.bg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexGap: 10,
     borderRadius: 16,
     overflow: 'hidden',
   },
-  half: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 'match_parent',
-    flexGap: 6,
-  },
-  crest: {
-    width: 30,
-    height: 'match_parent',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: C.inset,
-  },
-  toggleLabel: { fontFamily: FONT, fontSize: 10 },
+  toggleLabel: { fontFamily: FONT, fontSize: 12 },
 } as const
