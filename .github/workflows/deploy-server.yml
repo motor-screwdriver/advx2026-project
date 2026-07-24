@@ -25,13 +25,6 @@ jobs:
         run: go vet ./... && go test ./...
         working-directory: server
 
-      - name: Build Docker image (linux/amd64)
-        run: |
-          docker build --platform linux/amd64 \
-            -t "$IMAGE:latest" \
-            ./server
-          docker save "$IMAGE:latest" | gzip > /tmp/"$IMAGE".tar.gz
-
       - name: Install sshpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
 
@@ -44,14 +37,25 @@ jobs:
           AI_MAX_TOKENS: '600'
         run: |
           set -euo pipefail
+          : "${DEPLOY_HOST:?}" "${DEPLOY_USER:?}" "${DEPLOY_PASSWORD:?}"
+          if [ -z "${OPENROUTER_API_KEY:-}" ]; then
+            echo "OPENROUTER_API_KEY secret is empty" >&2
+            exit 1
+          fi
+
           SSH_OPTS="-o StrictHostKeyChecking=accept-new -o ConnectTimeout=15"
           REMOTE="$DEPLOY_USER@$DEPLOY_HOST"
           ssh_run() { sshpass -p "$DEPLOY_PASSWORD" ssh $SSH_OPTS "$REMOTE" "$@"; }
 
-          ssh_run "mkdir -p '$APP_DIR'"
+          ssh_run "mkdir -p '$APP_DIR/src'"
 
-          sshpass -p "$DEPLOY_PASSWORD" rsync -az -e "ssh $SSH_OPTS" \
-            /tmp/"$IMAGE".tar.gz "$REMOTE:$APP_DIR/$IMAGE.tar.gz"
+          sshpass -p "$DEPLOY_PASSWORD" rsync -az --delete -e "ssh $SSH_OPTS" \
+            --exclude 'eightbit-sleep-server' \
+            --exclude '*_test.go' \
+            --exclude '.git' \
+            --exclude 'tmp/' \
+            --exclude 'bin/' \
+            server/ "$REMOTE:$APP_DIR/src/"
 
           printf '%s\n' \
             'AI_PROVIDER=openrouter' \
@@ -67,24 +71,36 @@ jobs:
           # Drop the old bare-metal unit if it is still around.
           ssh_run "systemctl stop 8bit-sleep 2>/dev/null || true; systemctl disable 8bit-sleep 2>/dev/null || true"
 
-          ssh_run "docker load -i '$APP_DIR/$IMAGE.tar.gz' \
+          ssh_run "docker build -t '$IMAGE:latest' '$APP_DIR/src' \
             && docker stop '$CONTAINER' 2>/dev/null || true \
             && docker rm '$CONTAINER' 2>/dev/null || true \
             && docker run -d --name '$CONTAINER' --restart=always \
               --env-file '$APP_DIR/server.env' \
               -p '${HOST_PORT}:8080' \
-              '$IMAGE:latest' \
-            && docker ps --filter name='^${CONTAINER}$' --format '{{.Names}} {{.Status}}'"
+              '$IMAGE:latest'"
 
-      - name: Health check
-        run: |
-          set -euo pipefail
           ORIGIN="http://${DEPLOY_HOST}:${HOST_PORT}"
           echo "Checking $ORIGIN"
+          for i in 1 2 3 4 5; do
+            if curl -fsS -m 5 "$ORIGIN/healthz" >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
           curl -fsS -m 15 "$ORIGIN/healthz"
           echo
-          curl -fsS -m 90 -X POST "$ORIGIN/api/oracle" \
+
+          code=$(curl -sS -m 90 -o /tmp/oracle.json -w '%{http_code}' \
+            -X POST "$ORIGIN/api/oracle" \
             -H 'Content-Type: application/json' \
-            -d '{"turns":[]}' \
-            | python3 -c "import sys, json; r = json.load(sys.stdin)['reply']; assert r['message']; print('oracle says:', r['message'][:120])"
+            -d '{"turns":[]}')
+          echo "oracle HTTP $code"
+          cat /tmp/oracle.json
+          echo
+          if [ "$code" != "200" ]; then
+            echo "==> container logs" >&2
+            ssh_run "docker logs --tail 50 '$CONTAINER'" >&2 || true
+            exit 1
+          fi
+          python3 -c "import json; r = json.load(open('/tmp/oracle.json'))['reply']; assert r['message']; print('oracle says:', r['message'][:120])"
           echo "Deploy OK: $ORIGIN"
