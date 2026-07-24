@@ -43,8 +43,7 @@ function onStoreChange(state: GameStore, prev: GameStore): void {
   if (g.window !== p.window || g.nights !== p.nights) {
     void resyncNotifications()
   }
-  // Window edits mid-session move the reminder's morning-guard minute too.
-  if (state.pendingBedTime !== prev.pendingBedTime || g.window !== p.window) {
+  if (state.pendingBedTime !== prev.pendingBedTime) {
     void syncWakeReminder()
   }
   const lastEvent = state.events[state.events.length - 1]

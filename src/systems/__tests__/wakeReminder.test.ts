@@ -30,29 +30,25 @@ beforeEach(async () => {
 })
 
 describe('syncWakeReminder', () => {
-  it('activates the native reminder with the window-guard minute while asleep', async () => {
+  it('activates the native reminder while a sleep session is active', async () => {
     const { store, syncWakeReminder } = await setup()
-    store.getState().setWindow({ bedMin: 690, wakeMin: 1140 }) // 23:30 → 07:00
     store.setState({ pendingBedTime: 690 })
     await syncWakeReminder()
-    // wakeMin 1140 (07:00) − 30 min = 1110 → clock 06:30 = 390
-    expect(setSleepReminderActive).toHaveBeenCalledWith(true, 390)
+    expect(setSleepReminderActive).toHaveBeenCalledWith(true)
   })
 
   it('deactivates the native reminder when no sleep is active', async () => {
-    const { store, syncWakeReminder } = await setup()
-    store.getState().setWindow({ bedMin: 690, wakeMin: 1140 })
+    const { syncWakeReminder } = await setup()
     await syncWakeReminder()
-    expect(setSleepReminderActive).toHaveBeenCalledWith(false, -1)
+    expect(setSleepReminderActive).toHaveBeenCalledWith(false)
   })
 
   it('deactivates when notifications are turned off', async () => {
     const { store, syncWakeReminder } = await setup()
     await mockAsyncStorage.setItem('8bit-sleep/notifications-enabled', 'off')
-    store.getState().setWindow({ bedMin: 690, wakeMin: 1140 })
     store.setState({ pendingBedTime: 690 })
     await syncWakeReminder()
-    expect(setSleepReminderActive).toHaveBeenCalledWith(false, -1)
+    expect(setSleepReminderActive).toHaveBeenCalledWith(false)
   })
 
   it('no-ops when the native module is missing (Expo Go / iOS / web)', async () => {
