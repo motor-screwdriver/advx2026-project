@@ -8,10 +8,6 @@
     "icon": "./assets/pixellab/root/icon.png",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#221812",
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.eightbitsleep.app"
-    },
     "android": {
       "package": "com.eightbitsleep.app",
       "adaptiveIcon": {
@@ -32,6 +28,36 @@
         "react-native-nfc-manager",
         {
           "nfcPermission": "Scan your Quote e-ink device to connect it to 8bit Sleep."
+        }
+      ],
+      [
+        "react-native-android-widget",
+        {
+          "fonts": ["./assets/fonts/PressStart2P-Regular.ttf"],
+          "widgets": [
+            {
+              "name": "SleepStats",
+              "label": "8bit Sleep · Hero",
+              "description": "Hero level, sleep streak and hearts at a glance.",
+              "minWidth": "110dp",
+              "minHeight": "110dp",
+              "targetCellWidth": 2,
+              "targetCellHeight": 2,
+              "resizeMode": "horizontal|vertical",
+              "updatePeriodMillis": 1800000
+            },
+            {
+              "name": "SleepToggle",
+              "label": "8bit Sleep · Sleep / Wake",
+              "description": "Tap to start sleep or wake up.",
+              "minWidth": "110dp",
+              "minHeight": "40dp",
+              "targetCellWidth": 2,
+              "targetCellHeight": 1,
+              "resizeMode": "horizontal",
+              "updatePeriodMillis": 1800000
+            }
+          ]
         }
       ]
     ],
