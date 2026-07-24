@@ -15,6 +15,7 @@ import { getDayPhase, type DayPhase } from '../ui/timeOfDay'
 import { useGame } from '../ui/useGame'
 import { useHeroWalk } from '../ui/useHeroWalk'
 import { DevTools } from './DevTools'
+import { HomeNav } from './HomeNav'
 
 const MAX_HP = 7
 const HERO_SIZE = 184
@@ -143,6 +144,7 @@ function TopBar({ hp, streak, level }: { hp: number; streak: number; level: numb
         <View style={styles.xpBarWrap}>
           <TavernBar value={streak} max={MAX_HP} />
         </View>
+        <HomeNav />
       </View>
     </WoodPanel>
   )
