@@ -22,6 +22,6 @@ export const BEDTIME_LINES = [
 export const MORNING_SUMMARY_BODY = 'Your hero survived the night. See what happened.'
 
 /** Ongoing wake reminder — sits in the shade while the hero sleeps. */
-export const WAKE_REMINDER_TITLE = 'Hero is asleep'
-export const WAKE_REMINDER_BODY =
-  'Up already? Tap here and finish the night quest to claim the loot.'
+export const WAKE_REMINDER_TITLE = '🌅 Rise and shine, hero'
+export const WAKE_REMINDER_SUBTITLE = 'Night quest in progress' // iOS second line
+export const WAKE_REMINDER_BODY = 'Awake? Tap to end the night and claim your loot. ⚔️'
