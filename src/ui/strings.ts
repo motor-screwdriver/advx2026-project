@@ -16,7 +16,6 @@ export const strings = {
   onboarding_bedtime: 'Bedtime',
   onboarding_wakeup: 'Wake up',
   onboarding_duration: 'Duration',
-  onboarding_min_hours: 'Minimum 7 hours',
   onboarding_begin: 'Set window',
   onboarding_adjust_title: 'Adjust your window',
   onboarding_adjust_body: 'Choose times that feel realistic. This is a starting point, not a test.',
@@ -243,7 +242,7 @@ export const strings = {
   common_confirm: 'Confirm',
   common_cancel: 'Cancel',
 
-  // Journal, guide and debug keys come from stringsExtra.
+  // Onboarding warnings, journal, guide and debug keys come from stringsExtra.
   ...stringsExtra,
 } as const
 
