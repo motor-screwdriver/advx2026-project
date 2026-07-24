@@ -52,18 +52,15 @@ cd server && go test ./...    # toolchain note: see below
 
 `.github/workflows/deploy-server.yml` deploys on manual dispatch only
 (Actions → Deploy server → Run workflow, from any branch): `go vet` +
-`go test`, cross-builds a static linux/amd64 binary, exports the static web
-client (`dist/`), then rsyncs both to the server and restarts systemd. Caddy terminates TLS (Let's Encrypt) and proxies `/api/*`
-to the Go service on `127.0.0.1:8091` (8091, not 8080 — that port belongs to
-another dockerized service on the host); static client lives in
-`/opt/8bit-sleep/client`, env in `/opt/8bit-sleep/server.env` (chmod 600).
+`go test`, rsyncs `server/` to the host, writes `/opt/8bit-sleep/server.env`
+(chmod 600) from secrets, then `docker build` + `docker run` on the host. The
+container publishes host port `HOST_PORT` (8080) to container port 8080;
+clients call the API directly at `http://<host>:8080` (`/api/oracle`,
+`/healthz`). There is no TLS proxy in front — plain HTTP only.
 
 Required GitHub secrets: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_PASSWORD`,
-`OPENROUTER_API_KEY`; optional: `DEPLOY_DOMAIN` (when a real domain replaces
-the `<DEPLOY_HOST>.sslip.io` one). The API origin is derived from those in
-the workflows — no separate GitHub variable needed. The server needs ports
-80/443 open for the Let's Encrypt HTTP challenge. First deploy provisions
-Caddy + the systemd unit via `tools/deploy/setup-server.sh` (idempotent).
+`OPENROUTER_API_KEY`; optional: `AI_MODEL`. The host firewall must allow
+inbound TCP on `HOST_PORT` (8080).
 
 A Go toolchain lives in `tools/.go/` locally (gitignored): prefix commands
 with `tools/.go/go/bin/` or add it to PATH.
