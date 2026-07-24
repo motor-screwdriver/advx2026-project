@@ -207,7 +207,7 @@ func parseRecommendation(model map[string]any) *SleepRecommendation {
 		wakeMin = 1440
 	}
 	duration := wakeMin - bedMin
-	if bedMin < 360 || bedMin > 900 || wakeMin < 720 || duration < 420 || duration > 720 {
+	if bedMin < 480 || bedMin > 720 || wakeMin < 960 || wakeMin > 1320 || duration < 420 || duration > 720 {
 		return nil
 	}
 	reason, ok := ascii(model["reason"], maxReasonChars)
