@@ -16,7 +16,7 @@ import (
 )
 
 const openRouterURL = "https://openrouter.ai/api/v1/chat/completions"
-const defaultModel = "google/gemini-2.5-flash-lite"
+const defaultModel = "openrouter/free"
 const defaultMaxTokens = 300
 
 // requestTimeout: free-tier models can take 30s+ for a structured reply; keep
