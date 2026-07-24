@@ -13,8 +13,6 @@ with one resurrection attempt per 7 days. A perfect week = level up + loot chest
 - Zustand + AsyncStorage (state/persistence, offline-first, no accounts)
 - Expo Notifications (local only)
 - Jest + ts-jest (engine tests)
-- Raids later (P2): the app's own Go + Postgres backend (`backend/`,
-  `compose.yaml`); `src/sync/` is the fail-soft client.
 
 ## Run
 
@@ -34,7 +32,7 @@ and no function 60 lines — ESLint enforces both.
 
 Import boundaries are enforced by `eslint-plugin-boundaries` (see
 `eslint.config.js`): contracts imports nothing, engine never imports UI,
-screens never import `sync` or `engine` directly.
+screens never import `engine` directly.
 
 ## Git rules (trunk-based)
 
@@ -71,39 +69,4 @@ never goes dark:
 curl -X POST https://dot.mindreset.tech/api/authV2/open/device/DEVICE_ID/image \
   -H 'Authorization: Bearer dot_app_KEY' -H 'Content-Type: application/json' \
   -d '{"image": "<base64 PNG>", "border": 1, "ditherType": "NONE"}'
-```
-
-## Raids (P2, FLAGS.raids)
-
-The app's own **Go + Postgres backend** (`backend/`, run via `compose.yaml`) —
-no third-party service. Anonymous (device ID), plain REST/JSON over fetch — no
-SDK. Sync on app open + pull-to-refresh only, no realtime. Unreachable backend =
-silent offline, solo play unaffected. Env: `EXPO_PUBLIC_API_URL` points the app
-at the backend reachable from the phone (see `.env.example`). Client API in
-`src/sync/`: `createRaid`, `joinRaid`, `leaveRaid`, `syncNow`, campfire math in
-`campfire.ts`.
-
-Run the backend + database:
-
-```bash
-cp .env.example .env          # set POSTGRES_PASSWORD
-docker compose up -d          # postgres + backend on :8080
-curl localhost:8080/health    # -> {"status":"ok"}
-```
-
-The backend creates its tables on boot (`backend/db.go`). REST surface:
-`POST /raids`, `GET /raids/{code}`, `GET|PUT /raids/{id}/members`,
-`DELETE /raids/{id}/members/{deviceId}`, `GET|PUT /raids/{id}/nights`.
-
-Schema (created automatically by `migrate`):
-
-```sql
-CREATE TABLE raids (id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  code text UNIQUE NOT NULL, created_at timestamptz DEFAULT now());
-CREATE TABLE raid_members (raid_id uuid REFERENCES raids(id) ON DELETE CASCADE,
-  device_id text, hero_type text, hero_name text, hp int,
-  PRIMARY KEY (raid_id, device_id));
-CREATE TABLE night_results (device_id text, raid_id uuid REFERENCES raids(id)
-  ON DELETE CASCADE, date date, score int, outcome text,
-  PRIMARY KEY (device_id, raid_id, date));
 ```

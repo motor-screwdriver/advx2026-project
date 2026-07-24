@@ -4,58 +4,58 @@
  * weekly-charge meta and events. Persisted after every action, so the
  * app restores correctly even if killed between "Sleep" and "Wake up".
  */
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
-import type { GameEvent } from '../contracts/events';
+import type { GameEvent } from '../contracts/events'
 import type {
   ArtifactId,
   ChestLoot,
   GameState,
   NightEvaluation,
   SleepWindow,
-} from '../contracts/types';
-import { applyHourglass } from '../engine/artifacts';
-import { MAX_HP } from '../engine/levels';
-import { canResurrect as canResurrectEngine } from '../engine/resurrection';
-import { nowNightLine } from '../engine/time';
+} from '../contracts/types'
+import { MAX_HP } from '../engine/levels'
+import { canResurrect as canResurrectEngine } from '../engine/resurrection'
+import { nowNightLine } from '../engine/time'
 import {
   freshHero,
   openGrantedChest,
   runNightTurn,
   tryChangeWindow,
   tryResurrect,
-} from './actions';
+  tryUseHourglass,
+} from './actions'
 
 /** Weekly charges and cooldowns that are not part of the frozen GameState. */
 export interface EngineMeta {
-  windowChangedAt: string | null;
-  secondWindUsedAt: string | null; // Second Wind artifact
+  windowChangedAt: string | null
+  secondWindUsedAt: string | null // Second Wind artifact
 }
 
 export interface GameStore {
-  game: GameState;
-  meta: EngineMeta;
-  pendingBedTime: number | null;
-  pendingWakeTime: number | null;
-  lastEvaluation: NightEvaluation | null;
-  pendingChest: boolean;
-  hydrated: boolean;
-  events: GameEvent[];
-  setWindow: (window: SleepWindow) => void;
-  assignHeroForWindow: () => void;
-  checkIn: (type: 'bed' | 'wake', atMin?: number) => void;
-  evaluateCurrentNight: (now?: Date) => NightEvaluation;
-  canResurrect: (now?: Date) => boolean;
-  applyResurrection: (success: boolean, now?: Date) => void;
-  startNewHero: () => void;
-  openChest: (rng?: () => number) => ChestLoot | null;
-  equip: (slot: 'armor' | 'charm', artifact: ArtifactId) => void;
-  changeWindow: (window: SleepWindow, now?: Date) => boolean;
-  useHourglass: (date: string, now?: Date) => boolean;
-  toggleDemoMode: () => void;
-  reset: () => void;
+  game: GameState
+  meta: EngineMeta
+  pendingBedTime: number | null
+  pendingWakeTime: number | null
+  lastEvaluation: NightEvaluation | null
+  pendingChest: boolean
+  hydrated: boolean
+  events: GameEvent[]
+  setWindow: (window: SleepWindow) => void
+  assignHeroForWindow: () => void
+  checkIn: (type: 'bed' | 'wake', atMin?: number) => void
+  evaluateCurrentNight: (now?: Date) => NightEvaluation
+  canResurrect: (now?: Date) => boolean
+  applyResurrection: (success: boolean, now?: Date) => void
+  startNewHero: () => void
+  openChest: (rng?: () => number) => ChestLoot | null
+  equip: (slot: 'armor' | 'charm', artifact: ArtifactId) => void
+  changeWindow: (window: SleepWindow, now?: Date) => boolean
+  useHourglass: (date: string, now?: Date) => boolean
+  toggleDemoMode: () => void
+  reset: () => void
 }
 
 function emptyGame(): GameState {
@@ -70,13 +70,13 @@ function emptyGame(): GameState {
     lastResurrectionAt: null,
     onboardingDone: false,
     demoMode: false,
-  };
+  }
 }
 
 const emptyMeta = (): EngineMeta => ({
   windowChangedAt: null,
   secondWindUsedAt: null,
-});
+})
 
 const initial = () => ({
   game: emptyGame(),
@@ -87,7 +87,7 @@ const initial = () => ({
   pendingChest: false,
   hydrated: false,
   events: [] as GameEvent[],
-});
+})
 
 export const useGameStore = create<GameStore>()(
   persist(
@@ -136,16 +136,11 @@ export const useGameStore = create<GameStore>()(
             : s,
         ),
       changeWindow: (window, now = new Date()) => tryChangeWindow(get, set, window, now),
-      useHourglass: (date, now = new Date()) => {
-        const next = applyHourglass(get().game, date, now);
-        if (!next) {
-          return false;
-        }
-        set({ game: next });
-        return true;
-      },
+      useHourglass: (date, now = new Date()) => tryUseHourglass(get, set, date, now),
       toggleDemoMode: () => set((s) => ({ game: { ...s.game, demoMode: !s.game.demoMode } })),
-      reset: () => set(initial()),
+      // Keep hydrated: GameProvider unmounts the navigator while !hydrated, so a
+      // reset that drops it kills the very navigation the caller triggers next.
+      reset: () => set({ ...initial(), hydrated: get().hydrated }),
     }),
     {
       name: '8bit-sleep/game',
@@ -159,8 +154,8 @@ export const useGameStore = create<GameStore>()(
         lastEvaluation: s.lastEvaluation,
       }),
       onRehydrateStorage: () => () => {
-        useGameStore.setState({ hydrated: true });
+        useGameStore.setState({ hydrated: true })
       },
     },
   ),
-);
+)

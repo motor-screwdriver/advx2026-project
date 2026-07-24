@@ -174,11 +174,6 @@ export const strings = {
     '7 clean nights in a row: level up plus a loot chest. At 0 hearts your hero dies. One resurrection per 7 days.',
   tutorial_done: 'Got it',
 
-  // Raid (P2, behind FLAGS.raids)
-  raid_title: 'Campfire Raid',
-  raid_body: '2-5 heroes around one campfire (P2).',
-  raid_disabled: 'Disabled: FLAGS.raids = false.',
-
   gallery_title: 'Art Gallery',
   gallery_body: 'QA wall: every pipeline asset, straight from assets/manifest.ts.',
   // Common
@@ -192,6 +187,6 @@ export const strings = {
   debug_empty: 'Empty',
   debug_mid: 'Mid-game',
   debug_death: 'Death',
-} as const;
+} as const
 
-export type StringKey = keyof typeof strings;
+export type StringKey = keyof typeof strings

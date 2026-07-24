@@ -1,25 +1,25 @@
-import { useRouter } from 'expo-router';
-import React, { useRef, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useRouter } from 'expo-router'
+import React, { useRef, useState } from 'react'
+import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 
-import { FLAGS } from '../contracts/flags';
-import type { SleepWindow } from '../contracts/types';
-import { PixelButton } from '../ui/PixelButton';
-import { PixelPanel } from '../ui/PixelPanel';
-import { Screen } from '../ui/Screen';
-import { strings } from '../ui/strings';
-import { theme } from '../ui/theme';
-import { useGame } from '../ui/useGame';
-import { formatClock } from '../ui/window';
+import { FLAGS } from '../contracts/flags'
+import type { SleepWindow } from '../contracts/types'
+import { PixelButton } from '../ui/PixelButton'
+import { PixelPanel } from '../ui/PixelPanel'
+import { Screen } from '../ui/Screen'
+import { strings } from '../ui/strings'
+import { theme } from '../ui/theme'
+import { useGame } from '../ui/useGame'
+import { formatClock } from '../ui/window'
 
-const DEMO_TAP_COUNT = 5;
-const DEMO_TAP_WINDOW_MS = 1500;
+const DEMO_TAP_COUNT = 5
+const DEMO_TAP_WINDOW_MS = 1500
 
 export function SettingsScreen() {
-  const router = useRouter();
-  const { state, resetProgress, toggleDemoMode } = useGame();
-  const [notificationsOn, setNotificationsOn] = useState(true);
-  const taps = useRef<number[]>([]);
+  const router = useRouter()
+  const { state, resetProgress, toggleDemoMode } = useGame()
+  const [notificationsOn, setNotificationsOn] = useState(true)
+  const taps = useRef<number[]>([])
 
   const confirmReset = () =>
     Alert.alert(strings.settings_reset, strings.settings_reset_confirm, [
@@ -28,23 +28,23 @@ export function SettingsScreen() {
         text: strings.common_confirm,
         style: 'destructive',
         onPress: () => {
-          resetProgress();
-          router.replace('/onboarding');
+          resetProgress()
+          router.replace('/onboarding')
         },
       },
-    ]);
+    ])
 
   const versionTap = () => {
-    const now = Date.now();
-    taps.current = [...taps.current.filter((t) => now - t < DEMO_TAP_WINDOW_MS), now];
+    const now = Date.now()
+    taps.current = [...taps.current.filter((t) => now - t < DEMO_TAP_WINDOW_MS), now]
     if (taps.current.length >= DEMO_TAP_COUNT) {
-      taps.current = [];
-      toggleDemoMode();
+      taps.current = []
+      toggleDemoMode()
     }
-  };
+  }
 
   return (
-    <Screen title={strings.settings_title}>
+    <Screen title={strings.settings_title} scroll>
       <WindowPanel window={state.window} />
       <PixelPanel>
         <View style={styles.row}>
@@ -64,7 +64,7 @@ export function SettingsScreen() {
         </Text>
       </Pressable>
     </Screen>
-  );
+  )
 }
 
 function WindowPanel({ window }: { window: SleepWindow | null }) {
@@ -76,25 +76,25 @@ function WindowPanel({ window }: { window: SleepWindow | null }) {
       </Text>
       <PixelButton compact disabled label={strings.settings_change} />
     </PixelPanel>
-  );
+  )
 }
 
 function EinkPanel() {
-  const { customizeWidgets, scanDeviceId } = useGame();
-  const [deviceId, setDeviceId] = useState('');
-  const [apiKey, setApiKey] = useState('');
-  const [scanning, setScanning] = useState(false);
+  const { customizeWidgets, scanDeviceId } = useGame()
+  const [deviceId, setDeviceId] = useState('')
+  const [apiKey, setApiKey] = useState('')
+  const [scanning, setScanning] = useState(false)
   const scan = async () => {
-    setScanning(true);
+    setScanning(true)
     try {
-      const id = await scanDeviceId();
+      const id = await scanDeviceId()
       if (id) {
-        setDeviceId(id);
+        setDeviceId(id)
       }
     } finally {
-      setScanning(false);
+      setScanning(false)
     }
-  };
+  }
   return (
     <PixelPanel>
       <Text style={styles.label}>{strings.settings_eink}</Text>
@@ -131,7 +131,7 @@ function EinkPanel() {
         onPress={() => customizeWidgets(deviceId, apiKey)}
       />
     </PixelPanel>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -168,4 +168,4 @@ const styles = StyleSheet.create({
     color: theme.colors.textDim,
     textAlign: 'center',
   },
-});
+})
