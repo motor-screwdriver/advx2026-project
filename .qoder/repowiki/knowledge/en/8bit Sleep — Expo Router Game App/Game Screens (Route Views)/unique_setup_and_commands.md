@@ -1,0 +1,1 @@
+Screens are registered as routes under expo-router's file-based routing convention (paths like `/onboarding`, `/morning-scene`, `/death` correspond to filenames). The DebugMenu is only visible in development (`__DEV__`) and can be toggled via a hidden tap sequence on the Settings version text (5 taps within 1500ms) to enable demo mode.

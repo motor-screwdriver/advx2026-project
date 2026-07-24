@@ -1,0 +1,5 @@
+- Each generator script defines a `BUILDERS` dict mapping asset names to builder functions, then iterates it in `main()` to produce outputs — used consistently in `scenes.py`, `generate_audio.py`, and `pixellab_batch.py`.
+- Asset metadata is always registered through `manifest_lib.update(section, name, entry)` rather than direct file writes, keeping `manifest.data.json` and `manifest.ts` in lockstep.
+- Pixel-art scenes compose reusable primitives from `scene_common.py` (sky, ground, pines, tent, fire_ring, flame, smoke, rain, lightning, beam, motes) and vary per-scene only via a palette dict passed as argument.
+- CLI tools use `argparse` subparsers with a `--out` parameter defaulting to `assets/_src/pixellab/` (or the appropriate section directory) and resolve relative paths against `REPO_ROOT` computed from `os.path.dirname(os.path.abspath(__file__))`.
+- Deterministic output is enforced by fixed seeds (audio uses `SEED = 0x8B17`, PixelLab calls pass explicit `seed` values) and nearest-neighbor upscaling, never dithering.

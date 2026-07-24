@@ -1,0 +1,1 @@
+React Native with Expo (`expo-font`), React Context + Zustand store (`../state/store`), React Native `Animated` API for native-driver animations, and Press Start 2P pixel font bundled under `assets/fonts/`. Sprite strips come from an asset manifest (`../../assets/manifest`).

@@ -1,0 +1,6 @@
+- Each screen is a single-file functional component exporting a named function matching the route path (e.g. `OnboardingScreen` → `/onboarding`).
+- Navigation is performed through `useRouter()` from expo-router using string hrefs (`router.push('/path')`, `router.replace('/path')`, `router.dismissTo('/')`).
+- All mutable game state and actions are accessed via the `useGame()` hook rather than local state, keeping screens read-heavy and side-effect focused.
+- UI composition relies on shared primitives from `../ui/*` (`Screen`, `PixelButton`, `PixelPanel`, `HeroSprite`, `SceneBanner`) instead of raw RN components for layout.
+- Text content is always pulled from `../ui/strings` using dot-notation keys (e.g. `strings.onboarding_title`, `strings.common_back`) for localization.
+- Styles are defined locally with `StyleSheet.create` and reference `theme.spacing()`, `theme.colors.*`, and `theme.type.*` consistently for visual consistency.

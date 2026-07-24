@@ -1,0 +1,6 @@
+- Each module exports pure functions that take state or input values and return new objects without side effects, never mutating their arguments.
+- External time sources are injected as function parameters (e.g. `now: Date = new Date()`) so tests can control time deterministically.
+- Randomness is passed in via an `rng: () => number` parameter rather than using `Math.random()` directly, enabling fully deterministic tests.
+- Game constants (MAX_HP, PERFECT_WEEK_NIGHTS, artifact pools, outcome tables) are declared as module-level `const` values at the top of their respective files.
+- State transitions follow an immutable pattern: spread the previous `state` and override only the changed fields, returning a fresh object.
+- Night outcomes are modeled as a sorted `OutcomeSpec[]` table looked up by score threshold, keeping scoring rules declarative and easy to extend.

@@ -1,0 +1,117 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: en-US
+branch: main
+nodes_managed: true
+exported_at: '2026-07-24T12:47:33Z'
+modules:
+  '':
+    dir_name: 8bit Sleep — Expo Router Game App
+    title: 8bit Sleep — Expo Router Game App
+    scope:
+      - README.md
+      - .gitignore
+      - package.json
+      - app.json
+      - tsconfig.json
+      - metro.config.js
+      - jest.config.js
+      - jest.setup.ts
+      - eslint.config.js
+      - .prettierrc
+      - .lintstagedrc.json
+      - .npmrc
+      - pnpm-workspace.yaml
+      - pnpm-lock.yaml
+      - .prettierignore
+    source_files: []
+    children:
+      - app_routes
+      - game_engine
+      - screens
+      - state_management
+      - systems
+      - tools
+      - ui_components
+    depends_on: []
+    related_to: []
+  app_routes:
+    dir_name: Expo Router App Entry Points & Screen Routes
+    title: Expo Router App Entry Points & Screen Routes
+    scope:
+      - app/
+    source_files: []
+    children: []
+    depends_on: []
+    related_to:
+      - path: screens
+      - path: ui_components
+  game_engine:
+    dir_name: Sleep-Tracking Game Engine
+    title: Sleep-Tracking Game Engine
+    scope:
+      - src/engine/
+    source_files: []
+    children: []
+    depends_on: []
+    related_to:
+      - path: state_management
+      - path: tools
+  screens:
+    dir_name: Game Screens (Route Views)
+    title: Game Screens (Route Views)
+    scope:
+      - src/screens/
+    source_files: []
+    children: []
+    depends_on: []
+    related_to:
+      - path: app_routes
+      - path: state_management
+      - path: systems
+  state_management:
+    dir_name: Game State Store & Contracts
+    title: Game State Store & Contracts
+    scope:
+      - src/state/
+      - src/contracts/
+    source_files: []
+    children: []
+    depends_on: []
+    related_to:
+      - path: game_engine
+      - path: screens
+      - path: ui_components
+  systems:
+    dir_name: Device & OS Integrations (E-ink, Notifications, NFC, Demo)
+    title: Device & OS Integrations (E-ink, Notifications, NFC, Demo)
+    scope:
+      - src/systems/
+    source_files: []
+    children: []
+    depends_on: []
+    related_to:
+      - path: screens
+  tools:
+    dir_name: 8bit Sleep Art & Audio Pipeline Tools
+    title: 8bit Sleep Art & Audio Pipeline Tools
+    scope:
+      - tools/
+    source_files: []
+    children: []
+    depends_on: []
+    related_to:
+      - path: game_engine
+      - path: ui_components
+  ui_components:
+    dir_name: React Native Pixel-Art UI Components & Game Screens
+    title: React Native Pixel-Art UI Components & Game Screens
+    scope:
+      - src/ui/
+    source_files: []
+    children: []
+    depends_on: []
+    related_to:
+      - path: app_routes
+      - path: state_management
+      - path: tools

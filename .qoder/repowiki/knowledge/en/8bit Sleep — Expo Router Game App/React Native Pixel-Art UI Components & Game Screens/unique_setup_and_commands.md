@@ -1,0 +1,1 @@
+Font loading uses `useGameFonts()` which requires `assets/fonts/PressStart2P-Regular.ttf` to be present; the hook returns true when either loaded or failed so the app proceeds gracefully. The `GameProvider` must wrap any component tree that calls `useGame()`, otherwise the hook throws. Dev presets (`empty`, `mid`, `death`) are available via `loadDebugPreset` for screen work.

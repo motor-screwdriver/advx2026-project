@@ -1,0 +1,1 @@
+React Native with Expo Router for navigation, styled via `react-native` StyleSheet and a custom `theme`/`strings` system; audio handled through a dedicated `systems/audio` module; game state accessed through the `useGame` hook.

@@ -1,0 +1,6 @@
+- All source files are TypeScript with strict mode enabled, extending expo/tsconfig.base.
+- ESLint uses eslint-config-expo plus eslint-plugin-boundaries to enforce module boundaries between children.
+- Prettier is configured centrally and enforced via lint-staged + Husky on every commit.
+- Jest tests live alongside their sources and use ts-jest with the shared jest.setup.ts.
+- State mutations go through Zustand actions in `state_management` rather than direct store writes.
+- Game logic stays pure in `game_engine` and is invoked only from action helpers, never directly from UI.

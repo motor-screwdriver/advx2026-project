@@ -1,0 +1,9 @@
+schema_version: 1
+module_path: systems
+title: Device & OS Integrations (E-ink, Notifications, NFC, Demo)
+scope:
+  - src/systems/
+source_files: []
+depends_on: []
+related_to:
+  - path: screens

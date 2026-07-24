@@ -1,0 +1,1 @@
+Expo SDK ~54 with Expo Router ~6, React Native 0.81, React 19, Zustand 5 for state, Jest+ts-jest for testing, ESLint v9 with eslint-plugin-boundaries, Prettier with CSS/import attribute plugins, Husky + lint-staged for pre-commit hooks, pnpm workspace, and a Python toolchain under `tools` for procedural pixel-art and chiptune generation.

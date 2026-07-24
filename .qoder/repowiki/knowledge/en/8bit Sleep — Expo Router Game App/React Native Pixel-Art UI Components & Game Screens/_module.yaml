@@ -1,0 +1,11 @@
+schema_version: 1
+module_path: ui_components
+title: React Native Pixel-Art UI Components & Game Screens
+scope:
+  - src/ui/
+source_files: []
+depends_on: []
+related_to:
+  - path: app_routes
+  - path: state_management
+  - path: tools
