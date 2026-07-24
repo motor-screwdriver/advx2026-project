@@ -1,0 +1,13 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <application>
+    <!-- Best-effort only: stock Android never delivers USER_PRESENT to manifest
+         receivers (it is sent without FLAG_RECEIVER_INCLUDE_BACKGROUND); some
+         OEM builds do. The broadcast is protected, so exported=true cannot be
+         spoofed. The reliable path is the runtime registration in the module. -->
+    <receiver android:name=".UnlockReceiver" android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.USER_PRESENT" />
+      </intent-filter>
+    </receiver>
+  </application>
+</manifest>
