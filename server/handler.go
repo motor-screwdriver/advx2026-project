@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log"
 	"net"
 	"net/http"
 	"strings"
@@ -121,14 +122,20 @@ func (s *Server) handleOracle(w http.ResponseWriter, r *http.Request) {
 		var unavailableErr *OracleUnavailableError
 		switch {
 		case errors.As(err, &inputErr):
+			log.Printf("oracle 400 client=%s: %v", clientID(r), err)
 			writeJSON(w, http.StatusBadRequest, errorResponse{Error: inputErr.msg})
 		case errors.As(err, &unavailableErr):
+			// The generic body hides the cause from the user; log the real
+			// upstream error (e.g. "OpenRouter 402: ...") so it is diagnosable.
+			log.Printf("oracle 503 client=%s: %v", clientID(r), err)
 			writeJSON(w, http.StatusServiceUnavailable, errorResponse{Error: "The oracle is unavailable."})
 		default:
+			log.Printf("oracle 500 client=%s: %v", clientID(r), err)
 			writeJSON(w, http.StatusInternalServerError, errorResponse{Error: "The oracle is unavailable."})
 		}
 		return
 	}
+	log.Printf("oracle 200 client=%s", clientID(r))
 	writeJSON(w, http.StatusOK, response)
 }
 

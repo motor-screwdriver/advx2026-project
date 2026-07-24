@@ -15,7 +15,10 @@ import (
 )
 
 const openRouterURL = "https://openrouter.ai/api/v1/chat/completions"
-const defaultModel = "google/gemini-2.5-flash-lite"
+// defaultModel is OpenRouter's free-models router: it routes each request to a
+// random available free model, so there is no per-token cost (only the
+// account-wide free-models-per-day cap). Override with AI_MODEL.
+const defaultModel = "openrouter/free"
 const defaultMaxTokens = 300
 
 // requestTimeout: free-tier models can take 30s+ for a structured reply; keep
@@ -194,7 +197,7 @@ func createAiProvider() (AiProvider, error) {
 		Model:  defaultModel,
 		AppURL: os.Getenv("AI_APP_URL"),
 	}
-	if model, set := os.LookupEnv("AI_MODEL"); set {
+	if model, set := os.LookupEnv("AI_MODEL"); set && model != "" {
 		config.Model = model
 	}
 	if maxTokens, err := strconv.Atoi(os.Getenv("AI_MAX_TOKENS")); err == nil && maxTokens > 0 {

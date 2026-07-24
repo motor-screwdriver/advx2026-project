@@ -13,7 +13,9 @@ set -euo pipefail
 DOMAIN="${DEPLOY_DOMAIN:-${DEPLOY_HOST}.sslip.io}"
 ORIGIN="https://${DOMAIN}"
 APP_DIR=/opt/8bit-sleep
-AI_MODEL="${AI_MODEL:-google/gemma-4-26b-a4b-it:free}"
+# openrouter/free routes to a random free model (no per-token cost); override
+# via the AI_MODEL env/secret. Free models share one account-wide daily cap.
+AI_MODEL="${AI_MODEL:-openrouter/free}"
 AI_MAX_TOKENS="${AI_MAX_TOKENS:-600}"
 # 8080 is taken by a dockerized backend on the host; 8091 is the default here.
 PORT="${PORT:-8091}"
