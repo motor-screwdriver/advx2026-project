@@ -1,0 +1,1 @@
+React Native with `expo-router` navigation, `@react-native-async-storage/async-storage` for persistence, `react-native-view-shot` for base64 card capture, `expo-notifications` for local push (lazy-loaded), and `react-native-nfc-manager` for NFC NDEF tag reading. All network calls go to `https://dot.mindreset.tech/api/authV2/open/device` with Bearer-token auth.

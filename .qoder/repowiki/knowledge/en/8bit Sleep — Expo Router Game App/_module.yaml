@@ -1,0 +1,22 @@
+schema_version: 1
+module_path: ''
+title: 8bit Sleep — Expo Router Game App
+scope:
+  - README.md
+  - .gitignore
+  - package.json
+  - app.json
+  - tsconfig.json
+  - metro.config.js
+  - jest.config.js
+  - jest.setup.ts
+  - eslint.config.js
+  - .prettierrc
+  - .lintstagedrc.json
+  - .npmrc
+  - pnpm-workspace.yaml
+  - pnpm-lock.yaml
+  - .prettierignore
+source_files: []
+depends_on: []
+related_to: []

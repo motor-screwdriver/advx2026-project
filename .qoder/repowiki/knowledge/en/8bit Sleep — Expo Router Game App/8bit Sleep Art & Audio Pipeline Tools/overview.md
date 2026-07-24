@@ -1,0 +1,1 @@
+Python toolchain that procedurally generates pixel-art assets and chiptune audio for the 8bit Sleep game, with a PixelLab AI integration layer and a manifest system that keeps generated assets in sync with the TypeScript UI.

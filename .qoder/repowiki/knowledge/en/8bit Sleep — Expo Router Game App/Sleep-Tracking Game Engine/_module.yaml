@@ -1,0 +1,10 @@
+schema_version: 1
+module_path: game_engine
+title: Sleep-Tracking Game Engine
+scope:
+  - src/engine/
+source_files: []
+depends_on: []
+related_to:
+  - path: state_management
+  - path: tools

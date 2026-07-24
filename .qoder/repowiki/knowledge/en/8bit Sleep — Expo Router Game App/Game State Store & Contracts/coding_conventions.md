@@ -1,0 +1,5 @@
+- Action helpers in `actions.ts` follow a `(get, set, ...args)` signature so they can read/write the Zustand store immutably via functional `set` updates.
+- State transitions are expressed as immutable object spreads (`{ ...s.game, ... }`) rather than in-place mutation, keeping each action's return value serializable for persistence.
+- Side effects produce typed `GameEvent` entries stamped with an ISO timestamp via the shared `event(type, now, payload)` helper and appended through `pushEvents`, which truncates the log to the last 100 entries.
+- Contract types in `src/contracts/` are treated as frozen M0 interfaces — new derived types are added as separate exports rather than mutating existing ones.
+- Feature flags are declared as a single `as const` object (`FLAGS`) with a corresponding `FlagName = keyof typeof FLAGS` type, and toggled through dedicated store actions like `toggleDemoMode`.

@@ -1,0 +1,1 @@
+Tests are co-located under `src/engine/__tests__/` and use a `fixtures.ts` helper; the engine must not import from `ui/` due to an eslint-plugin-boundaries rule, keeping it testable and framework-agnostic.

@@ -1,0 +1,1 @@
+React Native pixel-art UI library providing themed components, scene backgrounds, animation helpers, and game screens (Soul Tether mini-game, hero walk, wheel picker) driven by a centralized GameProvider context.

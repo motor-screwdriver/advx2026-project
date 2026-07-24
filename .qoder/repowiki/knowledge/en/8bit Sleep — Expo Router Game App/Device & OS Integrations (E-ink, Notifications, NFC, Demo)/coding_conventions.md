@@ -1,0 +1,5 @@
+- Optional/native-only modules are loaded lazily via a cached `require()` inside a `loadXxx()` function that returns `null` in Expo Go or when the feature flag is off, so imports never trigger runtime failures.
+- All external integrations degrade silently: failures are caught, logged with a `[module]` prefix, and return a safe default without throwing, ensuring solo offline play never depends on them.
+- Persistent configuration is stored under stable `8bit-sleep/*` keys in AsyncStorage with explicit getter/setter pairs that parse/validate on read and swallow errors.
+- Feature-gated functionality checks `FLAGS.<feature>` at the top of public functions before doing any work, keeping the rest of the codebase agnostic to whether a feature is enabled.
+- Pure utility modules (e.g. `scheduleMath.ts`, `demoNights.ts`) avoid any framework imports so they remain jest-testable and side-effect free.

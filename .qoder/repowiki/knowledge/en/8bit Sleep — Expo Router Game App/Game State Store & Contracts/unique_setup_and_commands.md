@@ -1,0 +1,1 @@
+The store persists under the AsyncStorage key `8bit-sleep/game` and marks itself `hydrated` only after `onRehydrateStorage` fires, so consumers must wait for `hydrated` before mounting navigators. Tests live alongside sources in `__tests__/` directories and exercise both store mutations and the mock engine.

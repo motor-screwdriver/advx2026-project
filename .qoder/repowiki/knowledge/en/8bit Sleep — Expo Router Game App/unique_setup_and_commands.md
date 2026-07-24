@@ -1,0 +1,1 @@
+`pnpm install` installs all dependencies; `pnpm start` launches the Expo dev server, with `pnpm android`, `pnpm ios`, and `pnpm web` targeting each platform. `pnpm check` runs lint, typecheck, and jest tests together; `pnpm format` rewrites everything via Prettier. Assets are regenerated through the Python pipeline under `tools/` before being consumed by the TypeScript UI.
