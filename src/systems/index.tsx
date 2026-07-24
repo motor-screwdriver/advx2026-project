@@ -16,7 +16,7 @@ import { DemoPanel } from './DemoPanel'
 import { scheduleEinkPush } from './eink'
 import { EinkCardHost } from './einkCard'
 import { configureNotificationHandler, syncNotifications } from './notifications'
-import { buildWidgetData, syncHomeWidgets } from './widgets'
+import { armWidgetLiveSync, buildWidgetData, syncHomeWidgets } from './widgets'
 
 let initialized = false
 
@@ -28,6 +28,9 @@ export function initSystems(): void {
   configureNotificationHandler()
   void resyncNotifications()
   useGameStore.subscribe(onStoreChange)
+  // Widget taps in this shared context are redrawn by the subscription —
+  // the headless click handler must not draw a second time (flicker).
+  armWidgetLiveSync()
   // Re-arm the schedule when the user comes back (morning summary re-arms).
   AppState.addEventListener('change', (status) => {
     if (status === 'active') {

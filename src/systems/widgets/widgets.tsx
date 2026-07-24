@@ -31,6 +31,9 @@ const C = {
   text: '#f5e6c8', // parchment cream
   textDim: '#c2a176', // muted tan
   gold: '#eab54d', // honey gold
+  goldLight: '#f7d98b', // top bevel highlight on the gold button
+  goldDark: '#8a6b2d', // thick base edge of the gold button
+  bevelDark: '#120c08', // thick base edge of the brown button
   dayText: '#3a2a1c',
 } as const
 
@@ -86,18 +89,23 @@ export function SleepStatsWidget({ data }: { data: HomeWidgetData }) {
   )
 }
 
-/** 2x1: one state-aware button — "START SLEEP" on tavern brown while awake,
- *  "WAKE UP" on gold once the hero is tucked in. The tap stays on the home
- *  screen: the headless task handler flips the store and re-renders this. */
+/** 2x1: one state-aware button styled as a chunky physical key — light top
+ *  bevel, thick dark base edge, like PixelButton in the app. Brown "START
+ *  SLEEP" while awake, gold "WAKE UP" once tucked in. The tap stays on the
+ *  home screen: the headless task handler flips the store and re-renders. */
 export function SleepToggleWidget({ data }: { data: HomeWidgetData }) {
   const asleep = data.asleep
-  const backgroundColor = asleep ? C.gold : C.bg
+  const face = {
+    backgroundColor: asleep ? C.gold : C.bg,
+    borderColor: asleep ? C.goldDark : C.bevelDark,
+    borderTopColor: asleep ? C.goldLight : C.outline,
+  }
   const color = asleep ? C.dayText : C.gold
   return (
     <FlexWidget
       clickAction={TOGGLE_SLEEP_ACTION}
       clickActionData={{ action: asleep ? 'wake' : 'sleep' }}
-      style={{ ...styles.toggleRoot, backgroundColor }}
+      style={{ ...styles.toggleRoot, ...face }}
     >
       <TextWidget
         text={asleep ? 'WAKE UP' : 'START SLEEP'}
@@ -157,7 +165,9 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    flexGap: 10,
+    borderWidth: 2,
+    borderBottomWidth: 6, // thick base edge — the button reads as raised
+    paddingBottom: 6, // recenters the label on the face above the base edge
     borderRadius: 16,
     overflow: 'hidden',
   },

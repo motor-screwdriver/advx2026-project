@@ -10,6 +10,7 @@ import { Platform } from 'react-native'
 
 import type { HomeWidgetData } from './widgetData'
 
+export { armWidgetLiveSync } from './liveSync'
 export { buildWidgetData, readWidgetData } from './widgetData'
 export type { HomeWidgetData } from './widgetData'
 
