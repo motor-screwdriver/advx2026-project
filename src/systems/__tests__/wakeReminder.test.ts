@@ -5,9 +5,32 @@ jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage)
 const scheduleNotificationAsync = jest.fn()
 const dismissNotificationAsync = jest.fn()
 
-jest.mock('expo-notifications', () => ({
-  scheduleNotificationAsync: (...args: unknown[]) => scheduleNotificationAsync(...args),
-  dismissNotificationAsync: (...args: unknown[]) => dismissNotificationAsync(...args),
+jest.mock('expo-notifications/build/scheduleNotificationAsync', () => ({
+  default: (...args: unknown[]) => scheduleNotificationAsync(...args),
+}))
+
+jest.mock('expo-notifications/build/dismissNotificationAsync', () => ({
+  default: (...args: unknown[]) => dismissNotificationAsync(...args),
+}))
+
+jest.mock('expo-notifications/build/NotificationsEmitter', () => ({
+  addNotificationResponseReceivedListener: jest.fn(),
+  getLastNotificationResponseAsync: jest.fn(),
+}))
+
+const getPermissionsAsync = jest.fn()
+
+jest.mock('expo-notifications/build/NotificationsHandler', () => ({
+  setNotificationHandler: jest.fn(),
+}))
+
+jest.mock('expo-notifications/build/NotificationPermissions', () => ({
+  getPermissionsAsync: (...args: unknown[]) => getPermissionsAsync(...args),
+  requestPermissionsAsync: jest.fn().mockResolvedValue({ granted: true }),
+}))
+
+jest.mock('expo-notifications/build/setNotificationChannelAsync', () => ({
+  default: jest.fn(),
 }))
 
 const routerPush = jest.fn()
@@ -32,6 +55,7 @@ beforeEach(async () => {
   for (const fn of [scheduleNotificationAsync, dismissNotificationAsync]) {
     fn.mockClear().mockResolvedValue(undefined)
   }
+  getPermissionsAsync.mockReset().mockResolvedValue({ granted: true, canAskAgain: true })
   await mockAsyncStorage.clear()
 })
 
@@ -43,7 +67,7 @@ describe('syncWakeReminder', () => {
     expect(scheduleNotificationAsync).toHaveBeenCalledWith(
       expect.objectContaining({
         identifier: 'wake-reminder-ongoing',
-        trigger: null,
+        trigger: { channelId: 'wake-reminder' },
         content: expect.objectContaining({
           sticky: true,
           autoDismiss: false,
@@ -70,8 +94,16 @@ describe('syncWakeReminder', () => {
     expect(scheduleNotificationAsync).not.toHaveBeenCalled()
   })
 
-  it('no-ops where expo-notifications cannot load (web / old Expo Go)', async () => {
-    jest.doMock('expo-notifications', () => {
+  it('does not post when OS notification permission is denied', async () => {
+    getPermissionsAsync.mockResolvedValue({ granted: false, canAskAgain: false })
+    const { store, syncWakeReminder } = await setup()
+    store.setState({ pendingBedTime: 690 })
+    await syncWakeReminder()
+    expect(scheduleNotificationAsync).not.toHaveBeenCalled()
+  })
+
+  it('no-ops where the native module cannot load (web)', async () => {
+    jest.doMock('expo-notifications/build/scheduleNotificationAsync', () => {
       throw new Error('native module unavailable')
     })
     const { store, syncWakeReminder } = await setup()
