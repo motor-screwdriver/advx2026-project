@@ -15,6 +15,51 @@ type MiFitnessDiagnostic struct {
 	Error    string `json:"error,omitempty"`
 }
 
+// MiFitnessRegionDiagnostic contains only per-IDC response metadata.
+type MiFitnessRegionDiagnostic struct {
+	Region  string `json:"region"`
+	BaseURL string `json:"base_url"`
+	Count   *int   `json:"count,omitempty"`
+	HasMore bool   `json:"has_more,omitempty"`
+	Error   string `json:"error,omitempty"`
+}
+
+// DiagnoseSleepRegions makes one sleep request to every supported Mi Fitness
+// IDC. Xiaomi Account country does not reliably identify the data region.
+func (c *MiFitnessClient) DiagnoseSleepRegions(
+	ctx context.Context, from, to time.Time,
+) []MiFitnessRegionDiagnostic {
+	regions := []string{"cn", "de", "i2", "ru", "sg", "us"}
+	results := make([]MiFitnessRegionDiagnostic, 0, len(regions))
+	for _, region := range regions {
+		baseURL, _ := miFitnessBaseURL(region)
+		requestCtx, cancel := context.WithTimeout(ctx, 60*time.Second)
+		result := c.diagnoseSleepRegion(requestCtx, region, baseURL, from, to)
+		cancel()
+		results = append(results, result)
+	}
+	return results
+}
+
+func (c *MiFitnessClient) diagnoseSleepRegion(
+	ctx context.Context, region, baseURL string, from, to time.Time,
+) MiFitnessRegionDiagnostic {
+	probe := *c
+	probe.region, probe.healthBase = region, baseURL
+	var page modernPage
+	err := probe.request(ctx, miFitnessAPIPath, map[string]any{
+		"start_time": from.Unix(), "end_time": to.Unix(), "key": "sleep",
+	}, &page)
+	result := MiFitnessRegionDiagnostic{Region: region, BaseURL: baseURL}
+	if err != nil {
+		result.Error = err.Error()
+		return result
+	}
+	count := len(page.DataList)
+	result.Count, result.HasMore = &count, page.HasMore
+	return result
+}
+
 // DiagnoseSleepSources compares the raw fitness endpoint with likely
 // aggregated endpoints. Unknown routes are reported rather than treated as a
 // successful sleep export.
