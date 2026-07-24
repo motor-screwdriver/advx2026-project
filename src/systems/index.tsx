@@ -16,7 +16,7 @@ import { DemoPanel } from './DemoPanel'
 import { scheduleEinkPush } from './eink'
 import { EinkCardHost } from './einkCard'
 import { configureNotificationHandler, syncNotifications } from './notifications'
-import { syncWakeReminder } from './wakeReminder'
+import { initWakeReminderListener, syncWakeReminder } from './wakeReminder'
 
 let initialized = false
 
@@ -26,6 +26,7 @@ export function initSystems(): void {
   }
   initialized = true
   configureNotificationHandler()
+  initWakeReminderListener()
   void resyncNotifications()
   void syncWakeReminder()
   useGameStore.subscribe(onStoreChange)

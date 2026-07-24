@@ -2,16 +2,21 @@ import mockAsyncStorage from '@react-native-async-storage/async-storage/jest/asy
 
 jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage)
 
-const setSleepReminderActive = jest.fn()
-const mockRequireOptionalNativeModule = jest.fn()
+const scheduleNotificationAsync = jest.fn()
+const dismissNotificationAsync = jest.fn()
 
-jest.mock('expo', () => ({
-  requireOptionalNativeModule: (...args: unknown[]) => mockRequireOptionalNativeModule(...args),
+jest.mock('expo-notifications', () => ({
+  scheduleNotificationAsync: (...args: unknown[]) => scheduleNotificationAsync(...args),
+  dismissNotificationAsync: (...args: unknown[]) => dismissNotificationAsync(...args),
 }))
 
-jest.mock('react-native', () => ({ Platform: { OS: 'android' } }))
+const routerPush = jest.fn()
 
-const NATIVE = { setSleepReminderActive }
+jest.mock('expo-router', () => ({ router: { push: (...args: unknown[]) => routerPush(...args) } }))
+
+jest.mock('expo', () => ({ isRunningInExpoGo: () => false }))
+
+jest.mock('react-native', () => ({ Platform: { OS: 'android' } }))
 
 // wakeReminder caches the native lookup at module level, so every test gets
 // fresh modules (jest.resetModules) and must use the store instance from the
@@ -24,38 +29,54 @@ async function setup() {
 
 beforeEach(async () => {
   jest.resetModules()
-  setSleepReminderActive.mockClear()
-  mockRequireOptionalNativeModule.mockReset().mockReturnValue(NATIVE)
+  for (const fn of [scheduleNotificationAsync, dismissNotificationAsync]) {
+    fn.mockClear().mockResolvedValue(undefined)
+  }
   await mockAsyncStorage.clear()
 })
 
 describe('syncWakeReminder', () => {
-  it('activates the native reminder while a sleep session is active', async () => {
+  it('posts the ongoing reminder while a sleep session is active', async () => {
     const { store, syncWakeReminder } = await setup()
     store.setState({ pendingBedTime: 690 })
     await syncWakeReminder()
-    expect(setSleepReminderActive).toHaveBeenCalledWith(true)
+    expect(scheduleNotificationAsync).toHaveBeenCalledWith(
+      expect.objectContaining({
+        identifier: 'wake-reminder-ongoing',
+        trigger: null,
+        content: expect.objectContaining({
+          sticky: true,
+          autoDismiss: false,
+          data: { wakeReminder: true },
+        }),
+      }),
+    )
+    expect(dismissNotificationAsync).not.toHaveBeenCalled()
   })
 
-  it('deactivates the native reminder when no sleep is active', async () => {
+  it('dismisses the reminder when no sleep is active', async () => {
     const { syncWakeReminder } = await setup()
     await syncWakeReminder()
-    expect(setSleepReminderActive).toHaveBeenCalledWith(false)
+    expect(dismissNotificationAsync).toHaveBeenCalledWith('wake-reminder-ongoing')
+    expect(scheduleNotificationAsync).not.toHaveBeenCalled()
   })
 
-  it('deactivates when notifications are turned off', async () => {
+  it('dismisses the reminder when notifications are turned off', async () => {
     const { store, syncWakeReminder } = await setup()
     await mockAsyncStorage.setItem('8bit-sleep/notifications-enabled', 'off')
     store.setState({ pendingBedTime: 690 })
     await syncWakeReminder()
-    expect(setSleepReminderActive).toHaveBeenCalledWith(false)
+    expect(dismissNotificationAsync).toHaveBeenCalledWith('wake-reminder-ongoing')
+    expect(scheduleNotificationAsync).not.toHaveBeenCalled()
   })
 
-  it('no-ops when the native module is missing (Expo Go / iOS / web)', async () => {
-    mockRequireOptionalNativeModule.mockReturnValue(null)
+  it('no-ops where expo-notifications cannot load (web / old Expo Go)', async () => {
+    jest.doMock('expo-notifications', () => {
+      throw new Error('native module unavailable')
+    })
     const { store, syncWakeReminder } = await setup()
     store.setState({ pendingBedTime: 690 })
-    await syncWakeReminder()
-    expect(setSleepReminderActive).not.toHaveBeenCalled()
+    await expect(syncWakeReminder()).resolves.toBeUndefined()
+    expect(scheduleNotificationAsync).not.toHaveBeenCalled()
   })
 })
