@@ -1,17 +1,17 @@
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import React from 'react'
+import { StyleSheet, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-import type { HeroType } from '../contracts/types';
-import { HeroSprite } from '../ui/HeroSprite';
-import { PixelPanel } from '../ui/PixelPanel';
-import { Screen } from '../ui/Screen';
-import { strings } from '../ui/strings';
-import { theme } from '../ui/theme';
-import { useGame } from '../ui/useGame';
+import type { HeroType } from '../contracts/types'
+import { strings } from '../ui/strings'
+import { ScreenTitle, TavernFrame } from '../ui/tavern'
+import { theme } from '../ui/theme'
+import { useGame } from '../ui/useGame'
+import { HeroCard, NavBar } from './HeroesParts'
 
 interface RowSpec {
-  label: string;
-  heroes: { type: HeroType; condition: string }[];
+  label: string
+  heroes: { type: HeroType; condition: string }[]
 }
 
 /** Mirrors the 3×3 summoning grid (engine/hero.ts), bedtime rows × duration. */
@@ -40,19 +40,22 @@ const ROWS: RowSpec[] = [
       { type: 'warlock', condition: strings.heroes_dur_long },
     ],
   },
-];
+]
 
 export function HeroesScreen() {
-  const { state } = useGame();
-  const current = state.hero?.type ?? null;
+  const { state } = useGame()
+  const current = state.hero?.type ?? null
   return (
-    <Screen title={strings.heroes_title}>
-      <Text style={styles.intro}>{strings.heroes_intro}</Text>
-      <ScrollView contentContainerStyle={styles.scroll}>
-        {ROWS.map((row) => (
-          <View key={row.label} style={styles.section}>
-            <Text style={styles.sectionLabel}>{row.label}</Text>
-            <View style={styles.row}>
+    <SafeAreaView style={styles.safe}>
+      <TavernFrame>
+        <ScreenTitle
+          title={strings.heroes_title.toUpperCase()}
+          subtitle={strings.heroes_intro}
+          size={20}
+        />
+        <View style={styles.grid}>
+          {ROWS.map((row) => (
+            <View key={row.label} style={styles.gridRow}>
               {row.heroes.map((hero) => (
                 <HeroCard
                   key={hero.type}
@@ -62,73 +65,24 @@ export function HeroesScreen() {
                 />
               ))}
             </View>
-          </View>
-        ))}
-      </ScrollView>
-    </Screen>
-  );
-}
-
-interface CardProps {
-  type: HeroType;
-  condition: string;
-  isCurrent: boolean;
-}
-
-function HeroCard({ type, condition, isCurrent }: CardProps) {
-  return (
-    <PixelPanel
-      style={[styles.card, isCurrent && styles.cardCurrent]}
-      contentStyle={styles.cardContent}
-    >
-      <HeroSprite type={type} size={48} animated={false} />
-      <Text style={styles.cardName}>{strings[`hero_${type}` as keyof typeof strings]}</Text>
-      <Text style={styles.cardCondition}>{condition}</Text>
-      {isCurrent && <Text style={styles.currentTag}>{strings.heroes_current}</Text>}
-    </PixelPanel>
-  );
+          ))}
+        </View>
+        <NavBar />
+      </TavernFrame>
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
-  intro: {
-    ...theme.type.label,
-    color: theme.colors.textDim,
-    textAlign: 'center',
-  },
-  scroll: { gap: theme.spacing(4), paddingBottom: theme.spacing(6) },
-  section: { gap: theme.spacing(2) },
-  sectionLabel: {
-    ...theme.type.label,
-    color: theme.colors.text,
-    textTransform: 'uppercase',
-  },
-  row: {
-    flexDirection: 'row',
-    gap: theme.spacing(2),
-  },
-  card: {
+  safe: { flex: 1, backgroundColor: '#150d08' },
+  grid: {
     flex: 1,
+    justifyContent: 'space-evenly',
+    gap: theme.spacing(2.5),
+    paddingVertical: theme.spacing(2),
   },
-  cardContent: {
-    flexGrow: 1,
-    alignItems: 'center',
-    gap: theme.spacing(2),
+  gridRow: {
+    flexDirection: 'row',
+    gap: theme.spacing(2.5),
   },
-  cardCurrent: {
-    borderColor: theme.colors.gold,
-  },
-  cardName: {
-    ...theme.type.label,
-    color: theme.colors.text,
-  },
-  cardCondition: {
-    ...theme.type.label,
-    color: theme.colors.textDim,
-    textAlign: 'center',
-  },
-  currentTag: {
-    ...theme.type.label,
-    color: theme.colors.gold,
-    textTransform: 'uppercase',
-  },
-});
+})
