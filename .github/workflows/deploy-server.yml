@@ -33,7 +33,7 @@ jobs:
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          AI_MODEL: google/gemma-4-26b-a4b-it:free
+          AI_MODEL: ${{ secrets.AI_MODEL }}
           AI_MAX_TOKENS: '600'
         run: |
           set -euo pipefail
