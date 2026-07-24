@@ -57,7 +57,7 @@ function onStoreChange(state: GameStore, prev: GameStore): void {
     scheduleEinkPush(g)
   }
   // Android home-screen widgets mirror everything on the home TopBar + hero,
-  // plus the asleep flag (2x1 toggle halves swap which side is lit).
+  // plus the asleep flag (the 2x1 toggle flips START SLEEP / WAKE UP).
   const widgetChanged =
     g.hero !== p.hero ||
     g.hp !== p.hp ||

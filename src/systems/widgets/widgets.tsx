@@ -2,9 +2,9 @@
  * Android home-screen widget layouts, in the app's cozy-tavern palette:
  * - SleepStats (2x2): level banner, sleep streak with moon, hero sprite and
  *   the LIVES heart bar — the home screen's TopBar + hero, condensed.
- * - SleepToggle (2x1): night half starts sleep, sun half wakes up, split by
- *   an armor crest. Taps fire eightbitsleep:// deep links (OPEN_URI), the app
- *   router performs the check-in (single-writer store stays safe).
+ * - SleepToggle (2x1): one state-aware button — moon "START SLEEP" while
+ *   awake, sun "WAKE UP" once tucked in. The tap fires a WIDGET_CLICK handled
+ *   headlessly by ./register (the store toggles in place, no app launch).
  * Loaded only on Android native builds via ./register / ./render — importing
  * react-native-android-widget in Expo Go / web / jest crashes on the missing
  * native module. RemoteViews render system frames: no RN gap, no RN fonts
@@ -18,9 +18,10 @@ import type { HomeWidgetData } from './widgetData'
 
 export const WIDGET_NAMES = { stats: 'SleepStats', toggle: 'SleepToggle' } as const
 
+/** Custom click action: routed to the headless task handler as WIDGET_CLICK. */
+export const TOGGLE_SLEEP_ACTION = 'TOGGLE_SLEEP'
+
 const FONT = 'PressStart2P-Regular' // copied to assets/fonts by the config plugin
-const SLEEP_URI = 'eightbitsleep://widget-action?action=sleep'
-const WAKE_URI = 'eightbitsleep://widget-action?action=wake'
 
 const C = {
   bg: '#221812', // theme bg, deep espresso
@@ -30,12 +31,9 @@ const C = {
   text: '#f5e6c8', // parchment cream
   textDim: '#c2a176', // muted tan
   gold: '#eab54d', // honey gold
-  night: '#16213c', // night-sky navy (widget scene)
   dayText: '#3a2a1c',
 } as const
 
-const MOON = require('../../../assets/pixellab/atmo/moon_night.png')
-const SUN = require('../../../assets/pixellab/atmo/sun_day.png')
 const HEART_FULL = require('../../../assets/pixellab/icons/heart_full.png')
 const HEART_EMPTY = require('../../../assets/pixellab/icons/heart_empty.png')
 
@@ -88,20 +86,19 @@ export function SleepStatsWidget({ data }: { data: HomeWidgetData }) {
   )
 }
 
-/** 2x1: one state-aware button — moon "START SLEEP" while awake, sun
- *  "WAKE UP" once the hero is tucked in. The tap deep-links the matching
- *  check-in, the store subscription re-renders the widget into the new state. */
+/** 2x1: one state-aware button — "START SLEEP" on tavern brown while awake,
+ *  "WAKE UP" on gold once the hero is tucked in. The tap stays on the home
+ *  screen: the headless task handler flips the store and re-renders this. */
 export function SleepToggleWidget({ data }: { data: HomeWidgetData }) {
   const asleep = data.asleep
-  const backgroundColor = asleep ? C.gold : C.night
+  const backgroundColor = asleep ? C.gold : C.bg
   const color = asleep ? C.dayText : C.gold
   return (
     <FlexWidget
-      clickAction="OPEN_URI"
-      clickActionData={{ uri: asleep ? WAKE_URI : SLEEP_URI }}
+      clickAction={TOGGLE_SLEEP_ACTION}
+      clickActionData={{ action: asleep ? 'wake' : 'sleep' }}
       style={{ ...styles.toggleRoot, backgroundColor }}
     >
-      <ImageWidget image={asleep ? SUN : MOON} imageWidth={24} imageHeight={24} />
       <TextWidget
         text={asleep ? 'WAKE UP' : 'START SLEEP'}
         style={{ ...styles.toggleLabel, color }}
@@ -157,12 +154,12 @@ const styles = {
   toggleRoot: {
     width: 'match_parent',
     height: 'match_parent',
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     flexGap: 10,
     borderRadius: 16,
     overflow: 'hidden',
   },
-  toggleLabel: { fontFamily: FONT, fontSize: 12 },
+  toggleLabel: { fontFamily: FONT, fontSize: 12, textAlign: 'center', lineHeight: 20 },
 } as const
