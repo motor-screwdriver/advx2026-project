@@ -4,36 +4,68 @@
  * the phone and the quick way back into the app is right there. Tap it to land
  * on Home, where the "Wake up" button finishes the night.
  *
- * Built on plain local expo-notifications (same mechanism as the bedtime
- * reminder): works in Expo Go and dev/production builds alike, needs no custom
- * native code, and — unlike any in-app unlock listener — survives the app
- * process being killed overnight. Where expo-notifications cannot load (web,
- * old Expo Go), everything silently no-ops and the game fully works.
+ * Local notifications work everywhere, Expo Go included — only REMOTE push was
+ * removed from Expo Go in SDK 53. Importing the package index there logs a
+ * remote-push error, so this module deep-imports only the local-notification
+ * files, which pull in no push-token code. Unlike the scheduled reminders in
+ * notifications.ts (skipped in Expo Go), this reminder is event-driven state,
+ * so it must load in Expo Go too. On web the native module cannot load and
+ * everything silently no-ops.
  */
 import { router } from 'expo-router'
 import { Platform } from 'react-native'
 
 import { useGameStore } from '../state/store'
 import { getNotificationsEnabled } from './notifications'
-import { WAKE_REMINDER_BODY, WAKE_REMINDER_TITLE } from './reminderLines'
+import { WAKE_REMINDER_BODY, WAKE_REMINDER_SUBTITLE, WAKE_REMINDER_TITLE } from './reminderLines'
 
 const REMINDER_ID = 'wake-reminder-ongoing'
 
-type NotificationsModule = typeof import('expo-notifications')
+type Notifications = typeof import('expo-notifications')
 type NotificationResponse = import('expo-notifications').NotificationResponse
 
-let cached: NotificationsModule | null | undefined
+type LocalNotificationsApi = Pick<
+  Notifications,
+  | 'scheduleNotificationAsync'
+  | 'dismissNotificationAsync'
+  | 'addNotificationResponseReceivedListener'
+  | 'getLastNotificationResponseAsync'
+  | 'setNotificationHandler'
+  | 'getPermissionsAsync'
+  | 'requestPermissionsAsync'
+  | 'setNotificationChannelAsync'
+>
 
-/** Try-require instead of an Expo Go pre-check: local notifications do work
- *  in current Expo Go; where the import genuinely fails, we stay silent. */
-function loadNotifications(): NotificationsModule | null {
+let cached: LocalNotificationsApi | null | undefined
+
+function loadLocal(): LocalNotificationsApi | null {
   if (cached === undefined) {
     try {
       cached =
         Platform.OS === 'web'
           ? null
-          : // eslint-disable-next-line @typescript-eslint/no-require-imports
-            (require('expo-notifications') as NotificationsModule)
+          : {
+              /* eslint-disable @typescript-eslint/no-require-imports */
+              scheduleNotificationAsync:
+                require('expo-notifications/build/scheduleNotificationAsync').default,
+              dismissNotificationAsync: require('expo-notifications/build/dismissNotificationAsync')
+                .default,
+              addNotificationResponseReceivedListener:
+                require('expo-notifications/build/NotificationsEmitter')
+                  .addNotificationResponseReceivedListener,
+              getLastNotificationResponseAsync:
+                require('expo-notifications/build/NotificationsEmitter')
+                  .getLastNotificationResponseAsync,
+              setNotificationHandler: require('expo-notifications/build/NotificationsHandler')
+                .setNotificationHandler,
+              getPermissionsAsync: require('expo-notifications/build/NotificationPermissions')
+                .getPermissionsAsync,
+              requestPermissionsAsync: require('expo-notifications/build/NotificationPermissions')
+                .requestPermissionsAsync,
+              setNotificationChannelAsync:
+                require('expo-notifications/build/setNotificationChannelAsync').default,
+              /* eslint-enable @typescript-eslint/no-require-imports */
+            }
     } catch {
       cached = null
     }
@@ -41,9 +73,29 @@ function loadNotifications(): NotificationsModule | null {
   return cached
 }
 
+const CHANNEL_ID = 'wake-reminder'
+
+async function ensureReady(n: LocalNotificationsApi): Promise<boolean> {
+  if (Platform.OS === 'android') {
+    await n.setNotificationChannelAsync(CHANNEL_ID, {
+      name: 'Wake-up reminder',
+      importance: 4, // AndroidImportance.HIGH — surfaces on the lock screen
+      sound: null,
+    })
+  }
+  const current = await n.getPermissionsAsync()
+  if (current.granted) {
+    return true
+  }
+  if (!current.canAskAgain) {
+    return false
+  }
+  return (await n.requestPermissionsAsync()).granted
+}
+
 /** Mirror the sleep-session state into the shade. Fire-and-forget. */
 export async function syncWakeReminder(): Promise<void> {
-  const n = loadNotifications()
+  const n = loadLocal()
   if (!n) {
     return
   }
@@ -51,10 +103,14 @@ export async function syncWakeReminder(): Promise<void> {
   const active = asleep && (await getNotificationsEnabled())
   try {
     if (active) {
+      if (!(await ensureReady(n))) {
+        return // no OS permission — the game still works
+      }
       await n.scheduleNotificationAsync({
         identifier: REMINDER_ID,
         content: {
           title: WAKE_REMINDER_TITLE,
+          subtitle: WAKE_REMINDER_SUBTITLE, // iOS: second, lighter line under the title
           body: WAKE_REMINDER_BODY,
           data: { wakeReminder: true },
           sticky: true, // ongoing: cannot be swiped away while the hero sleeps
@@ -63,7 +119,7 @@ export async function syncWakeReminder(): Promise<void> {
           vibrate: [],
           color: '#eab54d',
         },
-        trigger: null, // post immediately
+        trigger: Platform.OS === 'android' ? { channelId: CHANNEL_ID } : null,
       })
     } else {
       await n.dismissNotificationAsync(REMINDER_ID)
@@ -75,10 +131,18 @@ export async function syncWakeReminder(): Promise<void> {
 
 /** Taps on the reminder route to Home (wake-up button), warm or cold start. */
 export function initWakeReminderListener(): void {
-  const n = loadNotifications()
+  const n = loadLocal()
   if (!n) {
     return
   }
+  n.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+      shouldShowBanner: true, // show even when posted while the app is foreground
+      shouldShowList: true,
+    }),
+  })
   const isReminder = (response: NotificationResponse | null): boolean =>
     response?.notification.request.content.data?.wakeReminder === true
   n.addNotificationResponseReceivedListener((response) => {
