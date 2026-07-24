@@ -1,0 +1,12 @@
+Dockerfile
+.dockerignore
+.git
+.gitignore
+*.md
+*.test
+*_test.go
+.idea
+.vscode
+tmp/
+bin/
+eightbit-sleep-server

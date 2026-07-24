@@ -194,7 +194,7 @@ func createAiProvider() (AiProvider, error) {
 		Model:  defaultModel,
 		AppURL: os.Getenv("AI_APP_URL"),
 	}
-	if model, set := os.LookupEnv("AI_MODEL"); set && model != "" {
+	if model := strings.TrimSpace(os.Getenv("AI_MODEL")); model != "" {
 		config.Model = model
 	}
 	if maxTokens, err := strconv.Atoi(os.Getenv("AI_MAX_TOKENS")); err == nil && maxTokens > 0 {
