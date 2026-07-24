@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -46,6 +47,50 @@ type AiProvider interface {
 type AiResponseError struct{ msg string }
 
 func (e *AiResponseError) Error() string { return e.msg }
+
+// requestIDKey tags a request context so handler and provider logs correlate.
+type requestIDKey struct{}
+
+func withRequestID(ctx context.Context, id uint64) context.Context {
+	return context.WithValue(ctx, requestIDKey{}, id)
+}
+
+func requestID(ctx context.Context) string {
+	if id, ok := ctx.Value(requestIDKey{}).(uint64); ok {
+		return strconv.FormatUint(id, 10)
+	}
+	return "-"
+}
+
+// envelopeSummary extracts the fields that explain free-tier roulette behavior
+// for logs: which model actually answered, how generation ended and how the
+// token budget was spent. Reasoning models can burn the whole completion
+// budget on reasoning tokens, leaving the content empty.
+func envelopeSummary(payload []byte) string {
+	var envelope struct {
+		Model   string `json:"model"`
+		Choices []struct {
+			FinishReason string `json:"finish_reason"`
+		} `json:"choices"`
+		Usage struct {
+			PromptTokens     int `json:"prompt_tokens"`
+			CompletionTokens int `json:"completion_tokens"`
+			CompletionDetail struct {
+				ReasoningTokens int `json:"reasoning_tokens"`
+			} `json:"completion_tokens_details"`
+		} `json:"usage"`
+	}
+	if err := json.Unmarshal(payload, &envelope); err != nil {
+		return "meta=unavailable"
+	}
+	finish := ""
+	if len(envelope.Choices) > 0 {
+		finish = envelope.Choices[0].FinishReason
+	}
+	return fmt.Sprintf("routed=%q finish=%q tokens=%d/%d reasoning=%d",
+		envelope.Model, finish, envelope.Usage.PromptTokens,
+		envelope.Usage.CompletionTokens, envelope.Usage.CompletionDetail.ReasoningTokens)
+}
 
 // OpenRouterConfig holds the OpenRouter connection settings.
 type OpenRouterConfig struct {
@@ -92,11 +137,18 @@ func (p *OpenRouterProvider) Complete(ctx context.Context, input StructuredCompl
 		"temperature": 0.8,
 		"max_tokens":  maxTokens,
 		"stream":      false,
+		// Free-route models are mostly reasoning models now; their chain-of-
+		// thought counts against max_tokens and can starve the actual reply
+		// (finish=length, empty content). The persona contract is strict JSON,
+		// so skip reasoning entirely.
+		"reasoning": map[string]any{"exclude": true},
 	}
 	payload, err := json.Marshal(requestBody)
 	if err != nil {
 		return nil, err
 	}
+	id := requestID(ctx)
+	log.Printf("openrouter request: id=%s model=%s messages=%d maxTokens=%d bytes=%d", id, p.config.Model, len(messages), maxTokens, len(payload))
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, p.url, bytes.NewReader(payload))
 	if err != nil {
 		return nil, err
@@ -107,8 +159,10 @@ func (p *OpenRouterProvider) Complete(ctx context.Context, input StructuredCompl
 	if p.config.AppURL != "" {
 		req.Header.Set("HTTP-Referer", p.config.AppURL)
 	}
+	start := time.Now()
 	resp, err := p.client.Do(req)
 	if err != nil {
+		log.Printf("openrouter transport error: id=%s model=%s err=%v", id, p.config.Model, err)
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -116,18 +170,27 @@ func (p *OpenRouterProvider) Complete(ctx context.Context, input StructuredCompl
 	if err != nil {
 		return nil, err
 	}
+	latency := time.Since(start).Round(time.Millisecond)
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		detail := []rune(string(body))
 		if len(detail) > 240 {
 			detail = detail[:240]
 		}
+		log.Printf("openrouter http %d: id=%s model=%s latency=%s body=%q", resp.StatusCode, id, p.config.Model, latency, truncateRunes(string(body), 400))
 		return nil, fmt.Errorf("OpenRouter %d: %s", resp.StatusCode, string(detail))
 	}
 	content, err := responseContent(body)
 	if err != nil {
+		log.Printf("openrouter unusable: id=%s latency=%s %s err=%v body=%q", id, latency, envelopeSummary(body), err, truncateRunes(string(body), 400))
 		return nil, err
 	}
-	return parseJSONContent(content)
+	parsed, err := parseJSONContent(content)
+	if err != nil {
+		log.Printf("openrouter non-JSON content: id=%s latency=%s %s err=%v content=%q", id, latency, envelopeSummary(body), err, truncateRunes(content, 300))
+		return nil, err
+	}
+	log.Printf("openrouter ok: id=%s latency=%s %s content=%d runes", id, latency, envelopeSummary(body), len([]rune(content)))
+	return parsed, nil
 }
 
 func responseContent(payload []byte) (string, error) {
