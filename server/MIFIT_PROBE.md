@@ -4,6 +4,10 @@ This is a read-only diagnostic utility for checking whether sleep data can be
 retrieved directly from Xiaomi's cloud without Google services or an analytics
 intermediary.
 
+For the full method-by-method protocol, request order, encryption format,
+access flows, and source-file map, see
+[`MIFIT_REVERSE_API.md`](./MIFIT_REVERSE_API.md).
+
 It supports two separate providers:
 
 - `mifitness` — the current Mi Fitness/Xiaomi Wear app
