@@ -22,17 +22,18 @@ const (
 )
 
 type options struct {
-	provider     string
-	region       string
-	from         string
-	to           string
-	timezone     string
-	jsonOutput   bool
-	requireSleep bool
-	authCache    string
-	reauth       bool
-	noAuthCache  bool
-	diagnose     bool
+	provider       string
+	region         string
+	from           string
+	to             string
+	timezone       string
+	jsonOutput     bool
+	requireSleep   bool
+	authCache      string
+	reauth         bool
+	noAuthCache    bool
+	diagnose       bool
+	discoverRegion bool
 }
 
 func main() {
@@ -58,16 +59,27 @@ func run() int {
 	if opts.diagnose {
 		requestBudget = 2 * time.Minute
 	}
+	if opts.discoverRegion {
+		requestBudget = 4 * time.Minute
+	}
 	ctx, cancel := context.WithTimeout(context.Background(), requestBudget)
 	defer cancel()
-	if opts.diagnose {
+	if opts.diagnose && opts.discoverRegion {
+		return fail(exitConfig, errors.New("use either --diagnose or --discover-region"))
+	}
+	if opts.diagnose || opts.discoverRegion {
 		client, ok := provider.(*mifit.MiFitnessClient)
 		if !ok {
-			return fail(exitConfig, errors.New("--diagnose supports only mifitness"))
+			return fail(exitConfig,
+				errors.New("Mi Fitness diagnostics require --provider mifitness"))
 		}
 		encoder := json.NewEncoder(os.Stdout)
 		encoder.SetIndent("", "  ")
-		if err := encoder.Encode(client.DiagnoseSleepSources(ctx, from, to)); err != nil {
+		var result any = client.DiagnoseSleepSources(ctx, from, to)
+		if opts.discoverRegion {
+			result = client.DiagnoseSleepRegions(ctx, from, to)
+		}
+		if err := encoder.Encode(result); err != nil {
 			return fail(exitDecode, err)
 		}
 		return exitOK
@@ -112,6 +124,8 @@ func parseFlags() options {
 		"do not load or save Xiaomi authorization")
 	flag.BoolVar(&opts.diagnose, "diagnose", false,
 		"print safe Mi Fitness endpoint counts without health values")
+	flag.BoolVar(&opts.discoverRegion, "discover-region", false,
+		"check sleep record counts in every Mi Fitness region")
 	flag.Parse()
 	return opts
 }

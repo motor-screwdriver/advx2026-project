@@ -244,6 +244,24 @@ go run ./cmd/mifit-probe \
 The result contains only endpoint names, requested keys, record counts, and
 safe errors.
 
+To make one `sleep` request to every supported Mi Fitness data region:
+
+```bash
+go run ./cmd/mifit-probe \
+  --provider mifitness \
+  --timezone Europe/Moscow \
+  --from 2026-04-24 \
+  --to 2026-07-24 \
+  --discover-region
+```
+
+Use the region with a non-zero `count` for exports. The command reuses the
+saved session and never prints record values. If every region returns zero,
+the session is valid but this Xiaomi Account exposes no sleep records through
+the confirmed `key=sleep` contract for that period. A region with `error`
+instead of `count` was not checked successfully and must not be treated as
+empty. European profiles, including Finland, normally use `de`.
+
 ### TLS timeout to the China server
 
 `TLS handshake timeout` is code 4: authorization succeeded, but the machine
