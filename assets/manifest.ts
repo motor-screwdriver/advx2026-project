@@ -649,6 +649,22 @@ export const ICONS = {
     frameWidth: 64,
     frameHeight: 64,
   },
+  book_cover: {
+    source: require('./pixellab/icons/book_cover.png'),
+    width: 320,
+    height: 416,
+    frames: 1,
+    frameWidth: 320,
+    frameHeight: 416,
+  },
+  book_open: {
+    source: require('./pixellab/icons/book_open.png'),
+    width: 400,
+    height: 352,
+    frames: 1,
+    frameWidth: 400,
+    frameHeight: 352,
+  },
   cos_aura: {
     source: require('./pixellab/icons/cos_aura.png'),
     width: 64,
@@ -941,6 +957,8 @@ export const ATMO = {
     frameHeight: 256,
   },
 } as const satisfies Record<string, SpriteEntry>
+
+export const DESIGN = {} as const satisfies Record<string, SpriteEntry>
 
 export const AUDIO = {
   music_day: { source: require('./audio/music_day.wav'), durationSec: 14.4, loop: true },

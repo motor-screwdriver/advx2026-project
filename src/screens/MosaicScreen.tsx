@@ -1,89 +1,98 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useRef } from 'react'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-import type { PixelColor } from '../contracts/types';
-import { PixelPanel } from '../ui/PixelPanel';
-import { Screen } from '../ui/Screen';
-import { strings } from '../ui/strings';
-import { theme } from '../ui/theme';
-import { useGame } from '../ui/useGame';
+import type { PixelColor } from '../contracts/types'
+import { shareViewAsPng } from '../systems/share'
+import { strings } from '../ui/strings'
+import { ScreenTitle, TavernFrame, WoodPanel } from '../ui/tavern'
+import { theme } from '../ui/theme'
+import { useGame } from '../ui/useGame'
+import { BadgesRow, ShareRow } from './MosaicParts'
 
-const DAYS_IN_YEAR = 365;
+const DAYS_IN_YEAR = 365
 
 const PIXEL_COLORS: Record<PixelColor, string> = {
   GOLD: theme.colors.pixelGold,
   GRAY: theme.colors.pixelGray,
   BLACK: theme.colors.pixelBlack,
-};
-
-export function MosaicScreen() {
-  const { state } = useGame();
-  const perfectCount = state.nights.filter((night) => night.outcome === 'PERFECT').length;
-  const perfectPct = state.nights.length
-    ? Math.round((perfectCount / state.nights.length) * 100)
-    : 0;
-
-  return (
-    <Screen title={strings.mosaic_title}>
-      <PixelPanel>
-        <View style={styles.stats}>
-          <Stat label={strings.mosaic_level} value={String(state.hero?.level ?? 0)} />
-          <Stat label={strings.mosaic_streak} value={String(state.perfectWeekStreak)} />
-          <Stat label={strings.mosaic_perfect} value={`${perfectPct}%`} />
-        </View>
-        <Text style={styles.legend}>{strings.mosaic_legend}</Text>
-      </PixelPanel>
-      {state.nights.length === 0 ? (
-        <Text style={styles.empty}>{strings.mosaic_empty}</Text>
-      ) : (
-        <View style={styles.grid}>
-          {state.nights.map((night, index) => (
-            <View
-              key={`${night.date}-${index}`}
-              style={[styles.pixel, { backgroundColor: PIXEL_COLORS[night.pixel] }]}
-            />
-          ))}
-          {Array.from({ length: DAYS_IN_YEAR - state.nights.length }, (_, index) => (
-            <View key={`empty-${index}`} style={[styles.pixel, styles.pixelEmpty]} />
-          ))}
-        </View>
-      )}
-    </Screen>
-  );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+/** Copy from the mosaic mockup that has no strings.ts key yet (local only). */
+const copy = {
+  shareDialog: 'My 8bit Sleep year mosaic',
+} as const
+
+/** One legend entry: a mosaic cell swatch plus its outcome label. */
+function LegendItem({ color, label }: { color: string; label: string }) {
   return (
-    <View style={styles.stat}>
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
+    <View style={styles.legendItem}>
+      <View style={[styles.legendSwatch, { backgroundColor: color }]} />
+      <Text style={styles.legendLabel}>{label}</Text>
     </View>
-  );
+  )
+}
+
+export function MosaicScreen() {
+  const { state } = useGame()
+  const shareRef = useRef<View>(null)
+  const perfectCount = state.nights.filter((night) => night.outcome === 'PERFECT').length
+  const perfectPct = state.nights.length
+    ? Math.round((perfectCount / state.nights.length) * 100)
+    : 0
+
+  const onShare = () => {
+    void shareViewAsPng(shareRef, copy.shareDialog)
+  }
+
+  return (
+    <SafeAreaView style={styles.safe}>
+      <TavernFrame>
+        <ScrollView contentContainerStyle={styles.stack} showsVerticalScrollIndicator={false}>
+          <ScreenTitle title={strings.mosaic_title.toUpperCase()} />
+          <BadgesRow
+            level={state.hero?.level ?? 0}
+            streak={state.perfectWeekStreak}
+            perfectPct={perfectPct}
+          />
+          <View ref={shareRef} collapsable={false}>
+            <WoodPanel contentStyle={styles.gridWell}>
+              {state.nights.length === 0 ? (
+                <Text style={styles.empty}>{strings.mosaic_empty}</Text>
+              ) : (
+                <>
+                  <View style={styles.grid}>
+                    {state.nights.map((night, index) => (
+                      <View
+                        key={`${night.date}-${index}`}
+                        style={[styles.pixel, { backgroundColor: PIXEL_COLORS[night.pixel] }]}
+                      />
+                    ))}
+                    {Array.from({ length: DAYS_IN_YEAR - state.nights.length }, (_, index) => (
+                      <View key={`empty-${index}`} style={[styles.pixel, styles.pixelEmpty]} />
+                    ))}
+                  </View>
+                  <View style={styles.legend}>
+                    <LegendItem color={theme.colors.pixelGold} label={strings.outcome_perfect} />
+                    <LegendItem color={theme.colors.pixelGray} label={strings.outcome_good} />
+                    <LegendItem color={theme.colors.pixelBlack} label={strings.outcome_bad} />
+                  </View>
+                </>
+              )}
+            </WoodPanel>
+          </View>
+          <ShareRow onShare={onShare} />
+        </ScrollView>
+      </TavernFrame>
+    </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
-  stats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  legend: {
-    ...theme.type.label,
-    color: theme.colors.textDim,
-    textAlign: 'center',
-    marginTop: theme.spacing(3),
-  },
-  stat: {
-    alignItems: 'center',
-    gap: theme.spacing(1),
-  },
-  statValue: {
-    ...theme.type.title,
-    color: theme.colors.gold,
-  },
-  statLabel: {
-    ...theme.type.label,
-    color: theme.colors.textDim,
-    textTransform: 'uppercase',
+  safe: { flex: 1, backgroundColor: '#150d08' },
+  stack: { gap: theme.spacing(4) },
+  gridWell: {
+    gap: theme.spacing(4),
   },
   empty: {
     ...theme.type.body,
@@ -93,6 +102,7 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    justifyContent: 'center',
     gap: 2,
   },
   pixel: {
@@ -103,4 +113,23 @@ const styles = StyleSheet.create({
   pixelEmpty: {
     backgroundColor: theme.colors.inset,
   },
-});
+  legend: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: theme.spacing(4),
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing(2),
+  },
+  legendSwatch: {
+    width: 12,
+    height: 12,
+    borderRadius: 2,
+  },
+  legendLabel: {
+    ...theme.type.label,
+    color: theme.colors.textDim,
+  },
+})
