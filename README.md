@@ -50,10 +50,10 @@ cd server && go test ./...    # toolchain note: see below
 
 ## Deploy (CI only)
 
-`.github/workflows/deploy-server.yml` deploys on push to `main` (or manual
-dispatch): `go vet` + `go test`, cross-builds a static linux/amd64 binary,
-exports the static web client (`dist/`), then rsyncs both to the server and
-restarts systemd. Caddy terminates TLS (Let's Encrypt) and proxies `/api/*`
+`.github/workflows/deploy-server.yml` deploys on manual dispatch only
+(Actions → Deploy server → Run workflow, from any branch): `go vet` +
+`go test`, cross-builds a static linux/amd64 binary, exports the static web
+client (`dist/`), then rsyncs both to the server and restarts systemd. Caddy terminates TLS (Let's Encrypt) and proxies `/api/*`
 to the Go service on `127.0.0.1:8091` (8091, not 8080 — that port belongs to
 another dockerized service on the host); static client lives in
 `/opt/8bit-sleep/client`, env in `/opt/8bit-sleep/server.env` (chmod 600).

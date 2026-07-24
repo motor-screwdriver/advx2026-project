@@ -1,8 +1,8 @@
 name: Deploy server
 
 on:
-  push:
-    branches: [main]
+  # Manual only, from any branch (Actions → Deploy server → Run workflow) —
+  # mirrors the APK build, never fires on push.
   workflow_dispatch:
 
 env:
