@@ -118,8 +118,15 @@ export const useGameStore = create<GameStore>()(
               }
             : s,
         ),
-      checkIn: (type, atMin = nowNightLine()) =>
-        set(type === 'bed' ? { pendingBedTime: atMin } : { pendingWakeTime: atMin }),
+      checkIn: (type, atMin = nowNightLine()) => {
+        // Re-entrant taps land while a wake transition is still animating; keep
+        // the pair consistent: bed only while awake, wake only while asleep.
+        const asleep = get().pendingBedTime !== null
+        if ((type === 'bed') === asleep) {
+          return
+        }
+        set(type === 'bed' ? { pendingBedTime: atMin } : { pendingWakeTime: atMin })
+      },
       evaluateCurrentNight: (now = new Date()) => runNightTurn(get, set, now),
       canResurrect: (now = new Date()) => canResurrectEngine(get().game.lastResurrectionAt, now),
       applyResurrection: (success, now = new Date()) => tryResurrect(get, set, success, now),

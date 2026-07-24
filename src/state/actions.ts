@@ -13,6 +13,7 @@ import type {
 import { applyHourglass } from '../engine/artifacts'
 import { rollChestLoot } from '../engine/chest'
 import { assignHero, heroName } from '../engine/hero'
+import { missedEvaluation } from '../engine/night'
 import {
   applyResurrection as applyResurrectionEngine,
   canResurrect as canResurrectEngine,
@@ -92,6 +93,9 @@ function nightEvents(prev: GameState, result: NightTurnResult, now: Date): GameE
 /** Evaluate the pending check-ins, apply the result and stamp weekly charges. */
 export function runNightTurn(get: GetState, set: SetState, now: Date): NightEvaluation {
   const s = get()
+  if (s.pendingBedTime === null && s.pendingWakeTime === null) {
+    return missedEvaluation(null, null) // nothing pending — re-entrant tap, not a night
+  }
   const result = applyNightTurn(s.game, {
     bedTime: s.pendingBedTime,
     wakeTime: s.pendingWakeTime,
