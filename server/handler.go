@@ -102,6 +102,8 @@ func newServer(providerFactory func() (AiProvider, error)) *Server {
 	mux.HandleFunc("POST /api/mifit/login", s.handleMiFitnessLogin)
 	mux.HandleFunc("POST /api/mifit/verify-email", s.handleMiFitnessVerifyEmail)
 	mux.HandleFunc("POST /api/morning-oracle", s.handleMorningOracle)
+	mux.HandleFunc("POST /api/mifit/login", s.handleMiFitnessLogin)
+	mux.HandleFunc("POST /api/mifit/verify-email", s.handleMiFitnessVerifyEmail)
 	mux.HandleFunc("GET /healthz", s.handleHealthz)
 	s.handler = corsMiddleware(mux)
 	return s

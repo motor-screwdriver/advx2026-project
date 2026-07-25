@@ -53,6 +53,7 @@
     "start:offline": "EXPO_OFFLINE=1 expo start",
     "server": "cd server && HOST=0.0.0.0 PORT=8080 go run .",
     "start:offline": "EXPO_OFFLINE=1 expo start",
+    "server": "cd server && HOST=0.0.0.0 PORT=8080 go run .",
     "android": "expo start --android",
     "web": "expo start --web",
     "lint": "eslint .",
