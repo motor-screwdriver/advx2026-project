@@ -1,6 +1,8 @@
 // The AsyncStorage mock is registered globally in jest.setup.ts.
 import AsyncStorage from '@react-native-async-storage/async-storage'
+
 import { useGameStore } from '../store'
+
 const WINDOW = { bedMin: 690, wakeMin: 1140 } // 23:30 → 07:00 → rogue
 const DAY1 = new Date('2026-07-15T08:00:00Z')
 

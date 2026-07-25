@@ -1,5 +1,13 @@
 {
   "atmosphere": {
+    "big_tree_night": {
+      "frameHeight": 438,
+      "frameWidth": 358,
+      "frames": 1,
+      "height": 438,
+      "path": "pixellab/atmo/big_tree_night.png",
+      "width": 358
+    },
     "cloud_a_day": {
       "frameHeight": 96,
       "frameWidth": 192,
@@ -64,6 +72,22 @@
       "path": "pixellab/atmo/cloud_b_night.png",
       "width": 128
     },
+    "cloud_night_a": {
+      "frameHeight": 34,
+      "frameWidth": 212,
+      "frames": 1,
+      "height": 34,
+      "path": "pixellab/atmo/cloud_night_a.png",
+      "width": 212
+    },
+    "cloud_night_b": {
+      "frameHeight": 52,
+      "frameWidth": 144,
+      "frames": 1,
+      "height": 52,
+      "path": "pixellab/atmo/cloud_night_b.png",
+      "width": 144
+    },
     "grass_day": {
       "frameHeight": 210,
       "frameWidth": 384,
@@ -89,20 +113,140 @@
       "width": 384
     },
     "grass_night": {
-      "frameHeight": 210,
+      "frameHeight": 96,
       "frameWidth": 384,
       "frames": 1,
-      "height": 210,
+      "height": 96,
       "path": "pixellab/atmo/grass_night.png",
       "width": 384
     },
-    "moon_night": {
-      "frameHeight": 256,
-      "frameWidth": 256,
+    "leaf_a": {
+      "frameHeight": 38,
+      "frameWidth": 34,
       "frames": 1,
-      "height": 256,
+      "height": 38,
+      "path": "pixellab/atmo/leaf_a.png",
+      "width": 34
+    },
+    "leaf_b": {
+      "frameHeight": 50,
+      "frameWidth": 24,
+      "frames": 1,
+      "height": 50,
+      "path": "pixellab/atmo/leaf_b.png",
+      "width": 24
+    },
+    "moon_full": {
+      "frameHeight": 204,
+      "frameWidth": 204,
+      "frames": 1,
+      "height": 204,
+      "path": "pixellab/atmo/moon_full.png",
+      "width": 204
+    },
+    "moon_night": {
+      "frameHeight": 198,
+      "frameWidth": 200,
+      "frames": 1,
+      "height": 198,
       "path": "pixellab/atmo/moon_night.png",
-      "width": 256
+      "width": 200
+    },
+    "mountains_night": {
+      "frameHeight": 121,
+      "frameWidth": 768,
+      "frames": 1,
+      "height": 121,
+      "path": "pixellab/atmo/mountains_night.png",
+      "width": 768
+    },
+    "pines_night": {
+      "frameHeight": 128,
+      "frameWidth": 768,
+      "frames": 1,
+      "height": 128,
+      "path": "pixellab/atmo/pines_night.png",
+      "width": 768
+    },
+    "prop_bush": {
+      "frameHeight": 84,
+      "frameWidth": 84,
+      "frames": 1,
+      "height": 84,
+      "path": "pixellab/atmo/prop_bush.png",
+      "width": 84
+    },
+    "prop_campfire": {
+      "frameHeight": 74,
+      "frameWidth": 80,
+      "frames": 1,
+      "height": 74,
+      "path": "pixellab/atmo/prop_campfire.png",
+      "width": 80
+    },
+    "prop_castle": {
+      "frameHeight": 258,
+      "frameWidth": 224,
+      "frames": 1,
+      "height": 258,
+      "path": "pixellab/atmo/prop_castle.png",
+      "width": 224
+    },
+    "prop_crystal": {
+      "frameHeight": 106,
+      "frameWidth": 106,
+      "frames": 1,
+      "height": 106,
+      "path": "pixellab/atmo/prop_crystal.png",
+      "width": 106
+    },
+    "prop_fence": {
+      "frameHeight": 70,
+      "frameWidth": 106,
+      "frames": 1,
+      "height": 70,
+      "path": "pixellab/atmo/prop_fence.png",
+      "width": 106
+    },
+    "prop_lantern": {
+      "frameHeight": 142,
+      "frameWidth": 48,
+      "frames": 1,
+      "height": 142,
+      "path": "pixellab/atmo/prop_lantern.png",
+      "width": 48
+    },
+    "prop_mushrooms": {
+      "frameHeight": 74,
+      "frameWidth": 80,
+      "frames": 1,
+      "height": 74,
+      "path": "pixellab/atmo/prop_mushrooms.png",
+      "width": 80
+    },
+    "prop_runestone": {
+      "frameHeight": 168,
+      "frameWidth": 124,
+      "frames": 1,
+      "height": 168,
+      "path": "pixellab/atmo/prop_runestone.png",
+      "width": 124
+    },
+    "prop_stump_owl": {
+      "frameHeight": 126,
+      "frameWidth": 88,
+      "frames": 1,
+      "height": 126,
+      "path": "pixellab/atmo/prop_stump_owl.png",
+      "width": 88
+    },
+    "prop_windmill": {
+      "frameHeight": 226,
+      "frameWidth": 192,
+      "frames": 1,
+      "height": 226,
+      "path": "pixellab/atmo/prop_windmill.png",
+      "width": 192
     },
     "sun_day": {
       "frameHeight": 256,
@@ -161,7 +305,136 @@
       "path": "audio/sfx_victory.wav"
     }
   },
-  "design": {},
+  "design": {
+    "gen_book_page_right_crop": {
+      "frameHeight": 233,
+      "frameWidth": 244,
+      "frames": 1,
+      "height": 233,
+      "path": "design/gen/book_page_right_crop.png",
+      "width": 244
+    },
+    "gen_booktransition_scene": {
+      "frameHeight": 352,
+      "frameWidth": 256,
+      "frames": 1,
+      "height": 352,
+      "path": "design/gen/booktransition_scene.png",
+      "width": 256
+    },
+    "gen_chest_open_scene": {
+      "frameHeight": 168,
+      "frameWidth": 200,
+      "frames": 1,
+      "height": 168,
+      "path": "design/gen/chest_open_scene.png",
+      "width": 200
+    },
+    "gen_heroes_bust_druid": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_druid.png",
+      "width": 64
+    },
+    "gen_heroes_bust_knight": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_knight.png",
+      "width": 64
+    },
+    "gen_heroes_bust_mage": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_mage.png",
+      "width": 64
+    },
+    "gen_heroes_bust_monk": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_monk.png",
+      "width": 64
+    },
+    "gen_heroes_bust_ninja": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_ninja.png",
+      "width": 64
+    },
+    "gen_heroes_bust_paladin": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_paladin.png",
+      "width": 64
+    },
+    "gen_heroes_bust_ranger": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_ranger.png",
+      "width": 64
+    },
+    "gen_heroes_bust_rogue": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_rogue.png",
+      "width": 64
+    },
+    "gen_heroes_bust_warlock": {
+      "frameHeight": 64,
+      "frameWidth": 64,
+      "frames": 1,
+      "height": 64,
+      "path": "design/gen/heroes_bust_warlock.png",
+      "width": 64
+    },
+    "gen_tether_scene": {
+      "frameHeight": 200,
+      "frameWidth": 200,
+      "frames": 1,
+      "height": 200,
+      "path": "design/gen/tether_scene.png",
+      "width": 200
+    },
+    "gen_tutorial_p1": {
+      "frameHeight": 160,
+      "frameWidth": 160,
+      "frames": 1,
+      "height": 160,
+      "path": "design/gen/tutorial_p1.png",
+      "width": 160
+    },
+    "gen_tutorial_p2": {
+      "frameHeight": 160,
+      "frameWidth": 160,
+      "frames": 1,
+      "height": 160,
+      "path": "design/gen/tutorial_p2.png",
+      "width": 160
+    },
+    "gen_tutorial_p3": {
+      "frameHeight": 160,
+      "frameWidth": 160,
+      "frames": 1,
+      "height": 160,
+      "path": "design/gen/tutorial_p3.png",
+      "width": 160
+    }
+  },
   "icons": {
     "app_icon": {
       "frameHeight": 1024,
@@ -429,6 +702,62 @@
     }
   },
   "scenes": {
+    "book_menu_1": {
+      "frameHeight": 960,
+      "frameWidth": 540,
+      "frames": 1,
+      "height": 960,
+      "path": "book_menu/frame_1.png",
+      "width": 540
+    },
+    "book_menu_2": {
+      "frameHeight": 960,
+      "frameWidth": 540,
+      "frames": 1,
+      "height": 960,
+      "path": "book_menu/frame_2.png",
+      "width": 540
+    },
+    "book_menu_3": {
+      "frameHeight": 960,
+      "frameWidth": 540,
+      "frames": 1,
+      "height": 960,
+      "path": "book_menu/frame_3.png",
+      "width": 540
+    },
+    "book_menu_4": {
+      "frameHeight": 960,
+      "frameWidth": 540,
+      "frames": 1,
+      "height": 960,
+      "path": "book_menu/frame_4.png",
+      "width": 540
+    },
+    "book_menu_5": {
+      "frameHeight": 960,
+      "frameWidth": 540,
+      "frames": 1,
+      "height": 960,
+      "path": "book_menu/frame_5.png",
+      "width": 540
+    },
+    "book_menu_6": {
+      "frameHeight": 960,
+      "frameWidth": 540,
+      "frames": 1,
+      "height": 960,
+      "path": "book_menu/frame_6.png",
+      "width": 540
+    },
+    "book_menu_7": {
+      "frameHeight": 960,
+      "frameWidth": 540,
+      "frames": 1,
+      "height": 960,
+      "path": "book_menu/frame_7.png",
+      "width": 540
+    },
     "scene_bad": {
       "frameHeight": 576,
       "frameWidth": 1024,

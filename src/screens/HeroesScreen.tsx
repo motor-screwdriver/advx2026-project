@@ -4,8 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import type { HeroType } from '../contracts/types'
 import { strings } from '../ui/strings'
-import { ScreenTitle, TavernFrame } from '../ui/tavern'
-import { theme } from '../ui/theme'
+import { ScreenTitle, TavernFrame, tavernLayout } from '../ui/tavern'
 import { useGame } from '../ui/useGame'
 import { HeroCard, NavBar } from './HeroesParts'
 
@@ -78,11 +77,11 @@ const styles = StyleSheet.create({
   grid: {
     flex: 1,
     justifyContent: 'space-evenly',
-    gap: theme.spacing(2.5),
-    paddingVertical: theme.spacing(2),
+    gap: tavernLayout.sectionGap,
+    paddingVertical: tavernLayout.sectionGap,
   },
   gridRow: {
     flexDirection: 'row',
-    gap: theme.spacing(2.5),
+    gap: tavernLayout.buttonGap,
   },
 })

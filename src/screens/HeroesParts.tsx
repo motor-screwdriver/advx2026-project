@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   },
   cardCondition: {
     ...theme.type.label,
-    fontSize: 7,
+    fontSize: 12,
     color: theme.colors.textDim,
     textAlign: 'center',
   },

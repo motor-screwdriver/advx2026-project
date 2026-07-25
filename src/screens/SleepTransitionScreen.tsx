@@ -1,139 +1,159 @@
+import MaskedView from '@react-native-masked-view/masked-view'
+import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
-import React, { useEffect, useRef, useState } from 'react'
-import { Animated, Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect } from 'react'
+import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native'
+import Animated, {
+  Easing,
+  type SharedValue,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import type { SpriteEntry } from '../../assets/manifest'
 import type { HeroType } from '../contracts/types'
+import { BookView } from '../ui/BookView'
 import { HeroSprite } from '../ui/HeroSprite'
+import { NightWorld } from '../ui/NightWorld'
 import { strings } from '../ui/strings'
-import { Parchment, TavernFrame, WoodPanel, tavernColors } from '../ui/tavern'
+import { Parchment, WoodPanel, tavernColors } from '../ui/tavern'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
 
-const AUTO_ADVANCE_MS = 2200
+const AUTO_ADVANCE_MS = 3200
+const REVEAL_MS = 1900
+const REVEAL_DELAY_MS = 600
 
-/**
- * Standalone scene illustration generated via PixelLab (see
- * docs/8bit Sleep — гайд генерация ассетов Kimi + PixelLab.md): an open
- * glowing golden book on a tavern desk with a rising light beam, sparkles,
- * candles and a shelf sign. One opaque image shown at its real aspect ratio —
- * no mockup crop-slices. Referenced locally per screen convention (not in the
- * manifest).
- */
-const SCENE: SpriteEntry = {
-  source: require('../../assets/design/gen/booktransition_scene.png'),
-  width: 256,
-  height: 352,
-  frames: 1,
-  frameWidth: 256,
-  frameHeight: 352,
+interface HeroSlot {
+  heroType: HeroType | null
+  heroSize: number
+  bottom: number
 }
 
-/** The tavern-desk scene with the live hero levitating in the light beam. */
-function BookScene({
-  heroType,
-  gold,
-  lift,
-}: {
-  heroType: HeroType | null
-  gold: boolean
-  lift: Animated.AnimatedInterpolation<string | number>
-}) {
-  const [bandWidth, setBandWidth] = useState(0)
-  // The hero is always a live sprite (knight included), so non-knight heroes
-  // and the gold skin work with no extra art; no hero -> beam stays empty.
-  const heroSize = bandWidth > 0 ? bandWidth * 0.22 : 64
+interface Stats {
+  hp: number
+  level: number
+  streak: number
+}
+
+/** Bottom layer: the living colored world with the walking hero on the ground slot. */
+function WorldScene({ heroType, heroSize, bottom, gold }: HeroSlot & { gold: boolean }) {
   return (
-    <View style={styles.band} onLayout={(e) => setBandWidth(e.nativeEvent.layout.width)}>
-      <Image source={SCENE.source} style={styles.scene} />
+    <>
+      <NightWorld />
       {heroType ? (
-        <Animated.View style={[styles.hero, { transform: [{ translateY: lift }] }]}>
-          <HeroSprite gold={gold} size={heroSize} type={heroType} />
-        </Animated.View>
+        <View style={[styles.heroSlot, { bottom }]} pointerEvents="none">
+          <HeroSprite type={heroType} gold={gold} size={heroSize} walking fps={8} />
+        </View>
       ) : null}
-    </View>
+    </>
+  )
+}
+
+/** Top layer: the inked character-sheet page, wiped away from the ground up. */
+function BookReveal({
+  reveal,
+  height,
+  book,
+}: {
+  reveal: SharedValue<number>
+  height: number
+  book: Stats & { heroType: HeroType | null }
+}) {
+  const maskBlock = useAnimatedStyle(() => ({ height: (1 - reveal.value) * height }))
+  return (
+    <MaskedView
+      style={StyleSheet.absoluteFill}
+      pointerEvents="none"
+      maskElement={
+        <View style={styles.maskRoot}>
+          <Animated.View style={maskBlock}>
+            <View style={styles.maskSolid} />
+            <LinearGradient colors={['#ffffff', 'transparent']} style={styles.maskFeather} />
+          </Animated.View>
+        </View>
+      }
+    >
+      <BookView heroType={book.heroType} hp={book.hp} level={book.level} streak={book.streak} />
+    </MaskedView>
+  )
+}
+
+/** Caption + skip hint, fading in as the world comes to life. */
+function Caption({ reveal }: { reveal: SharedValue<number> }) {
+  const textFade = useAnimatedStyle(() => ({ opacity: reveal.value }))
+  return (
+    <SafeAreaView style={styles.overlay} pointerEvents="box-none">
+      <Animated.View style={[styles.captionWrap, textFade]}>
+        <WoodPanel>
+          <Parchment>
+            <Text style={styles.caption}>{strings.transition_carry}</Text>
+          </Parchment>
+        </WoodPanel>
+      </Animated.View>
+      <Text style={styles.hint}>{strings.transition_tap}</Text>
+    </SafeAreaView>
   )
 }
 
 /**
- * Interstitial: the open book glows and carries the player over to their hero.
+ * Book -> world transition (Tier 2). We open on the awake character-sheet page
+ * (the same book scene as Home) and a single Reanimated wipe eats the page from
+ * the bottom up — a MaskedView turns the animated height into a soft alpha
+ * reveal — uncovering the hero, now colored and walking, in the living
+ * NightWorld beneath. One clean motion, no extra flourishes.
+ *
  * Home already flipped to the asleep state (sleepNow ran), so dismissing back
- * to '/' reveals the night hero scene. Auto-advances, or tap to skip.
+ * to '/' lands on the night walking scene. Auto-advances, or tap to skip.
  */
 export function SleepTransitionScreen() {
   const router = useRouter()
   const { state } = useGame()
+  const { height: H, width: W } = useWindowDimensions()
 
-  const fade = useRef(new Animated.Value(0)).current
-  const float = useRef(new Animated.Value(0)).current
+  const heroType = state.hero ? state.hero.type : null
+  const gold = state.perfectWeekStreak >= 7
+  const heroSize = Math.min(W * 0.52, 230)
+  const bottom = H * 0.16
+  const book = {
+    heroType,
+    hp: state.hp,
+    level: state.hero ? state.hero.level : 1,
+    streak: state.perfectWeekStreak,
+  }
 
+  const reveal = useSharedValue(0)
   const leave = () => router.dismissTo('/')
 
   useEffect(() => {
-    Animated.timing(fade, { toValue: 1, duration: 500, useNativeDriver: true }).start()
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(float, { toValue: 1, duration: 900, useNativeDriver: true }),
-        Animated.timing(float, { toValue: 0, duration: 900, useNativeDriver: true }),
-      ]),
-    ).start()
+    reveal.value = withDelay(
+      REVEAL_DELAY_MS,
+      withTiming(1, { duration: REVEAL_MS, easing: Easing.inOut(Easing.ease) }),
+    )
     const id = setTimeout(leave, AUTO_ADVANCE_MS)
     return () => clearTimeout(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const heroLift = float.interpolate({ inputRange: [0, 1], outputRange: [0, -10] })
-
   return (
     <Pressable style={styles.root} onPress={leave}>
-      <TavernFrame>
-        <SafeAreaView style={styles.safe}>
-          <Animated.View style={[styles.column, { opacity: fade }]}>
-            <BookScene
-              gold={state.perfectWeekStreak >= 7}
-              heroType={state.hero ? state.hero.type : null}
-              lift={heroLift}
-            />
-            <View style={styles.bottom}>
-              <WoodPanel>
-                <Parchment>
-                  <Text style={styles.caption}>{strings.transition_carry}</Text>
-                </Parchment>
-              </WoodPanel>
-              <Text style={styles.hint}>{strings.transition_tap}</Text>
-            </View>
-          </Animated.View>
-        </SafeAreaView>
-      </TavernFrame>
+      <WorldScene heroType={heroType} gold={gold} heroSize={heroSize} bottom={bottom} />
+      <BookReveal reveal={reveal} height={H} book={book} />
+      <Caption reveal={reveal} />
     </Pressable>
   )
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: theme.colors.bg },
-  safe: { flex: 1 },
-  column: { flex: 1, gap: theme.spacing(2) },
-  band: {
-    width: '100%',
-    aspectRatio: SCENE.width / SCENE.height,
-  },
-  scene: { width: '100%', height: '100%' },
-  hero: {
-    position: 'absolute',
-    // Centered on the light beam, hovering just above the open book.
-    left: '38%',
-    top: '18%',
-    width: '24%',
-    aspectRatio: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  bottom: {
-    flex: 1,
-    justifyContent: 'center',
-    gap: theme.spacing(3),
-  },
+  heroSlot: { position: 'absolute', left: 0, right: 0, alignItems: 'center' },
+  maskRoot: { ...StyleSheet.absoluteFillObject, backgroundColor: 'transparent' },
+  maskSolid: { flex: 1, backgroundColor: '#ffffff' },
+  maskFeather: { height: 60 },
+  overlay: { flex: 1, justifyContent: 'space-between', paddingVertical: theme.spacing(4) },
+  captionWrap: { paddingHorizontal: theme.spacing(2) },
   caption: {
     fontFamily: theme.fontFamily,
     fontSize: 12,
@@ -142,5 +162,5 @@ const styles = StyleSheet.create({
     color: tavernColors.inkOnParchment,
     textAlign: 'center',
   },
-  hint: { ...theme.type.label, color: theme.colors.textDim, textAlign: 'center' },
+  hint: { ...theme.type.label, color: theme.colors.text, textAlign: 'center' },
 })

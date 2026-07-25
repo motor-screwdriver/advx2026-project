@@ -26,19 +26,20 @@ export const colors = {
 
   rareBlue: '#57a8e8', // Rare loot frame
   epicViolet: '#a179e6', // Epic loot frame
-} as const;
+} as const
 
-export const GAME_FONT = 'press-start';
+export const GAME_FONT = 'pixelify-sans-bold'
 
 /**
- * Type scale. Press Start 2P is a display font: legible from ~10px up,
- * painful below. Ratio ≥1.25 between steps; generous line heights.
+ * Type scale. Pixelify Sans Bold is a chunky bold pixel display face with
+ * Latin + Cyrillic coverage: reads heavy at any size, so the scale stays
+ * moderate. Ratio ≥1.25 between steps; generous line heights.
  */
 export const type = {
-  title: { fontFamily: GAME_FONT, fontSize: 18, lineHeight: 28, letterSpacing: 1 },
-  body: { fontFamily: GAME_FONT, fontSize: 10, lineHeight: 18 },
-  label: { fontFamily: GAME_FONT, fontSize: 8, lineHeight: 14, letterSpacing: 1 },
-} as const;
+  title: { fontFamily: GAME_FONT, fontSize: 22, lineHeight: 30, letterSpacing: 1 },
+  body: { fontFamily: GAME_FONT, fontSize: 16, lineHeight: 20 },
+  label: { fontFamily: GAME_FONT, fontSize: 12, lineHeight: 16, letterSpacing: 1 },
+} as const
 
 export const theme = {
   colors,
@@ -47,4 +48,6 @@ export const theme = {
   borderWidth: 1,
   borderRadius: 4,
   spacing: (units: number) => units * 4,
-} as const;
+  /** One consistent screen inset for every block/button margin (see DESIGN.md). */
+  screenPad: 16,
+} as const

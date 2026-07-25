@@ -1,15 +1,17 @@
-import { useFonts } from 'expo-font';
+import { PixelifySans_700Bold } from '@expo-google-fonts/pixelify-sans'
+import { useFonts } from 'expo-font'
 
-import { GAME_FONT } from './theme';
+import { GAME_FONT } from './theme'
 
 /**
- * Loads the bundled Press Start 2P font (assets/fonts/).
+ * Loads the single unified pixel font (Pixelify Sans Bold — a chunky bold
+ * pixel face with Latin + Cyrillic coverage) used for every text in the app.
  * Returns true once loading finished OR failed — on failure the app
  * proceeds with the system font (graceful degradation, NFR-15).
  */
 export function useGameFonts(): boolean {
   const [loaded, error] = useFonts({
-    [GAME_FONT]: require('../../assets/fonts/PressStart2P-Regular.ttf'),
-  });
-  return loaded || error !== null;
+    [GAME_FONT]: PixelifySans_700Bold,
+  })
+  return loaded || error !== null
 }
