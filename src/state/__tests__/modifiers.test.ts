@@ -25,7 +25,11 @@ describe('Second Wind artifact — once per 7 days', () => {
   it('softens only the first TERRIBLE of the week, recharges after 7 days', () => {
     onboard()
     useGameStore.setState({
-      game: { ...useGameStore.getState().game, artifacts: ['second_wind'] },
+      game: {
+        ...useGameStore.getState().game,
+        artifacts: ['second_wind'],
+        equipped: { armor: null, utilities: 'second_wind', charm: null },
+      },
     })
     expect(terribleNight(DAY1)?.hpDelta).toBe(-1) // charge spent
     expect(terribleNight(DAY2)?.hpDelta).toBe(-2) // full damage
@@ -36,10 +40,22 @@ describe('Second Wind artifact — once per 7 days', () => {
     onboard()
     expect(terribleNight(DAY1)?.hpDelta).toBe(-2)
   })
+
+  it('does nothing when in inventory but not equipped', () => {
+    onboard()
+    useGameStore.setState({
+      game: {
+        ...useGameStore.getState().game,
+        artifacts: ['second_wind'],
+        equipped: { armor: null, utilities: null, charm: null },
+      },
+    })
+    expect(terribleNight(DAY1)?.hpDelta).toBe(-2)
+  })
 })
 
-describe('death, Phoenix Feather and resurrection', () => {
-  it('Phoenix Feather auto-revives at 3 HP without the weekly cooldown', () => {
+describe('Phoenix Feather — manual use on death', () => {
+  it('is NOT auto-consumed in turn; hero dies with feather', () => {
     onboard()
     useGameStore.setState({
       game: {
@@ -61,12 +77,33 @@ describe('death, Phoenix Feather and resurrection', () => {
     })
     terribleNight(DAY1)
     const s = useGameStore.getState()
-    expect(s.game.hp).toBe(3)
-    expect(s.game.artifacts).toEqual([])
-    expect(s.game.lastResurrectionAt).toBeNull()
-    expect(s.events.map((e) => e.type)).toContain('RESURRECTED')
+    expect(s.game.hp).toBe(0)
+    expect(s.game.artifacts).toContain('phoenix_feather')
+    expect(s.events.map((e) => e.type)).toContain('DEATH')
   })
 
+  it('usePhoenix consumes feather and revives at 3 HP', () => {
+    onboard()
+    useGameStore.setState({
+      game: { ...useGameStore.getState().game, hp: 0, artifacts: ['phoenix_feather'] },
+    })
+    const result = useGameStore.getState().usePhoenix()
+    expect(result).toBe(true)
+    expect(useGameStore.getState().game.hp).toBe(3)
+    expect(useGameStore.getState().game.artifacts).not.toContain('phoenix_feather')
+  })
+
+  it('usePhoenix fails without feather', () => {
+    onboard()
+    useGameStore.setState({
+      game: { ...useGameStore.getState().game, hp: 0, artifacts: [] },
+    })
+    expect(useGameStore.getState().usePhoenix()).toBe(false)
+    expect(useGameStore.getState().game.hp).toBe(0)
+  })
+})
+
+describe('Resurrection cooldown', () => {
   it('resurrection cooldown gates applyResurrection', () => {
     onboard()
     const s = useGameStore.getState()
@@ -92,10 +129,14 @@ describe('death, Phoenix Feather and resurrection', () => {
 })
 
 describe('Iron Armor — consumed once', () => {
-  it('absorbs a single HP loss', () => {
+  it('absorbs a single HP loss when equipped', () => {
     onboard()
     useGameStore.setState({
-      game: { ...useGameStore.getState().game, artifacts: ['iron_armor'] },
+      game: {
+        ...useGameStore.getState().game,
+        artifacts: ['iron_armor'],
+        equipped: { armor: 'iron_armor', utilities: null, charm: null },
+      },
     })
     terribleNight(DAY1)
     expect(useGameStore.getState().game.hp).toBe(7)

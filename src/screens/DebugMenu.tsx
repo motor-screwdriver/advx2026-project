@@ -3,6 +3,8 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import { FLAGS } from '../contracts/flags'
+import { useGameStore } from '../state/store'
+import { demoCheckIns, type DemoNightKind } from '../systems/demoNights'
 import { PixelButton } from '../ui/PixelButton'
 import { strings } from '../ui/strings'
 import { theme } from '../ui/theme'
@@ -33,6 +35,11 @@ const PRESETS: { preset: DebugPreset; label: string }[] = [
   { preset: 'death', label: strings.debug_death },
 ]
 
+const NIGHT_SIMS: { kind: DemoNightKind; label: string }[] = [
+  { kind: 'bad', label: 'Bad Night (-1 HP)' },
+  { kind: 'terrible', label: 'Terrible (-2 HP)' },
+]
+
 /** Temporary M0-M1 navigation + state presets. Removed before release. */
 export function DebugMenu() {
   const { loadDebugPreset } = useGame()
@@ -55,8 +62,24 @@ export function DebugMenu() {
           <PixelButton key={preset} compact label={label} onPress={() => loadDebugPreset(preset)} />
         ))}
       </View>
+      <Text style={styles.heading}>SIMULATE NIGHT</Text>
+      <View style={styles.grid}>
+        {NIGHT_SIMS.map(({ kind, label }) => (
+          <PixelButton key={kind} compact label={label} onPress={() => simulateNight(kind)} />
+        ))}
+      </View>
     </View>
   )
+}
+
+/** Run a scripted night through the real engine — HP changes, streak breaks. */
+function simulateNight(kind: DemoNightKind): void {
+  const s = useGameStore.getState()
+  if (!s.game.window) return
+  const { bedTime, wakeTime } = demoCheckIns(s.game.window, kind)
+  s.checkIn('bed', bedTime)
+  s.checkIn('wake', wakeTime)
+  s.evaluateCurrentNight()
 }
 
 const styles = StyleSheet.create({

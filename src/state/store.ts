@@ -12,10 +12,12 @@ import type { GameEvent } from '../contracts/events'
 import type {
   ArtifactId,
   ChestLoot,
+  CosmeticId,
   GameState,
   NightEvaluation,
   SleepWindow,
 } from '../contracts/types'
+import { canEquipInSlot } from '../engine/artifacts'
 import { MAX_HP } from '../engine/levels'
 import { canResurrect as canResurrectEngine } from '../engine/resurrection'
 import { nowNightLine } from '../engine/time'
@@ -23,9 +25,11 @@ import {
   freshHero,
   openGrantedChest,
   runNightTurn,
+  startNewHeroWithPenalty,
   tryChangeWindow,
   tryResurrect,
   tryUseHourglass,
+  usePhoenixFeather,
 } from './actions'
 
 type ProcessLike = { env?: Record<string, string | undefined> }
@@ -42,6 +46,9 @@ const gameStorage = createJSONStorage(() => (isServerRender ? serverStorage : As
 export interface EngineMeta {
   windowChangedAt: string | null
   secondWindUsedAt: string | null // Second Wind artifact
+  nightWatchUsedAt: string | null // Night Watch artifact (1 per week)
+  coffeeAmuletActivatedAt: string | null // legacy — kept for save compat
+  alarmBellActivatedAt: string | null // legacy — kept for save compat
 }
 
 export interface GameStore {
@@ -61,7 +68,10 @@ export interface GameStore {
   applyResurrection: (success: boolean, now?: Date) => void
   startNewHero: () => void
   openChest: (rng?: () => number) => ChestLoot | null
-  equip: (slot: 'armor' | 'charm', artifact: ArtifactId) => void
+  equip: (slot: 'armor' | 'utilities', artifact: ArtifactId) => void
+  unequip: (slot: 'armor' | 'utilities' | 'charm') => void
+  equipCosmetic: (cosmetic: CosmeticId) => void
+  usePhoenix: () => boolean
   changeWindow: (window: SleepWindow, now?: Date) => boolean
   useHourglass: (date: string, now?: Date) => boolean
   toggleDemoMode: () => void
@@ -76,7 +86,8 @@ function emptyGame(): GameState {
     perfectWeekStreak: 0,
     nights: [],
     artifacts: [],
-    equipped: { armor: null, charm: null },
+    cosmetics: [],
+    equipped: { armor: null, utilities: null, charm: null },
     lastResurrectionAt: null,
     onboardingDone: false,
     demoMode: false,
@@ -86,6 +97,9 @@ function emptyGame(): GameState {
 const emptyMeta = (): EngineMeta => ({
   windowChangedAt: null,
   secondWindUsedAt: null,
+  nightWatchUsedAt: null,
+  coffeeAmuletActivatedAt: null,
+  alarmBellActivatedAt: null,
 })
 
 const initial = () => ({
@@ -131,27 +145,27 @@ export const useGameStore = create<GameStore>()(
       canResurrect: (now = new Date()) => canResurrectEngine(get().game.lastResurrectionAt, now),
       applyResurrection: (success, now = new Date()) => tryResurrect(get, set, success, now),
       startNewHero: () =>
-        set((s) =>
-          s.game.window
-            ? {
-                game: {
-                  ...s.game,
-                  hero: freshHero(s.game.window),
-                  hp: MAX_HP,
-                  perfectWeekStreak: 0,
-                  artifacts: [],
-                  equipped: { armor: null, charm: null },
-                },
-              }
-            : { game: emptyGame() },
-        ),
+        set((s) => {
+          // Death penalty: lose ~50% of artifacts, keep the rest for the new hero
+          const penalizedGame = startNewHeroWithPenalty(s.game)
+          return { game: penalizedGame }
+        }),
       openChest: (rng = Math.random) => openGrantedChest(get, set, rng),
       equip: (slot, artifact) =>
         set((s) =>
-          s.game.artifacts.includes(artifact)
+          s.game.artifacts.indexOf(artifact) >= 0 && canEquipInSlot(artifact, slot)
             ? { game: { ...s.game, equipped: { ...s.game.equipped, [slot]: artifact } } }
             : s,
         ),
+      unequip: (slot) =>
+        set((s) => ({ game: { ...s.game, equipped: { ...s.game.equipped, [slot]: null } } })),
+      equipCosmetic: (cosmetic) =>
+        set((s) =>
+          (s.game.cosmetics ?? []).indexOf(cosmetic) >= 0
+            ? { game: { ...s.game, equipped: { ...s.game.equipped, charm: cosmetic } } }
+            : s,
+        ),
+      usePhoenix: () => usePhoenixFeather(get, set),
       changeWindow: (window, now = new Date()) => tryChangeWindow(get, set, window, now),
       useHourglass: (date, now = new Date()) => tryUseHourglass(get, set, date, now),
       toggleDemoMode: () => set((s) => ({ game: { ...s.game, demoMode: !s.game.demoMode } })),

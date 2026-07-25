@@ -166,8 +166,8 @@ export const strings = {
   chest_title: 'Loot chest',
   chest_tap: 'Tap the chest to open it!',
   chest_none: 'No chest yet. Earn one with a Perfect Week (7 clean nights).',
-  chest_earned: 'A reward for your Perfect Week.',
-  chest_in_bag: 'Equip it from the Bag on the home screen.',
+  chest_earned: 'Cosmetic flair — not a bag item.',
+  chest_in_bag: 'Added to your bag. Equip it from a slot.',
   chest_take: 'Take',
   rarity_common: 'Common',
   rarity_rare: 'Rare',
@@ -175,30 +175,32 @@ export const strings = {
 
   // Inventory
   inventory_title: 'Bag',
-  inventory_hint:
-    'Equip one armor and one charm below. Consumables (like Iron Armor) work on their own — no need to equip them.',
+  inventory_hint: 'Tap a slot to equip or change gear.',
   inventory_armor: 'Armor',
   inventory_armor_desc: 'Armor slot — passive protection',
+  inventory_utilities: 'Utilities',
+  inventory_utilities_desc: 'Utilities slot — tools & buffs',
   inventory_charm: 'Charm',
-  inventory_charm_desc: 'Charm slot — passive trinket',
+  inventory_charm_desc: 'Charm slot — cosmetics',
   inventory_slot_empty: 'Nothing equipped',
   inventory_consumables: 'Items',
   inventory_empty: 'Nothing yet. Win chests with Perfect Weeks.',
   inventory_equipped: 'Equipped',
   inventory_to_armor: 'TO ARMOR',
   inventory_to_charm: 'TO CHARM',
+  inventory_unequip: 'REMOVE',
+  inventory_use: 'USE',
 
   // Artifact descriptions
   artifact_iron_armor: 'Absorbs one HP loss, then breaks. Works automatically.',
-  artifact_phoenix_feather: 'On death, auto-revives the hero at 3 HP. Works automatically.',
+  artifact_phoenix_feather: 'On death, offer to rise from the ashes. One use.',
   artifact_hourglass: 'Upgrades one bad night from the last 24 h to GOOD.',
   artifact_lucky_coin: 'Your next chest is guaranteed Rare or better.',
-  artifact_second_wind: 'First TERRIBLE night each week: -1 HP instead of -2.',
-  artifact_coffee_amulet: 'Bedtime tolerance +30 min for 7 days. Coming soon.',
-  artifact_alarm_bell: 'Wake-up tolerance +30 min for 7 days. Coming soon.',
-  artifact_warm_blanket: 'No oversleep penalty while equipped. Coming soon.',
-  artifact_night_watch: 'One missed check-in per week is auto-filled. Coming soon.',
-  artifact_star_map: 'Evening hint for your ideal bedtime. Coming soon.',
+  artifact_second_wind: 'First TERRIBLE night each week: -1 HP instead of -2. Equip to activate.',
+  artifact_coffee_amulet: 'Bedtime tolerance +30 min for 7 days.',
+  artifact_alarm_bell: 'Wake-up tolerance +30 min for 7 days.',
+  artifact_warm_blanket: 'No oversleep penalty while equipped.',
+  artifact_night_watch: 'One missed check-in per week is auto-filled as GOOD. Equip to activate.',
 
   // Settings
   settings_title: 'Settings',
@@ -236,13 +238,11 @@ export const strings = {
 
   gallery_title: 'Art Gallery',
   gallery_body: 'QA wall: every pipeline asset, straight from assets/manifest.ts.',
-
   // Common
   common_back: 'Back',
   common_confirm: 'Confirm',
   common_cancel: 'Cancel',
 
-  // Onboarding warnings, journal, guide and debug keys come from stringsExtra.
   ...stringsExtra,
 } as const
 

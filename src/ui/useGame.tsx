@@ -14,6 +14,7 @@ import { mockGameState } from '../contracts/mock'
 import type {
   ArtifactId,
   ChestLoot,
+  CosmeticId,
   GameState,
   NightEvaluation,
   SleepWindow,
@@ -31,6 +32,7 @@ interface GameApi {
   state: GameState
   lastEvaluation: NightEvaluation | null
   pendingBedTime: number | null
+  pendingChest: boolean
   completeOnboarding: (window: SleepWindow) => void
   sleepNow: () => void
   wakeNow: () => NightEvaluation
@@ -38,7 +40,11 @@ interface GameApi {
   resurrect: () => void
   startNewHero: () => void
   openChest: () => ChestLoot | null
-  equip: (slot: 'armor' | 'charm', artifact: ArtifactId) => void
+  equip: (slot: 'armor' | 'utilities', artifact: ArtifactId) => void
+  unequip: (slot: 'armor' | 'utilities' | 'charm') => void
+  equipCosmetic: (cosmetic: CosmeticId) => void
+  useHourglass: (date: string) => boolean
+  usePhoenix: () => boolean
   changeWindow: (window: SleepWindow) => boolean
   resetProgress: () => void
   toggleDemoMode: () => void
@@ -52,19 +58,23 @@ const GameContext = createContext<GameApi | null>(null)
 const EMPTY_META: EngineMeta = {
   windowChangedAt: null,
   secondWindUsedAt: null,
+  nightWatchUsedAt: null,
+  coffeeAmuletActivatedAt: null,
+  alarmBellActivatedAt: null,
 }
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
   const game = useGameStore((s) => s.game)
   const lastEvaluation = useGameStore((s) => s.lastEvaluation)
   const pendingBedTime = useGameStore((s) => s.pendingBedTime)
+  const pendingChest = useGameStore((s) => s.pendingChest)
   const hydrated = useGameStore((s) => s.hydrated)
   React.useEffect(() => {
     initSystems() // Dev D: notifications, demo panel wiring, e-ink triggers
   }, [])
   const api = useMemo<GameApi>(
-    () => buildApi(game, lastEvaluation, pendingBedTime),
-    [game, lastEvaluation, pendingBedTime],
+    () => buildApi(game, lastEvaluation, pendingBedTime, pendingChest),
+    [game, lastEvaluation, pendingBedTime, pendingChest],
   )
   if (!hydrated) {
     return null // wait for AsyncStorage rehydration, avoid an onboarding flash
@@ -81,11 +91,13 @@ function buildApi(
   game: GameState,
   lastEvaluation: NightEvaluation | null,
   pendingBedTime: number | null,
+  pendingChest: boolean,
 ): GameApi {
   return {
     state: game,
     lastEvaluation,
     pendingBedTime,
+    pendingChest,
     completeOnboarding: (window) => {
       useGameStore.getState().setWindow(window)
       useGameStore.getState().assignHeroForWindow()
@@ -100,6 +112,10 @@ function buildApi(
     startNewHero: () => useGameStore.getState().startNewHero(),
     openChest: () => useGameStore.getState().openChest(),
     equip: (slot, artifact) => useGameStore.getState().equip(slot, artifact),
+    unequip: (slot) => useGameStore.getState().unequip(slot),
+    equipCosmetic: (cosmetic) => useGameStore.getState().equipCosmetic(cosmetic),
+    useHourglass: (date) => useGameStore.getState().useHourglass(date),
+    usePhoenix: () => useGameStore.getState().usePhoenix(),
     changeWindow: (window) => useGameStore.getState().changeWindow(window),
     resetProgress: () => useGameStore.getState().reset(),
     toggleDemoMode: () => useGameStore.getState().toggleDemoMode(),

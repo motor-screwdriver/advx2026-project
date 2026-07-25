@@ -1,6 +1,6 @@
-import type { GameState, NightRecord } from '../../contracts/types';
+import type { GameState, NightRecord } from '../../contracts/types'
 
-export const WINDOW = { bedMin: 690, wakeMin: 1140 }; // 23:30 → 07:00, D = 450
+export const WINDOW = { bedMin: 690, wakeMin: 1140 } // 23:30 → 07:00, D = 450
 
 export function makeGame(overrides: Partial<GameState> = {}): GameState {
   return {
@@ -10,12 +10,13 @@ export function makeGame(overrides: Partial<GameState> = {}): GameState {
     perfectWeekStreak: 0,
     nights: [],
     artifacts: [],
-    equipped: { armor: null, charm: null },
+    cosmetics: [],
+    equipped: { armor: null, utilities: null, charm: null },
     lastResurrectionAt: null,
     onboardingDone: true,
     demoMode: false,
     ...overrides,
-  };
+  }
 }
 
 export function makeNight(overrides: Partial<NightRecord> = {}): NightRecord {
@@ -28,8 +29,8 @@ export function makeNight(overrides: Partial<NightRecord> = {}): NightRecord {
     hpDelta: 1,
     pixel: 'GOLD',
     ...overrides,
-  };
+  }
 }
 
 /** Options for a plain turn with no weekly charges involved. */
-export const TURN = { secondWindAvailable: false, date: '2026-07-22' };
+export const TURN = { secondWindAvailable: false, nightWatchAvailable: false, date: '2026-07-22' }

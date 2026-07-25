@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 
 import { ICONS, SCENES, type SpriteEntry } from '../../assets/manifest'
-import type { NightOutcome } from '../contracts/types'
+import type { NightEvaluation, NightOutcome } from '../contracts/types'
 import { playSfx } from '../systems/audio'
 import { PixelSprite } from '../ui/PixelSprite'
 import { RewardRow } from '../ui/RewardRow'
@@ -95,7 +95,7 @@ function StreakStrip({ streak }: { streak: number }) {
 
 export function MorningSceneScreen() {
   const router = useRouter()
-  const { state, lastEvaluation } = useGame()
+  const { state, lastEvaluation, pendingChest } = useGame()
 
   useEffect(() => {
     if (!lastEvaluation) return
@@ -117,8 +117,31 @@ export function MorningSceneScreen() {
     )
   }
 
-  const { outcome, hpDelta, xp } = lastEvaluation
+  return (
+    <MorningResult
+      evaluation={lastEvaluation}
+      streak={state.perfectWeekStreak}
+      pendingChest={pendingChest}
+      onContinue={() => router.replace('/morning-chat')}
+      onChest={() => router.push('/chest')}
+    />
+  )
+}
 
+function MorningResult({
+  evaluation,
+  streak,
+  pendingChest,
+  onContinue,
+  onChest,
+}: {
+  evaluation: NightEvaluation
+  streak: number
+  pendingChest: boolean
+  onContinue: () => void
+  onChest: () => void
+}) {
+  const { outcome, hpDelta, xp } = evaluation
   return (
     <TavernFrame>
       <View style={styles.stack}>
@@ -142,12 +165,11 @@ export function MorningSceneScreen() {
           </View>
         </WoodPanel>
 
-        <StreakStrip streak={state.perfectWeekStreak} />
+        <StreakStrip streak={streak} />
 
-        <GoldButton
-          label={strings.morning_continue.toUpperCase()}
-          onPress={() => router.replace('/morning-chat')}
-        />
+        {pendingChest && <GoldButton label={strings.chest_title.toUpperCase()} onPress={onChest} />}
+
+        <GoldButton label={strings.morning_continue.toUpperCase()} onPress={onContinue} />
       </View>
     </TavernFrame>
   )
@@ -194,21 +216,10 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 0,
   },
-  panelBody: {
-    gap: theme.spacing(3),
-  },
-  line: {
-    ...theme.type.label,
-    color: theme.colors.textDim,
-    textAlign: 'center',
-  },
-  rewards: {
-    alignSelf: 'stretch',
-    gap: theme.spacing(2),
-  },
-  streakStrip: {
-    alignSelf: 'center',
-  },
+  panelBody: { gap: theme.spacing(3) },
+  line: { ...theme.type.label, color: theme.colors.textDim, textAlign: 'center' },
+  rewards: { alignSelf: 'stretch', gap: theme.spacing(2) },
+  streakStrip: { alignSelf: 'center' },
   streakWell: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -217,11 +228,7 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing(2),
     paddingHorizontal: theme.spacing(4),
   },
-  streakText: {
-    ...theme.type.body,
-    color: theme.colors.leaf,
-    letterSpacing: 2,
-  },
+  streakText: { ...theme.type.body, color: theme.colors.leaf, letterSpacing: 2 },
   leafOrnament: {
     width: 8,
     height: 8,
