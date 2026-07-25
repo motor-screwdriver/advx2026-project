@@ -69,7 +69,7 @@ export function MiFitRow({ k, rowW, delay }: { k: number; rowW: number; delay: n
       </SpriteRow>
       {open && (
         <View style={{ width: rowW }}>
-          <MiFitnessPanel />
+          <MiFitnessPanel k={k} />
         </View>
       )}
     </>
@@ -92,7 +92,7 @@ export function EinkRow({ k, rowW, delay }: { k: number; rowW: number; delay: nu
       </SpriteRow>
       {open && (
         <View style={{ width: rowW }}>
-          <EinkLinkPanel onLinked={() => setLinked(true)} />
+          <EinkLinkPanel k={k} onLinked={() => setLinked(true)} />
         </View>
       )}
     </>

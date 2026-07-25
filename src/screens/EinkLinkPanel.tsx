@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { Animated, StyleSheet, Text, TextInput, View } from 'react-native'
+import { StyleSheet, Text, TextInput } from 'react-native'
 
-import { spriteColors, useRowEntrance } from '../ui/settingsSprite'
+import { SettingsDropdownPanel, spriteColors } from '../ui/settingsSprite'
 import { strings } from '../ui/strings'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
@@ -41,44 +41,39 @@ function useEinkLink(onLinked: () => void) {
   return { deviceId, setDeviceId, apiKey, setApiKey, scanning, scan, customize }
 }
 
-export function EinkLinkPanel({ onLinked }: { onLinked: () => void }) {
+export function EinkLinkPanel({ k, onLinked }: { k: number; onLinked: () => void }) {
   const link = useEinkLink(onLinked)
-  const { opacity, translateY } = useRowEntrance(0)
 
   return (
-    <Animated.View style={[styles.outline, { opacity, transform: [{ translateY }] }]}>
-      <View style={styles.brass}>
-        <View style={styles.plank}>
-          <PlankAction
-            label={link.scanning ? strings.settings_scanning : strings.settings_scan_nfc}
-            onPress={() => void link.scan()}
-            disabled={link.scanning}
-          />
-          <Text style={styles.hint}>{strings.settings_device_id_hint}</Text>
-          <TextInput
-            style={styles.input}
-            placeholder={strings.settings_device_id}
-            placeholderTextColor={spriteColors.tan}
-            value={link.deviceId}
-            onChangeText={link.setDeviceId}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder={strings.settings_api_key}
-            placeholderTextColor={spriteColors.tan}
-            value={link.apiKey}
-            onChangeText={link.setApiKey}
-            autoCapitalize="none"
-            autoCorrect={false}
-            secureTextEntry
-          />
-          <Text style={styles.hint}>{strings.settings_api_key_hint}</Text>
-          <PlankAction label={strings.settings_customize} onPress={link.customize} />
-        </View>
-      </View>
-    </Animated.View>
+    <SettingsDropdownPanel k={k}>
+      <PlankAction
+        label={link.scanning ? strings.settings_scanning : strings.settings_scan_nfc}
+        onPress={() => void link.scan()}
+        disabled={link.scanning}
+      />
+      <Text style={styles.hint}>{strings.settings_device_id_hint}</Text>
+      <TextInput
+        style={styles.input}
+        placeholder={strings.settings_device_id}
+        placeholderTextColor={spriteColors.tan}
+        value={link.deviceId}
+        onChangeText={link.setDeviceId}
+        autoCapitalize="none"
+        autoCorrect={false}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder={strings.settings_api_key}
+        placeholderTextColor={spriteColors.tan}
+        value={link.apiKey}
+        onChangeText={link.setApiKey}
+        autoCapitalize="none"
+        autoCorrect={false}
+        secureTextEntry
+      />
+      <Text style={styles.hint}>{strings.settings_api_key_hint}</Text>
+      <PlankAction label={strings.settings_customize} onPress={link.customize} />
+    </SettingsDropdownPanel>
   )
 }
 
@@ -104,29 +99,6 @@ function PlankAction({
 }
 
 const styles = StyleSheet.create({
-  outline: {
-    backgroundColor: spriteColors.outline,
-    borderRadius: 12,
-    padding: 3,
-    marginTop: -theme.spacing(2),
-  },
-  brass: {
-    backgroundColor: spriteColors.brass,
-    borderTopColor: spriteColors.brassLight,
-    borderTopWidth: 2,
-    borderRadius: 9,
-    padding: 3,
-  },
-  plank: {
-    backgroundColor: spriteColors.plank,
-    borderTopColor: spriteColors.plankLight,
-    borderTopWidth: 2,
-    borderBottomColor: spriteColors.plankDark,
-    borderBottomWidth: 2,
-    borderRadius: 6,
-    padding: theme.spacing(4),
-    gap: theme.spacing(3),
-  },
   action: {
     fontFamily: theme.fontFamily,
     fontSize: 13,

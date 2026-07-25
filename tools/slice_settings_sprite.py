@@ -11,6 +11,7 @@ Slices (registered in the manifest under `design` as settings_*):
   row_eink_off  same plank with the NOT LINKED area wood-cleaned (linked state)
   row_change    plank with baked CHANGE WINDOW + 7-DAY COOLDOWN (untouched)
   row_reset     plank with baked RESET PROGRESS (untouched)
+  dropdown_top/mid/bottom  row_blank split into caps + repeatable body
   toggle_track  dark toggle well, knob area reconstructed by mirroring
   toggle_knob   gold ON knob, transparent outside
   toggle_knob_blank  knob with the ON letters gold-filled (for OFF overlay)
@@ -59,6 +60,7 @@ TRACK_FLAT = (100, 180)  # flat well band inside the cap, track-local x
 KNOB = (1650, 1425, 1945, 1670)  # crop window around the gold knob
 KNOB_TEXT = (1730, 1490, 1858, 1596)  # ON letters inside the knob
 RIM = 16  # dark rim thickness kept around the gold when masking
+DROPDOWN_SPLIT = (170, 270)
 
 
 def dist(a, b):
@@ -211,6 +213,13 @@ def main():
     slices["row_window"] = flood_alpha(sheet.crop(BOXES["row1"]))
     wood_clean(sheet, ROW1_LABEL)
     slices["row_blank"] = flood_alpha(sheet.crop(BOXES["row1"]))
+    slices["dropdown_top"] = slices["row_blank"].crop((0, 0, 2026, DROPDOWN_SPLIT[0]))
+    slices["dropdown_mid"] = slices["row_blank"].crop(
+        (0, DROPDOWN_SPLIT[0], 2026, DROPDOWN_SPLIT[1])
+    )
+    slices["dropdown_bottom"] = slices["row_blank"].crop(
+        (0, DROPDOWN_SPLIT[1], 2026, 440)
+    )
     wood_clean(sheet, ROW2_TOGGLE)
     slices["row_notif"] = flood_alpha(sheet.crop(BOXES["row2"]))
     wood_clean(sheet, ROW3_VALUE)

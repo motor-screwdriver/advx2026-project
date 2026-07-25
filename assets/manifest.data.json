@@ -634,6 +634,30 @@
       "path": "design/onboarding/14-selection-arrow.png",
       "width": 32
     },
+    "settings_dropdown_bottom": {
+      "frameHeight": 170,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 170,
+      "path": "design/settings/dropdown_bottom.png",
+      "width": 2026
+    },
+    "settings_dropdown_mid": {
+      "frameHeight": 100,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 100,
+      "path": "design/settings/dropdown_mid.png",
+      "width": 2026
+    },
+    "settings_dropdown_top": {
+      "frameHeight": 170,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 170,
+      "path": "design/settings/dropdown_top.png",
+      "width": 2026
+    },
     "settings_header": {
       "frameHeight": 340,
       "frameWidth": 1960,

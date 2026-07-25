@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import { MIFIT_REGIONS, type MiFitnessRegion } from '../contracts/mifit'
 import type { MiFitnessLoginPhase } from '../ui/mifitLoginFlow'
 import { PixelButton } from '../ui/PixelButton'
+import { spriteColors } from '../ui/settingsSprite'
 import { strings } from '../ui/strings'
 import { theme } from '../ui/theme'
 
@@ -76,7 +77,7 @@ function CredentialsForm(props: DisconnectedStateProps & { busy: boolean }) {
       <TextInput
         style={panelStyles.input}
         placeholder={strings.mifit_username}
-        placeholderTextColor={theme.colors.textDim}
+        placeholderTextColor={spriteColors.tan}
         value={props.username}
         onChangeText={props.setUsername}
         autoCapitalize="none"
@@ -85,7 +86,7 @@ function CredentialsForm(props: DisconnectedStateProps & { busy: boolean }) {
       <TextInput
         style={panelStyles.input}
         placeholder={strings.mifit_password}
-        placeholderTextColor={theme.colors.textDim}
+        placeholderTextColor={spriteColors.tan}
         value={props.password}
         onChangeText={props.setPassword}
         autoCapitalize="none"
@@ -109,7 +110,7 @@ function EmailCodeForm(props: DisconnectedStateProps & { busy: boolean }) {
       <TextInput
         style={panelStyles.input}
         placeholder={strings.mifit_email_code}
-        placeholderTextColor={theme.colors.textDim}
+        placeholderTextColor={spriteColors.tan}
         value={props.code}
         onChangeText={props.setCode}
         autoCapitalize="none"
@@ -156,38 +157,38 @@ function RegionSelector({
 export const panelStyles = StyleSheet.create({
   label: {
     ...theme.type.label,
-    color: theme.colors.textDim,
+    color: spriteColors.tan,
     textTransform: 'uppercase',
   },
   value: {
     ...theme.type.body,
-    color: theme.colors.text,
+    color: spriteColors.cream,
   },
   block: {
     gap: theme.spacing(3),
   },
   input: {
     ...theme.type.body,
-    color: theme.colors.text,
-    backgroundColor: theme.colors.inset,
+    color: spriteColors.cream,
+    backgroundColor: spriteColors.trackWell,
     borderWidth: theme.borderWidth,
-    borderColor: theme.colors.outline,
+    borderColor: spriteColors.outline,
     borderRadius: theme.borderRadius,
     padding: theme.spacing(3),
   },
   hint: {
     ...theme.type.label,
-    color: theme.colors.textDim,
+    color: spriteColors.tan,
     textTransform: 'none',
   },
   security: {
     ...theme.type.label,
-    color: theme.colors.leaf,
+    color: spriteColors.goldLight,
     textTransform: 'none',
   },
   error: {
     ...theme.type.label,
-    color: theme.colors.heartFull,
+    color: spriteColors.red,
     textTransform: 'none',
   },
   regionGrid: {
@@ -196,18 +197,18 @@ export const panelStyles = StyleSheet.create({
     gap: theme.spacing(2),
   },
   regionOption: {
-    backgroundColor: theme.colors.inset,
+    backgroundColor: spriteColors.trackWell,
     borderWidth: theme.borderWidth,
-    borderColor: theme.colors.outline,
+    borderColor: spriteColors.outline,
     borderRadius: theme.borderRadius,
     paddingHorizontal: theme.spacing(2),
     paddingVertical: theme.spacing(2),
   },
   regionSelected: {
-    borderColor: theme.colors.gold,
+    borderColor: spriteColors.gold,
   },
   regionText: {
     ...theme.type.label,
-    color: theme.colors.text,
+    color: spriteColors.cream,
   },
 })

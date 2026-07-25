@@ -1,15 +1,15 @@
 import React from 'react'
 import { Text } from 'react-native'
 
-import { PixelPanel } from '../ui/PixelPanel'
+import { SettingsDropdownPanel } from '../ui/settingsSprite'
 import { strings } from '../ui/strings'
 import { ConnectedState, DisconnectedState, panelStyles } from './MiFitnessParts'
 import { useMiFitnessLogin } from './useMiFitnessLogin'
 
-export function MiFitnessPanel() {
+export function MiFitnessPanel({ k }: { k: number }) {
   const model = useMiFitnessLogin()
   return (
-    <PixelPanel>
+    <SettingsDropdownPanel k={k}>
       <Text style={panelStyles.label}>{strings.mifit_title}</Text>
       {model.connected ? (
         <ConnectedState
@@ -20,6 +20,6 @@ export function MiFitnessPanel() {
       ) : (
         <DisconnectedState {...model} />
       )}
-    </PixelPanel>
+    </SettingsDropdownPanel>
   )
 }
