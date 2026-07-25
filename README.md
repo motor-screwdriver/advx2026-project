@@ -38,8 +38,11 @@ screens never import `engine` directly.
 
 First-run onboarding is a conversation with Luma (tavern-style sleep oracle).
 The client POSTs chat turns to `/api/oracle`; the only backend is the Go
-service in `server/` (stdlib only, OpenRouter key + system prompt stay
-server-side). Wire contract: `src/contracts/aiOnboarding.ts`.
+service in `server/` (stdlib only, LLM API key + system prompt stay
+server-side). The Go service proxies to a self-hosted vLLM server
+(Qwen2.5-7B-Instruct on a rented RTX 5090), reached through a reverse SSH
+tunnel on host loopback (`AI_BASE_URL`, default `http://127.0.0.1:8000/v1`).
+Wire contract: `src/contracts/aiOnboarding.ts`.
 
 Local client development runs against the deployed backend — set
 `EXPO_PUBLIC_API_ORIGIN` in `.env` (see `.env.example`). Backend changes:
@@ -54,13 +57,15 @@ cd server && go test ./...    # toolchain note: see below
 (Actions → Deploy server → Run workflow, from any branch): `go vet` +
 `go test`, rsyncs `server/` to the host, writes `/opt/8bit-sleep/server.env`
 (chmod 600) from secrets, then `docker build` + `docker run` on the host. The
-container publishes host port `HOST_PORT` (8080) to container port 8080;
-clients call the API directly at `http://<host>:8080` (`/api/oracle`,
-`/healthz`). There is no TLS proxy in front — plain HTTP only.
+container runs with `--network=host` (so it can reach the LLM tunnel on
+host loopback) and binds `HOST_PORT` (8080) itself; clients call the API
+directly at `http://<host>:8080` (`/api/oracle`, `/healthz`). There is no
+TLS proxy in front — plain HTTP only.
 
 Required GitHub secrets: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_PASSWORD`,
-`OPENROUTER_API_KEY`; optional: `AI_MODEL`. The host firewall must allow
-inbound TCP on `HOST_PORT` (8080).
+`AI_API_KEY`, `AI_BASE_URL`; optional: `AI_MODEL`. The host firewall must
+allow inbound TCP on `HOST_PORT` (8080). The GPU box must be up with the
+reverse tunnel active before deploy, or the post-deploy oracle check fails.
 
 A Go toolchain lives in `tools/.go/` locally (gitignored): prefix commands
 with `tools/.go/go/bin/` or add it to PATH.
