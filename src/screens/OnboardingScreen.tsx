@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useState } from 'react'
-import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native'
+import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { DESIGN } from '../../assets/manifest'
@@ -126,16 +126,12 @@ function OnboardingView(props: OnboardingViewProps) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.body}
-        showsVerticalScrollIndicator={false}
-      >
-        <PixelSprite sprite={DESIGN.onboarding_logo_text} size={contentW * 0.78} />
+      <View style={styles.body}>
+        <PixelSprite sprite={DESIGN.onboarding_logo_text} size={contentW * 0.6} />
         {props.compactIntro ? (
           <Text style={styles.introText}>{props.compactIntro}</Text>
         ) : (
-          <PixelSprite sprite={DESIGN.onboarding_panel_rules_card} size={contentW * 0.92} />
+          <PixelSprite sprite={DESIGN.onboarding_panel_rules_card} size={contentW * 0.9} />
         )}
         <View style={styles.wheels}>
           <SpriteWheel
@@ -162,19 +158,19 @@ function OnboardingView(props: OnboardingViewProps) {
             pressed && props.valid && styles.beginPressed,
           ]}
         >
-          <PixelSprite sprite={DESIGN.onboarding_button_begin_plaque} size={contentW * 0.88} />
+          <PixelSprite sprite={DESIGN.onboarding_button_begin_plaque} size={contentW * 0.84} />
         </Pressable>
         {props.warning ? (
           <Text style={styles.warning}>{props.warning}</Text>
         ) : (
-          <PixelSprite sprite={DESIGN.onboarding_caption_min_hours} size={contentW * 0.5} />
+          <PixelSprite sprite={DESIGN.onboarding_caption_min_hours} size={contentW * 0.46} />
         )}
         {props.showBack && (
           <Pressable onPress={props.onBack} style={({ pressed }) => pressed && styles.beginPressed}>
             <Text style={styles.back}>{strings.common_back}</Text>
           </Pressable>
         )}
-      </ScrollView>
+      </View>
     </SafeAreaView>
   )
 }
@@ -184,13 +180,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0a0705',
   },
-  scroll: { flex: 1 },
   body: {
-    flexGrow: 1,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: theme.spacing(3),
-    paddingVertical: theme.spacing(4),
+    gap: theme.spacing(2.5),
   },
   introText: {
     ...theme.type.body,

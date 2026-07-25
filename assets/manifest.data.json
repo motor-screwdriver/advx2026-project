@@ -451,12 +451,12 @@
       "width": 874
     },
     "onboarding_logo_text": {
-      "frameHeight": 720,
-      "frameWidth": 1850,
+      "frameHeight": 774,
+      "frameWidth": 1508,
       "frames": 1,
-      "height": 720,
+      "height": 774,
       "path": "design/onboarding/15-logo-text.png",
-      "width": 1850
+      "width": 1508
     },
     "onboarding_panel_rules_card": {
       "frameHeight": 1028,

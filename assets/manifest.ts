@@ -1305,11 +1305,11 @@ export const DESIGN = {
   },
   onboarding_logo_text: {
     source: require('./design/onboarding/15-logo-text.png'),
-    width: 1850,
-    height: 720,
+    width: 1508,
+    height: 774,
     frames: 1,
-    frameWidth: 1850,
-    frameHeight: 720,
+    frameWidth: 1508,
+    frameHeight: 774,
   },
   onboarding_panel_rules_card: {
     source: require('./design/onboarding/16-panel-rules-card.png'),
