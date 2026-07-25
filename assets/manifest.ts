@@ -566,13 +566,21 @@ export const SCENES = {
     frameWidth: 210,
     frameHeight: 170,
   },
-  start_book: {
-    source: require('./start_screen/book.png'),
-    width: 720,
-    height: 1280,
+  start_book_frame_1: {
+    source: require('./start_screen/book_frame_1.png'),
+    width: 2160,
+    height: 3840,
     frames: 1,
-    frameWidth: 720,
-    frameHeight: 1280,
+    frameWidth: 2160,
+    frameHeight: 3840,
+  },
+  start_book_frame_2: {
+    source: require('./start_screen/book_frame_2.png'),
+    width: 2160,
+    height: 3840,
+    frames: 1,
+    frameWidth: 2160,
+    frameHeight: 3840,
   },
   start_candle_1: {
     source: require('./start_screen/candle_1.png'),

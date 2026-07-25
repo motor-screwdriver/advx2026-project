@@ -1168,13 +1168,21 @@
       "path": "start_screen/bag_pressed.png",
       "width": 210
     },
-    "start_book": {
-      "frameHeight": 1280,
-      "frameWidth": 720,
+    "start_book_frame_1": {
+      "frameHeight": 3840,
+      "frameWidth": 2160,
       "frames": 1,
-      "height": 1280,
-      "path": "start_screen/book.png",
-      "width": 720
+      "height": 3840,
+      "path": "start_screen/book_frame_1.png",
+      "width": 2160
+    },
+    "start_book_frame_2": {
+      "frameHeight": 3840,
+      "frameWidth": 2160,
+      "frames": 1,
+      "height": 3840,
+      "path": "start_screen/book_frame_2.png",
+      "width": 2160
     },
     "start_candle_1": {
       "frameHeight": 165,
