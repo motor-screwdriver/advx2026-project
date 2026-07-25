@@ -918,6 +918,54 @@
       "path": "luma/btn_empty_down.png",
       "width": 959
     },
+    "morning_base": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/morning_base.png",
+      "width": 1080
+    },
+    "morning_blink": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/morning_blink.png",
+      "width": 1080
+    },
+    "morning_env2": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/morning_env2.png",
+      "width": 1080
+    },
+    "morning_env3": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/morning_env3.png",
+      "width": 1080
+    },
+    "morning_talk_half": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/morning_talk_half.png",
+      "width": 1080
+    },
+    "morning_talk_open": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/morning_talk_open.png",
+      "width": 1080
+    },
     "s1_base": {
       "frameHeight": 1920,
       "frameWidth": 1080,
@@ -1064,62 +1112,6 @@
     }
   },
   "scenes": {
-    "book_menu_1": {
-      "frameHeight": 960,
-      "frameWidth": 540,
-      "frames": 1,
-      "height": 960,
-      "path": "book_menu/frame_1.png",
-      "width": 540
-    },
-    "book_menu_2": {
-      "frameHeight": 960,
-      "frameWidth": 540,
-      "frames": 1,
-      "height": 960,
-      "path": "book_menu/frame_2.png",
-      "width": 540
-    },
-    "book_menu_3": {
-      "frameHeight": 960,
-      "frameWidth": 540,
-      "frames": 1,
-      "height": 960,
-      "path": "book_menu/frame_3.png",
-      "width": 540
-    },
-    "book_menu_4": {
-      "frameHeight": 960,
-      "frameWidth": 540,
-      "frames": 1,
-      "height": 960,
-      "path": "book_menu/frame_4.png",
-      "width": 540
-    },
-    "book_menu_5": {
-      "frameHeight": 960,
-      "frameWidth": 540,
-      "frames": 1,
-      "height": 960,
-      "path": "book_menu/frame_5.png",
-      "width": 540
-    },
-    "book_menu_6": {
-      "frameHeight": 960,
-      "frameWidth": 540,
-      "frames": 1,
-      "height": 960,
-      "path": "book_menu/frame_6.png",
-      "width": 540
-    },
-    "book_menu_7": {
-      "frameHeight": 960,
-      "frameWidth": 540,
-      "frames": 1,
-      "height": 960,
-      "path": "book_menu/frame_7.png",
-      "width": 540
-    },
     "scene_bad": {
       "frameHeight": 576,
       "frameWidth": 1024,
@@ -1167,6 +1159,78 @@
       "height": 576,
       "path": "pixellab/scenes/scene_terrible.png",
       "width": 3072
+    },
+    "start_bag_pressed": {
+      "frameHeight": 170,
+      "frameWidth": 210,
+      "frames": 1,
+      "height": 170,
+      "path": "start_screen/bag_pressed.png",
+      "width": 210
+    },
+    "start_book": {
+      "frameHeight": 1280,
+      "frameWidth": 720,
+      "frames": 1,
+      "height": 1280,
+      "path": "start_screen/book.png",
+      "width": 720
+    },
+    "start_candle_1": {
+      "frameHeight": 165,
+      "frameWidth": 100,
+      "frames": 1,
+      "height": 165,
+      "path": "start_screen/candle_1.png",
+      "width": 100
+    },
+    "start_candle_2": {
+      "frameHeight": 165,
+      "frameWidth": 100,
+      "frames": 1,
+      "height": 165,
+      "path": "start_screen/candle_2.png",
+      "width": 100
+    },
+    "start_candle_3": {
+      "frameHeight": 165,
+      "frameWidth": 100,
+      "frames": 1,
+      "height": 165,
+      "path": "start_screen/candle_3.png",
+      "width": 100
+    },
+    "start_candle_4": {
+      "frameHeight": 165,
+      "frameWidth": 100,
+      "frames": 1,
+      "height": 165,
+      "path": "start_screen/candle_4.png",
+      "width": 100
+    },
+    "start_mosaic_pressed": {
+      "frameHeight": 170,
+      "frameWidth": 210,
+      "frames": 1,
+      "height": 170,
+      "path": "start_screen/mosaic_pressed.png",
+      "width": 210
+    },
+    "start_settings_pressed": {
+      "frameHeight": 170,
+      "frameWidth": 205,
+      "frames": 1,
+      "height": 170,
+      "path": "start_screen/settings_pressed.png",
+      "width": 205
+    },
+    "start_sleep_pressed": {
+      "frameHeight": 165,
+      "frameWidth": 595,
+      "frames": 1,
+      "height": 165,
+      "path": "start_screen/sleep_pressed.png",
+      "width": 595
     }
   },
   "sprites": {

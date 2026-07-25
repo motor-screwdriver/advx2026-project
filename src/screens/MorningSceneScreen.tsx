@@ -126,7 +126,12 @@ export function MorningSceneScreen() {
       evaluation={lastEvaluation}
       streak={state.perfectWeekStreak}
       pendingChest={pendingChest}
-      onContinue={() => go('/morning-chat', { effect: 'wipe', replace: true })}
+      onContinue={() =>
+        go(lastEvaluation.outcome === 'MISSED' ? '/' : '/morning-chat', {
+          effect: 'wipe',
+          replace: true,
+        })
+      }
       onChest={() => go('/chest', { effect: 'wipe' })}
     />
   )

@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useRef } from 'react'
 import { Animated, StyleSheet, View } from 'react-native'
 
 import { useFadeIn } from '../ui/animations'
-import { BookView } from '../ui/BookView'
 import { HeroSprite } from '../ui/HeroSprite'
 import { NightWorld } from '../ui/NightWorld'
 import { useScreenTransition } from '../ui/screenTransition'
+import { StartScreen } from '../ui/StartScreen'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
 import { Dock, TopBar } from './HomeNightDock'
@@ -32,9 +32,9 @@ function useAsleepProgress(asleep: boolean) {
   return progress
 }
 
-/** Awake: the inked character-sheet book (nav lives on the page). Asleep:
- * the living night world. Both stay mounted and simply crossfade into one
- * another right here on Home — no separate transition screen, no hard pop. */
+/** Awake: the start screen, the storybook waiting on the candle-lit table.
+ * Asleep: the living night world. Both stay mounted and simply crossfade into
+ * one another right here on Home — no separate transition screen, no hard pop. */
 export function HeroStage({
   asleep,
   state,
@@ -58,11 +58,9 @@ export function HeroStage({
         style={[StyleSheet.absoluteFill, { opacity: bookFade }]}
         pointerEvents={asleep ? 'none' : 'auto'}
       >
-        <BookView
-          heroType={hero.type}
+        <StartScreen
           hp={state.hp}
           level={hero.level}
-          streak={state.perfectWeekStreak}
           onSleep={onSleep}
           onBag={() => go('/inventory', { effect: 'wipe' })}
           onMosaic={() => go('/mosaic', { effect: 'wipe' })}

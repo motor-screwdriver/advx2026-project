@@ -86,6 +86,7 @@ export function GoldButton(props: {
   onPress?: () => void
   style?: StyleProp<ViewStyle>
   compact?: boolean
+  disabled?: boolean
 }) {
   return (
     <BaseButton
