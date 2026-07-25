@@ -11,8 +11,9 @@ import { strings } from './strings'
 // and MOSAIC/BAG/SETTINGS plaques and the empty HP strip already drawn in. The
 // UI adds only what changes — the candle flame, the hero's hearts/level, and the
 // darker pressed art of whichever plaque is held down.
-const BOOK = SCENES.start_book
-const ASPECT = BOOK.width / BOOK.height // 720 / 1280
+const BOOK_FRAMES = [SCENES.start_book_frame_1, SCENES.start_book_frame_2]
+const BOOK_FLIP_MS = 500
+const ASPECT = BOOK_FRAMES[0].width / BOOK_FRAMES[0].height // 2160 / 3840
 
 // Everything below is a fraction of the backdrop, measured in tools/start_screen.py.
 const CANDLE_RECT = { l: 60 / 2160, t: 375 / 3840, w: 300 / 2160, h: 495 / 3840 }
@@ -150,10 +151,18 @@ export function StartScreen({ hp, level, onSleep, onBag, onMosaic, onSettings }:
   const { width: W, height: H } = useWindowDimensions()
   const bookW = Math.min(W, H * ASPECT)
   const bookH = bookW / ASPECT
+  const bookFrame = useFlicker(BOOK_FRAMES.length, BOOK_FLIP_MS)
   return (
     <View style={styles.root}>
       <View style={{ width: bookW, height: bookH }}>
-        <ExpoImage source={BOOK.source} style={StyleSheet.absoluteFill} contentFit="fill" />
+        {BOOK_FRAMES.map((f, i) => (
+          <ExpoImage
+            key={i}
+            source={f.source}
+            style={[StyleSheet.absoluteFill, { opacity: i === bookFrame ? 1 : 0 }]}
+            contentFit="fill"
+          />
+        ))}
         <Flame bookW={bookW} bookH={bookH} />
         <View style={place(STRIP_RECT, bookW, bookH)} pointerEvents="none">
           <StartStatusStrip hp={hp} level={level} height={bookH * STRIP_RECT.h} />
