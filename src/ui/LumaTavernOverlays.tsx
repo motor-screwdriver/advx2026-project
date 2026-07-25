@@ -9,6 +9,7 @@ import {
   LUMA_FONT,
   rectStyle,
   S1_PARCHMENT,
+  S1_SLOTS,
   S2_ACCEPT,
   S2_ADJUST,
   S2_PARCHMENT,
@@ -34,8 +35,13 @@ export function LumaWelcomeOverlay({
   return (
     <>
       <DialogueText rect={S1_PARCHMENT} stage={stage} text={strings.oracle_welcome_body} />
-      <SlotButton index={0} stage={stage} label={strings.oracle_start} onPress={onStart} />
-      <SlotButton index={1} stage={stage} label={strings.oracle_set_manually} onPress={onManual} />
+      <SlotButton rect={S1_SLOTS[0]} stage={stage} label={strings.oracle_start} onPress={onStart} />
+      <SlotButton
+        rect={S1_SLOTS[1]}
+        stage={stage}
+        label={strings.oracle_set_manually}
+        onPress={onManual}
+      />
     </>
   )
 }
@@ -67,7 +73,7 @@ export function LumaChatOverlay({
           .map((suggestion, i) => (
             <SlotButton
               key={suggestion}
-              index={i}
+              rect={S1_SLOTS[i]}
               stage={stage}
               label={suggestion}
               onPress={() => onSend(suggestion)}
@@ -137,8 +143,13 @@ export function LumaErrorOverlay({
   return (
     <>
       <DialogueText rect={S1_PARCHMENT} stage={stage} text={text} />
-      <SlotButton index={0} stage={stage} label={strings.oracle_retry} onPress={onRetry} />
-      <SlotButton index={1} stage={stage} label={strings.oracle_set_manually} onPress={onManual} />
+      <SlotButton rect={S1_SLOTS[0]} stage={stage} label={strings.oracle_retry} onPress={onRetry} />
+      <SlotButton
+        rect={S1_SLOTS[1]}
+        stage={stage}
+        label={strings.oracle_set_manually}
+        onPress={onManual}
+      />
     </>
   )
 }

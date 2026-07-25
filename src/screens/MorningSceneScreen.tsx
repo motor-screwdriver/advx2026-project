@@ -124,7 +124,7 @@ export function MorningSceneScreen() {
       evaluation={lastEvaluation}
       streak={state.perfectWeekStreak}
       pendingChest={pendingChest}
-      onContinue={() => router.replace('/morning-chat')}
+      onContinue={() => router.replace(lastEvaluation.outcome === 'MISSED' ? '/' : '/morning-chat')}
       onChest={() => router.push('/chest')}
     />
   )

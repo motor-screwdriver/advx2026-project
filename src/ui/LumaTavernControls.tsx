@@ -4,11 +4,11 @@ import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 
 import { LUMA } from '../../assets/manifest'
 import {
   fitFont,
+  fitParagraph,
   LUMA_FONT,
   rectStyle,
   S1_INPUT,
   S1_SEND,
-  S1_SLOTS,
   stageFont,
   type FracRect,
   type StageSize,
@@ -76,21 +76,21 @@ export function SpriteButton({
   )
 }
 
-/** Answer button baked into one of the two slots of the question scene. */
+/** Answer button on one of the empty wood slots of a scene. */
 export function SlotButton({
-  index,
+  rect,
   stage,
   label,
   onPress,
 }: {
-  index: number
+  rect: FracRect
   stage: StageSize
   label: string
   onPress: () => void
 }) {
   return (
     <SpriteButton
-      rect={S1_SLOTS[index]}
+      rect={rect}
       stage={stage}
       up={LUMA.btn_empty}
       down={LUMA.btn_empty_down}
@@ -114,15 +114,24 @@ function parchmentFont(length: number): number {
   return 100
 }
 
-/** Scrollable ink text over the parchment area; follows the typewriter. */
+const FIT_LINE_HEIGHT = 1.45
+const TIER_LINE_HEIGHT = 1.55
+
+/**
+ * Scrollable ink text over the parchment area; follows the typewriter. With
+ * `fit` the size is chosen so the whole message shows at once (long morning
+ * talk), otherwise it steps down through tiers and scrolls.
+ */
 export function DialogueText({
   rect,
   stage,
   text,
+  fit = false,
 }: {
   rect: FracRect
   stage: StageSize
   text: string
+  fit?: boolean
 }) {
   const scroll = useRef<ScrollView>(null)
   const previous = useRef('')
@@ -139,25 +148,43 @@ export function DialogueText({
       scroll.current?.scrollTo({ y: 0, animated: false })
     }
   }, [text])
-  const fontSize = stageFont(stage, parchmentFont(text.length))
+  const lineHeight = fit ? FIT_LINE_HEIGHT : TIER_LINE_HEIGHT
+  const sourcePx = fit
+    ? fitParagraph(text, rect, LUMA_FONT.parchment, LUMA_FONT.parchmentMin, lineHeight)
+    : parchmentFont(text.length)
+  const fontSize = stageFont(stage, sourcePx)
   return (
     <View style={rectStyle(rect, stage)}>
-      <ScrollView ref={scroll} showsVerticalScrollIndicator={false}>
-        <Text style={[styles.dialogue, { fontSize, lineHeight: fontSize * 1.55 }]}>{text}</Text>
+      <ScrollView
+        ref={scroll}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={fit ? styles.fitted : undefined}
+      >
+        <Text style={[styles.dialogue, { fontSize, lineHeight: fontSize * lineHeight }]}>
+          {text}
+        </Text>
       </ScrollView>
     </View>
   )
 }
 
-/** Single-line chat input on the baked field plus the paper-plane send tile. */
+/** Single-line chat input on a baked field plus the send tile; morning chat passes its own rects. */
 export function ChatInputRow({
   stage,
   disabled,
   onSend,
+  inputRect = S1_INPUT,
+  sendRect = S1_SEND,
+  fontSourcePx = LUMA_FONT.input,
+  placeholder = strings.oracle_input_placeholder,
 }: {
   stage: StageSize
   disabled: boolean
   onSend: (text: string) => void
+  inputRect?: FracRect
+  sendRect?: FracRect
+  fontSourcePx?: number
+  placeholder?: string
 }) {
   const [draft, setDraft] = useState('')
   const ready = draft.trim().length > 0 && !disabled
@@ -168,28 +195,28 @@ export function ChatInputRow({
     onSend(draft)
     setDraft('')
   }
-  const fontSize = stageFont(stage, LUMA_FONT.input)
+  const fontSize = stageFont(stage, fontSourcePx)
   return (
     <>
       <TextInput
-        style={[rectStyle(S1_INPUT, stage), styles.input, { fontSize }]}
+        style={[rectStyle(inputRect, stage), styles.input, { fontSize }]}
         value={draft}
         onChangeText={setDraft}
-        placeholder={strings.oracle_input_placeholder}
+        placeholder={placeholder}
         placeholderTextColor="#8a6f52"
         maxLength={MAX_INPUT_CHARS}
         returnKeyType="send"
         onSubmitEditing={submit}
         blurOnSubmit={false}
         editable={!disabled}
-        accessibilityLabel={strings.oracle_input_placeholder}
+        accessibilityLabel={placeholder}
       />
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={strings.oracle_send}
         onPress={submit}
         disabled={!ready}
-        style={rectStyle(S1_SEND, stage)}
+        style={rectStyle(sendRect, stage)}
       >
         {({ pressed }) => <View style={[styles.sendTouch, pressed && styles.sendPressed]} />}
       </Pressable>
@@ -209,6 +236,8 @@ const styles = StyleSheet.create({
     fontFamily: theme.fontFamily,
     color: tavernColors.inkOnParchment,
   },
+  /** A message that fits sits centred on the parchment rather than hugging the top. */
+  fitted: { flexGrow: 1, justifyContent: 'center' },
   input: {
     fontFamily: theme.fontFamily,
     color: theme.colors.text,
