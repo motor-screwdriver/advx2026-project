@@ -42,6 +42,7 @@ export const strings = {
   oracle_mic: 'Voice',
   oracle_mic_stop: 'Stop',
   oracle_result_title: 'Your starting window',
+  oracle_window_strip: 'Your window',
   oracle_result_hint: 'A gentle target, not a test.',
   oracle_change_later: 'You can change it later in Settings.',
   oracle_accept: 'Keep this window',
@@ -87,6 +88,7 @@ export const strings = {
   home_hearts: 'Hearts',
   home_streak: 'Perfect week',
   home_level: 'LV',
+  home_lvl: 'LVL',
   home_window: 'Sleep window',
   home_sleep: 'Sleep',
   home_wakeup: 'Wake up',
@@ -97,10 +99,6 @@ export const strings = {
   home_nav_heroes: 'HEROES',
   home_nav_settings: 'SETTINGS',
   home_menu_tagline: 'THE NIGHTLY WATCH',
-
-  // Sleep transition (book carries you to the hero)
-  transition_carry: 'THE BOOK CARRIES YOU TO YOUR HERO...',
-  transition_tap: 'Tap to continue',
 
   // Night outcomes
   outcome_perfect: 'PERFECT',

@@ -277,7 +277,7 @@
     "music_day": {
       "durationSec": 14.4,
       "loop": true,
-      "path": "audio/main_theme.mp3"
+      "path": "audio/day_theme.mp3"
     },
     "music_night": {
       "durationSec": 16.0,
@@ -306,6 +306,118 @@
     }
   },
   "design": {
+    "chest_button_claim": {
+      "frameHeight": 186,
+      "frameWidth": 626,
+      "frames": 1,
+      "height": 186,
+      "path": "design/chest/30-button-claim.png",
+      "width": 626
+    },
+    "chest_candle_l": {
+      "frameHeight": 310,
+      "frameWidth": 110,
+      "frames": 1,
+      "height": 310,
+      "path": "design/chest/23-candle-l.png",
+      "width": 110
+    },
+    "chest_candle_r": {
+      "frameHeight": 310,
+      "frameWidth": 158,
+      "frames": 1,
+      "height": 310,
+      "path": "design/chest/24-candle-r.png",
+      "width": 158
+    },
+    "chest_card_frame": {
+      "frameHeight": 626,
+      "frameWidth": 522,
+      "frames": 1,
+      "height": 626,
+      "path": "design/chest/28-card-frame.png",
+      "width": 522
+    },
+    "chest_chest_gold": {
+      "frameHeight": 544,
+      "frameWidth": 626,
+      "frames": 1,
+      "height": 544,
+      "path": "design/chest/34-chest-gold.png",
+      "width": 626
+    },
+    "chest_chest_open_glow": {
+      "frameHeight": 486,
+      "frameWidth": 612,
+      "frames": 1,
+      "height": 486,
+      "path": "design/chest/29-chest-open-glow.png",
+      "width": 612
+    },
+    "chest_chest_steel": {
+      "frameHeight": 478,
+      "frameWidth": 626,
+      "frames": 1,
+      "height": 478,
+      "path": "design/chest/22-chest-steel.png",
+      "width": 626
+    },
+    "chest_plaque_ready": {
+      "frameHeight": 154,
+      "frameWidth": 582,
+      "frames": 1,
+      "height": 154,
+      "path": "design/chest/21-plaque-ready.png",
+      "width": 582
+    },
+    "chest_ribbon_lucky": {
+      "frameHeight": 90,
+      "frameWidth": 622,
+      "frames": 1,
+      "height": 90,
+      "path": "design/chest/35-ribbon-lucky.png",
+      "width": 622
+    },
+    "chest_ribbon_rare": {
+      "frameHeight": 146,
+      "frameWidth": 382,
+      "frames": 1,
+      "height": 146,
+      "path": "design/chest/27-ribbon-rare.png",
+      "width": 382
+    },
+    "chest_sparkle_1": {
+      "frameHeight": 42,
+      "frameWidth": 38,
+      "frames": 1,
+      "height": 42,
+      "path": "design/chest/31-sparkle-1.png",
+      "width": 38
+    },
+    "chest_title_weekly_chest": {
+      "frameHeight": 156,
+      "frameWidth": 622,
+      "frames": 1,
+      "height": 156,
+      "path": "design/chest/20-title-weekly-chest.png",
+      "width": 622
+    },
+    "chest_title_weekly_chest_gold": {
+      "frameHeight": 158,
+      "frameWidth": 612,
+      "frames": 1,
+      "height": 158,
+      "path": "design/chest/33-title-weekly-chest-gold.png",
+      "width": 612
+    },
+    "chest_title_weekly_loot": {
+      "frameHeight": 128,
+      "frameWidth": 612,
+      "frames": 1,
+      "height": 128,
+      "path": "design/chest/26-title-weekly-loot.png",
+      "width": 612
+    },
     "gen_book_page_right_crop": {
       "frameHeight": 233,
       "frameWidth": 244,
@@ -433,6 +545,62 @@
       "height": 160,
       "path": "design/gen/tutorial_p3.png",
       "width": 160
+    },
+    "onboarding_button_begin_plaque": {
+      "frameHeight": 452,
+      "frameWidth": 1558,
+      "frames": 1,
+      "height": 452,
+      "path": "design/onboarding/17-button-begin-plaque.png",
+      "width": 1558
+    },
+    "onboarding_caption_min_hours": {
+      "frameHeight": 70,
+      "frameWidth": 874,
+      "frames": 1,
+      "height": 70,
+      "path": "design/onboarding/18-caption-min-hours.png",
+      "width": 874
+    },
+    "onboarding_logo_text": {
+      "frameHeight": 774,
+      "frameWidth": 1508,
+      "frames": 1,
+      "height": 774,
+      "path": "design/onboarding/15-logo-text.png",
+      "width": 1508
+    },
+    "onboarding_panel_rules_card": {
+      "frameHeight": 1028,
+      "frameWidth": 1848,
+      "frames": 1,
+      "height": 1028,
+      "path": "design/onboarding/16-panel-rules-card.png",
+      "width": 1848
+    },
+    "onboarding_picker_window_bedtime": {
+      "frameHeight": 364,
+      "frameWidth": 282,
+      "frames": 1,
+      "height": 364,
+      "path": "design/onboarding/12-picker-window-bedtime.png",
+      "width": 282
+    },
+    "onboarding_picker_window_wakeup": {
+      "frameHeight": 364,
+      "frameWidth": 282,
+      "frames": 1,
+      "height": 364,
+      "path": "design/onboarding/13-picker-window-wakeup.png",
+      "width": 282
+    },
+    "onboarding_selection_arrow": {
+      "frameHeight": 40,
+      "frameWidth": 32,
+      "frames": 1,
+      "height": 40,
+      "path": "design/onboarding/14-selection-arrow.png",
+      "width": 32
     }
   },
   "icons": {
@@ -701,63 +869,201 @@
       "width": 32
     }
   },
+  "luma": {
+    "btn_accept": {
+      "frameHeight": 162,
+      "frameWidth": 703,
+      "frames": 1,
+      "height": 162,
+      "path": "luma/btn_accept.png",
+      "width": 703
+    },
+    "btn_accept_down": {
+      "frameHeight": 162,
+      "frameWidth": 703,
+      "frames": 1,
+      "height": 162,
+      "path": "luma/btn_accept_down.png",
+      "width": 703
+    },
+    "btn_adjust": {
+      "frameHeight": 115,
+      "frameWidth": 424,
+      "frames": 1,
+      "height": 115,
+      "path": "luma/btn_adjust.png",
+      "width": 424
+    },
+    "btn_adjust_down": {
+      "frameHeight": 115,
+      "frameWidth": 424,
+      "frames": 1,
+      "height": 115,
+      "path": "luma/btn_adjust_down.png",
+      "width": 424
+    },
+    "btn_empty": {
+      "frameHeight": 129,
+      "frameWidth": 959,
+      "frames": 1,
+      "height": 129,
+      "path": "luma/btn_empty.png",
+      "width": 959
+    },
+    "btn_empty_down": {
+      "frameHeight": 129,
+      "frameWidth": 959,
+      "frames": 1,
+      "height": 129,
+      "path": "luma/btn_empty_down.png",
+      "width": 959
+    },
+    "s1_base": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_base.png",
+      "width": 1080
+    },
+    "s1_base_start": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_base_start.png",
+      "width": 1080
+    },
+    "s1_blink": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_blink.png",
+      "width": 1080
+    },
+    "s1_blink_start": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_blink_start.png",
+      "width": 1080
+    },
+    "s1_env2": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_env2.png",
+      "width": 1080
+    },
+    "s1_env2_start": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_env2_start.png",
+      "width": 1080
+    },
+    "s1_env3": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_env3.png",
+      "width": 1080
+    },
+    "s1_env3_start": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_env3_start.png",
+      "width": 1080
+    },
+    "s1_env4": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_env4.png",
+      "width": 1080
+    },
+    "s1_env4_start": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_env4_start.png",
+      "width": 1080
+    },
+    "s1_talk_half": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_talk_half.png",
+      "width": 1080
+    },
+    "s1_talk_half_start": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_talk_half_start.png",
+      "width": 1080
+    },
+    "s1_talk_open": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_talk_open.png",
+      "width": 1080
+    },
+    "s1_talk_open_start": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_talk_open_start.png",
+      "width": 1080
+    },
+    "s2_base": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s2_base.png",
+      "width": 1080
+    },
+    "s2_blink": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s2_blink.png",
+      "width": 1080
+    },
+    "s2_env2": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s2_env2.png",
+      "width": 1080
+    },
+    "s2_env3": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s2_env3.png",
+      "width": 1080
+    }
+  },
   "scenes": {
-    "book_menu_1": {
-      "frameHeight": 960,
-      "frameWidth": 540,
-      "frames": 1,
-      "height": 960,
-      "path": "book_menu/frame_1.png",
-      "width": 540
-    },
-    "book_menu_2": {
-      "frameHeight": 960,
-      "frameWidth": 540,
-      "frames": 1,
-      "height": 960,
-      "path": "book_menu/frame_2.png",
-      "width": 540
-    },
-    "book_menu_3": {
-      "frameHeight": 960,
-      "frameWidth": 540,
-      "frames": 1,
-      "height": 960,
-      "path": "book_menu/frame_3.png",
-      "width": 540
-    },
-    "book_menu_4": {
-      "frameHeight": 960,
-      "frameWidth": 540,
-      "frames": 1,
-      "height": 960,
-      "path": "book_menu/frame_4.png",
-      "width": 540
-    },
-    "book_menu_5": {
-      "frameHeight": 960,
-      "frameWidth": 540,
-      "frames": 1,
-      "height": 960,
-      "path": "book_menu/frame_5.png",
-      "width": 540
-    },
-    "book_menu_6": {
-      "frameHeight": 960,
-      "frameWidth": 540,
-      "frames": 1,
-      "height": 960,
-      "path": "book_menu/frame_6.png",
-      "width": 540
-    },
-    "book_menu_7": {
-      "frameHeight": 960,
-      "frameWidth": 540,
-      "frames": 1,
-      "height": 960,
-      "path": "book_menu/frame_7.png",
-      "width": 540
-    },
     "scene_bad": {
       "frameHeight": 576,
       "frameWidth": 1024,
@@ -805,6 +1111,78 @@
       "height": 576,
       "path": "pixellab/scenes/scene_terrible.png",
       "width": 3072
+    },
+    "start_bag_pressed": {
+      "frameHeight": 170,
+      "frameWidth": 210,
+      "frames": 1,
+      "height": 170,
+      "path": "start_screen/bag_pressed.png",
+      "width": 210
+    },
+    "start_book": {
+      "frameHeight": 1280,
+      "frameWidth": 720,
+      "frames": 1,
+      "height": 1280,
+      "path": "start_screen/book.png",
+      "width": 720
+    },
+    "start_candle_1": {
+      "frameHeight": 165,
+      "frameWidth": 100,
+      "frames": 1,
+      "height": 165,
+      "path": "start_screen/candle_1.png",
+      "width": 100
+    },
+    "start_candle_2": {
+      "frameHeight": 165,
+      "frameWidth": 100,
+      "frames": 1,
+      "height": 165,
+      "path": "start_screen/candle_2.png",
+      "width": 100
+    },
+    "start_candle_3": {
+      "frameHeight": 165,
+      "frameWidth": 100,
+      "frames": 1,
+      "height": 165,
+      "path": "start_screen/candle_3.png",
+      "width": 100
+    },
+    "start_candle_4": {
+      "frameHeight": 165,
+      "frameWidth": 100,
+      "frames": 1,
+      "height": 165,
+      "path": "start_screen/candle_4.png",
+      "width": 100
+    },
+    "start_mosaic_pressed": {
+      "frameHeight": 170,
+      "frameWidth": 210,
+      "frames": 1,
+      "height": 170,
+      "path": "start_screen/mosaic_pressed.png",
+      "width": 210
+    },
+    "start_settings_pressed": {
+      "frameHeight": 170,
+      "frameWidth": 205,
+      "frames": 1,
+      "height": 170,
+      "path": "start_screen/settings_pressed.png",
+      "width": 205
+    },
+    "start_sleep_pressed": {
+      "frameHeight": 165,
+      "frameWidth": 595,
+      "frames": 1,
+      "height": 165,
+      "path": "start_screen/sleep_pressed.png",
+      "width": 595
     }
   },
   "sprites": {

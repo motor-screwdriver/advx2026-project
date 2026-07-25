@@ -1,16 +1,15 @@
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { ICONS } from '../../assets/manifest'
-import { PixelButton } from '../ui/PixelButton'
+import { DESIGN } from '../../assets/manifest'
 import { PixelSprite } from '../ui/PixelSprite'
-import { Screen } from '../ui/Screen'
 import { strings } from '../ui/strings'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
-import { WheelPicker } from '../ui/WheelPicker'
-import { formatClock, formatDuration, MAX_SLEEP_MIN, MIN_SLEEP_MIN } from '../ui/window'
+import { MAX_SLEEP_MIN, MIN_SLEEP_MIN } from '../ui/window'
+import { SpriteWheel } from './OnboardingWheel'
 
 const STEP = 15
 const range = (from: number, to: number) =>
@@ -50,13 +49,6 @@ function windowWarning(bedMin: number, wakeMin: number): string | null {
   return null
 }
 
-function screenTitle(editing: boolean, adjusted: boolean): string {
-  if (editing) {
-    return strings.onboarding_change_title
-  }
-  return adjusted ? strings.onboarding_adjust_title : strings.onboarding_title
-}
-
 export function OnboardingScreen() {
   const router = useRouter()
   const params = useLocalSearchParams<{
@@ -86,26 +78,23 @@ export function OnboardingScreen() {
         setBlocked(true)
         return
       }
-      router.replace('/hero-ceremony')
+      router.replace('/')
       return
     }
     completeOnboarding({ bedMin, wakeMin })
-    router.replace('/hero-ceremony')
+    router.replace('/')
   }
 
-  const title = screenTitle(editing, adjusted)
   const compactIntro = editing ? strings.onboarding_change_body : strings.onboarding_adjust_body
 
   return (
     <OnboardingView
-      title={title}
       compactIntro={editing || adjusted ? compactIntro : null}
       bedMin={bedMin}
       wakeMin={wakeMin}
       valid={valid}
       warning={warning}
       blocked={blocked}
-      editing={editing}
       showBack={editing || adjusted}
       onBedChange={setBedMin}
       onWakeChange={setWakeMin}
@@ -116,14 +105,12 @@ export function OnboardingScreen() {
 }
 
 interface OnboardingViewProps {
-  title: string
   compactIntro: string | null
   bedMin: number
   wakeMin: number
   valid: boolean
   warning: string | null
   blocked: boolean
-  editing: boolean
   showBack: boolean
   onBedChange: (value: number) => void
   onWakeChange: (value: number) => void
@@ -131,103 +118,96 @@ interface OnboardingViewProps {
   onBack: () => void
 }
 
+/** Prototype 01-онбординг: logo, rules panel, two sprite wheels, BEGIN, caption. */
 function OnboardingView(props: OnboardingViewProps) {
-  return (
-    <Screen title={props.title}>
-      <OnboardingIntro compact={props.compactIntro} />
-      <View style={styles.wheels}>
-        <WheelColumn
-          label={strings.onboarding_bedtime}
-          values={BED_VALUES}
-          value={props.bedMin}
-          onChange={props.onBedChange}
-        />
-        <WheelColumn
-          label={strings.onboarding_wakeup}
-          values={WAKE_VALUES}
-          value={props.wakeMin}
-          onChange={props.onWakeChange}
-        />
-      </View>
-      <Text style={styles.duration}>
-        {strings.onboarding_duration}: {formatDuration(props.wakeMin - props.bedMin)}
-      </Text>
-      {props.warning && <Text style={styles.warning}>{props.warning}</Text>}
-      {props.blocked && <Text style={styles.warning}>{strings.onboarding_change_blocked}</Text>}
-      <PixelButton
-        label={props.editing ? strings.onboarding_save : strings.onboarding_begin}
-        onPress={props.onBegin}
-        disabled={!props.valid}
-      />
-      {props.showBack && <PixelButton compact label={strings.common_back} onPress={props.onBack} />}
-    </Screen>
-  )
-}
+  const { width } = useWindowDimensions()
+  const contentW = Math.min(width, 480)
+  const wheelW = (contentW - theme.spacing(4) * 2 - theme.spacing(3)) / 2
 
-function OnboardingIntro({ compact }: { compact: string | null }) {
-  if (compact) {
-    return <Text style={styles.introText}>{compact}</Text>
-  }
   return (
-    <>
-      <View style={styles.logo}>
-        <PixelSprite sprite={ICONS.logo} size={120} animated={false} />
+    <SafeAreaView style={styles.safe}>
+      <View style={styles.body}>
+        <PixelSprite sprite={DESIGN.onboarding_logo_text} size={contentW * 0.6} />
+        {props.compactIntro ? (
+          <Text style={styles.introText}>{props.compactIntro}</Text>
+        ) : (
+          <PixelSprite sprite={DESIGN.onboarding_panel_rules_card} size={contentW * 0.9} />
+        )}
+        <View style={styles.wheels}>
+          <SpriteWheel
+            windowSprite={DESIGN.onboarding_picker_window_bedtime}
+            values={BED_VALUES}
+            value={props.bedMin}
+            onChange={props.onBedChange}
+            width={wheelW}
+          />
+          <SpriteWheel
+            windowSprite={DESIGN.onboarding_picker_window_wakeup}
+            values={WAKE_VALUES}
+            value={props.wakeMin}
+            onChange={props.onWakeChange}
+            width={wheelW}
+          />
+        </View>
+        {props.blocked && <Text style={styles.warning}>{strings.onboarding_change_blocked}</Text>}
+        <Pressable
+          onPress={props.onBegin}
+          disabled={!props.valid}
+          style={({ pressed }) => [
+            !props.valid && styles.beginDisabled,
+            pressed && props.valid && styles.beginPressed,
+          ]}
+        >
+          <PixelSprite sprite={DESIGN.onboarding_button_begin_plaque} size={contentW * 0.84} />
+        </Pressable>
+        {props.warning ? (
+          <Text style={styles.warning}>{props.warning}</Text>
+        ) : (
+          <PixelSprite sprite={DESIGN.onboarding_caption_min_hours} size={contentW * 0.46} />
+        )}
+        {props.showBack && (
+          <Pressable onPress={props.onBack} style={({ pressed }) => pressed && styles.beginPressed}>
+            <Text style={styles.back}>{strings.common_back}</Text>
+          </Pressable>
+        )}
       </View>
-      <View style={styles.intro}>
-        <Text style={styles.introText}>{strings.onboarding_intro_1}</Text>
-        <Text style={styles.introText}>{strings.onboarding_intro_2}</Text>
-        <Text style={styles.introText}>{strings.onboarding_intro_3}</Text>
-      </View>
-    </>
-  )
-}
-
-interface WheelColumnProps {
-  label: string
-  values: readonly number[]
-  value: number
-  onChange: (value: number) => void
-}
-
-function WheelColumn({ label, values, value, onChange }: WheelColumnProps) {
-  return (
-    <View style={styles.wheelColumn}>
-      <Text style={styles.wheelLabel}>{label}</Text>
-      <WheelPicker values={values} format={formatClock} value={value} onChange={onChange} />
-    </View>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-  logo: { alignItems: 'center' },
-  intro: { gap: theme.spacing(2) },
+  safe: {
+    flex: 1,
+    backgroundColor: '#0a0705',
+  },
+  body: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: theme.spacing(2.5),
+  },
   introText: {
     ...theme.type.body,
     color: theme.colors.textDim,
     textAlign: 'center',
+    paddingHorizontal: theme.spacing(6),
   },
   wheels: {
     flexDirection: 'row',
-    gap: theme.spacing(4),
+    gap: theme.spacing(3),
+    paddingHorizontal: theme.spacing(4),
   },
-  wheelColumn: {
-    flex: 1,
-    gap: theme.spacing(2),
-  },
-  wheelLabel: {
-    ...theme.type.label,
-    color: theme.colors.text,
-    textAlign: 'center',
-    textTransform: 'uppercase',
-  },
-  duration: {
-    ...theme.type.body,
-    color: theme.colors.text,
-    textAlign: 'center',
-  },
+  beginDisabled: { opacity: 0.4 },
+  beginPressed: { opacity: 0.75 },
   warning: {
     ...theme.type.label,
     color: theme.colors.heartFull,
     textAlign: 'center',
+  },
+  back: {
+    ...theme.type.label,
+    color: theme.colors.textDim,
+    textAlign: 'center',
+    textTransform: 'uppercase',
   },
 })
