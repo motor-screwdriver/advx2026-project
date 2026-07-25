@@ -86,11 +86,11 @@ export function OnboardingScreen() {
         setBlocked(true)
         return
       }
-      router.replace('/hero-ceremony')
+      router.replace('/')
       return
     }
     completeOnboarding({ bedMin, wakeMin })
-    router.replace('/hero-ceremony')
+    router.replace('/')
   }
 
   const title = screenTitle(editing, adjusted)
