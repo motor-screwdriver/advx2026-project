@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Animated, StyleSheet, View } from 'react-native'
 
+import { useMiFitnessStore } from '../state/mifitStore'
 import { useFadeIn } from '../ui/animations'
 import { HeroSprite } from '../ui/HeroSprite'
 import { NightWorld } from '../ui/NightWorld'
@@ -60,6 +61,7 @@ export function HeroStage({
   onSleep: () => void
 }) {
   const go = useScreenTransition()
+  const connected = useMiFitnessStore((state) => state.connected)
   const hero = state.hero!
   const nightFade = useAsleepProgress(asleep)
   const nightMounted = useNightMounted(asleep)
@@ -81,6 +83,7 @@ export function HeroStage({
           onBag={() => go('/inventory', { effect: 'wipe' })}
           onMosaic={() => go('/mosaic', { effect: 'wipe' })}
           onSettings={() => go('/settings', { effect: 'wipe' })}
+          onSleepPlan={connected ? () => go('/sleep-plan', { effect: 'wipe' }) : undefined}
         />
       </Animated.View>
       {nightMounted && (
