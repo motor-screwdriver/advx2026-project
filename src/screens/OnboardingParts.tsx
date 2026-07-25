@@ -27,9 +27,9 @@ const STEP = 15
 const range = (from: number, to: number) =>
   Array.from({ length: (to - from) / STEP + 1 }, (_, i) => from + i * STEP)
 
-// Bedtime 18:00..03:00, wake 00:00..12:00 (night-line minutes from noon).
-const BED_VALUES = range(360, 900)
-const WAKE_VALUES = range(720, 1440)
+// Bedtime 20:00..00:00, wake 04:00..10:00 (night-line minutes from noon).
+const BED_VALUES = range(480, 720)
+const WAKE_VALUES = range(960, 1320)
 
 /** Mockup 01a: innkeeper scene, dialogue panel, three wood answer buttons. */
 export function QuestionStep({ onAnswer }: { onAnswer: (bed: number, wake: number) => void }) {
@@ -44,7 +44,7 @@ export function QuestionStep({ onAnswer }: { onAnswer: (bed: number, wake: numbe
       <View style={styles.choices}>
         <ChoiceButton label={COPY.choiceEarly} onPress={() => onAnswer(570, 1110)} />
         <ChoiceButton label={COPY.choiceNormal} onPress={() => onAnswer(690, 1170)} />
-        <ChoiceButton label={COPY.choiceLate} onPress={() => onAnswer(750, 1230)} />
+        <ChoiceButton label={COPY.choiceLate} onPress={() => onAnswer(720, 1230)} />
       </View>
     </View>
   )

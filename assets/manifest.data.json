@@ -277,12 +277,12 @@
     "music_day": {
       "durationSec": 14.4,
       "loop": true,
-      "path": "audio/music_day.wav"
+      "path": "audio/main_theme.mp3"
     },
     "music_night": {
       "durationSec": 16.0,
       "loop": true,
-      "path": "audio/music_night.wav"
+      "path": "audio/main_theme.mp3"
     },
     "sfx_chest": {
       "durationSec": 0.8,

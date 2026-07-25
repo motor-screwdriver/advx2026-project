@@ -1,59 +1,107 @@
 name: Deploy server
 
 on:
-  # Manual only, from any branch (Actions → Deploy server → Run workflow) —
-  # mirrors the APK build, never fires on push.
+  # Manual only, from any branch (Actions → Deploy server → Run workflow).
   workflow_dispatch:
 
 env:
-  EXPO_NO_TELEMETRY: 1
+  IMAGE: eightbit-sleep-server
+  CONTAINER: 8bit-sleep
+  HOST_PORT: '8080'
+  APP_DIR: /opt/8bit-sleep
 
 jobs:
   deploy:
+    name: Test & deploy server
     runs-on: ubuntu-latest
     env:
       DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
-      # Optional: set when a real domain replaces the sslip.io one.
-      DEPLOY_DOMAIN: ${{ secrets.DEPLOY_DOMAIN }}
     steps:
-      # Baked into the web client; deploy.sh derives the same origin for its
-      # health check, so there is one source of truth (DEPLOY_HOST).
-      - name: Resolve API origin
-        run: echo "EXPO_PUBLIC_API_ORIGIN=https://${DEPLOY_DOMAIN:-${DEPLOY_HOST}.sslip.io}" >> "$GITHUB_ENV"
-
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: pnpm
       - uses: actions/setup-go@v6
         with:
           go-version: '1.26'
-
-      - run: pnpm install --frozen-lockfile
 
       - name: Test Go backend
         run: go vet ./... && go test ./...
         working-directory: server
 
-      - name: Build Go backend (linux/amd64, static)
-        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags='-s -w' -o 8bit-sleep-server .
-        working-directory: server
-
-      - name: Export static web client
-        run: pnpm exec expo export --platform web
-
       - name: Install sshpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
 
-      - name: Deploy to production
+      - name: Deploy container
         env:
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          AI_MODEL: google/gemma-4-26b-a4b-it:free
-          AI_MAX_TOKENS: '600'
-        run: tools/deploy/deploy.sh
+          AI_MODEL: ${{ secrets.AI_MODEL }}
+          AI_MAX_TOKENS: '1200'
+        run: |
+          set -euo pipefail
+          : "${DEPLOY_HOST:?}" "${DEPLOY_USER:?}" "${DEPLOY_PASSWORD:?}"
+          if [ -z "${OPENROUTER_API_KEY:-}" ]; then
+            echo "OPENROUTER_API_KEY secret is empty" >&2
+            exit 1
+          fi
+
+          SSH_OPTS="-o StrictHostKeyChecking=accept-new -o ConnectTimeout=15"
+          REMOTE="$DEPLOY_USER@$DEPLOY_HOST"
+          ssh_run() { sshpass -p "$DEPLOY_PASSWORD" ssh $SSH_OPTS "$REMOTE" "$@"; }
+
+          ssh_run "mkdir -p '$APP_DIR/src'"
+
+          sshpass -p "$DEPLOY_PASSWORD" rsync -az --delete -e "ssh $SSH_OPTS" \
+            --exclude 'eightbit-sleep-server' \
+            --exclude '*_test.go' \
+            --exclude '.git' \
+            --exclude 'tmp/' \
+            --exclude 'bin/' \
+            server/ "$REMOTE:$APP_DIR/src/"
+
+          printf '%s\n' \
+            'AI_PROVIDER=openrouter' \
+            "OPENROUTER_API_KEY=$OPENROUTER_API_KEY" \
+            "AI_MODEL=$AI_MODEL" \
+            "AI_MAX_TOKENS=$AI_MAX_TOKENS" \
+            > /tmp/server.env
+          chmod 600 /tmp/server.env
+          sshpass -p "$DEPLOY_PASSWORD" rsync -az -e "ssh $SSH_OPTS" \
+            /tmp/server.env "$REMOTE:$APP_DIR/server.env"
+          ssh_run "chmod 600 '$APP_DIR/server.env'"
+
+          # Drop the old bare-metal unit if it is still around.
+          ssh_run "systemctl stop 8bit-sleep 2>/dev/null || true; systemctl disable 8bit-sleep 2>/dev/null || true"
+
+          ssh_run "docker build -t '$IMAGE:latest' '$APP_DIR/src' \
+            && docker stop '$CONTAINER' 2>/dev/null || true \
+            && docker rm '$CONTAINER' 2>/dev/null || true \
+            && docker run -d --name '$CONTAINER' --restart=always \
+              --env-file '$APP_DIR/server.env' \
+              -p '${HOST_PORT}:8080' \
+              '$IMAGE:latest'"
+
+          ORIGIN="http://${DEPLOY_HOST}:${HOST_PORT}"
+          echo "Checking $ORIGIN"
+          for i in 1 2 3 4 5; do
+            if curl -fsS -m 5 "$ORIGIN/healthz" >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl -fsS -m 15 "$ORIGIN/healthz"
+          echo
+
+          code=$(curl -sS -m 90 -o /tmp/oracle.json -w '%{http_code}' \
+            -X POST "$ORIGIN/api/oracle" \
+            -H 'Content-Type: application/json' \
+            -d '{"turns":[]}')
+          echo "oracle HTTP $code"
+          cat /tmp/oracle.json
+          echo
+          if [ "$code" != "200" ]; then
+            echo "==> container logs" >&2
+            ssh_run "docker logs --tail 50 '$CONTAINER'" >&2 || true
+            exit 1
+          fi
+          python3 -c "import json; r = json.load(open('/tmp/oracle.json'))['reply']; assert r['message']; print('oracle says:', r['message'][:120])"
+          echo "Deploy OK: $ORIGIN"

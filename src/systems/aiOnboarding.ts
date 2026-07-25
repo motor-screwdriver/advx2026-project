@@ -11,7 +11,7 @@ type ProcessLike = {
 
 /**
  * In production (and when testing the client against the deployed Go backend)
- * EXPO_PUBLIC_API_ORIGIN points at the server, e.g. https://85.159.228.60.sslip.io.
+ * EXPO_PUBLIC_API_ORIGIN points at the server, e.g. http://85.159.228.60:8080.
  * Empty means same-origin relative requests.
  */
 function resolveEndpoint(): string {

@@ -2,7 +2,6 @@ import { useRouter } from 'expo-router'
 import React from 'react'
 import {
   KeyboardAvoidingView,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -72,10 +71,7 @@ export function OracleOnboardingScreen() {
       <DayNightBackground phase="night" />
       <View pointerEvents="none" style={styles.scrim} />
       <SafeAreaView style={[styles.safe, compact && styles.safeCompact]}>
-        <KeyboardAvoidingView
-          style={styles.avoider}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        >
+        <KeyboardAvoidingView style={styles.avoider}>
           <TopBar hidden={state.phase === 'result'} onSkip={manual} />
           <OracleStage thinking={state.loading} compact={compact} />
           <View style={styles.panelWrap}>

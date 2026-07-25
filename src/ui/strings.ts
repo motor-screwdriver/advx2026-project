@@ -1,7 +1,10 @@
 /**
  * ALL user-facing text lives here (product language: English only).
  * Flat key-value, no i18n framework (NFR-08).
+ * Secondary screens and debug strings live in stringsExtra.ts (line cap).
  */
+import { stringsExtra } from './stringsExtra'
+
 export const strings = {
   appName: '8bit Sleep',
 
@@ -13,7 +16,6 @@ export const strings = {
   onboarding_bedtime: 'Bedtime',
   onboarding_wakeup: 'Wake up',
   onboarding_duration: 'Duration',
-  onboarding_min_hours: 'Minimum 7 hours',
   onboarding_begin: 'Set window',
   onboarding_adjust_title: 'Adjust your window',
   onboarding_adjust_body: 'Choose times that feel realistic. This is a starting point, not a test.',
@@ -234,17 +236,14 @@ export const strings = {
 
   gallery_title: 'Art Gallery',
   gallery_body: 'QA wall: every pipeline asset, straight from assets/manifest.ts.',
+
   // Common
   common_back: 'Back',
   common_confirm: 'Confirm',
   common_cancel: 'Cancel',
 
-  // Debug (temporary, M0-M1)
-  debug_title: '-- Debug (temporary) --',
-  debug_presets: 'State presets',
-  debug_empty: 'Empty',
-  debug_mid: 'Mid-game',
-  debug_death: 'Death',
+  // Onboarding warnings, journal, guide and debug keys come from stringsExtra.
+  ...stringsExtra,
 } as const
 
 export type StringKey = keyof typeof strings

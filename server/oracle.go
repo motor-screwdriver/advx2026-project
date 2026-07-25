@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"log"
 	"regexp"
 	"slices"
 	"strconv"
@@ -206,7 +207,7 @@ func parseRecommendation(model map[string]any) *SleepRecommendation {
 		wakeMin = 1440
 	}
 	duration := wakeMin - bedMin
-	if bedMin < 360 || bedMin > 900 || wakeMin < 720 || duration < 420 || duration > 720 {
+	if bedMin < 480 || bedMin > 720 || wakeMin < 960 || wakeMin > 1320 || duration < 420 || duration > 720 {
 		return nil
 	}
 	reason, ok := ascii(model["reason"], maxReasonChars)
@@ -263,6 +264,10 @@ func buildOracleResponse(ctx context.Context, body any, newProvider func() (AiPr
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("oracle turns: id=%s count=%d", requestID(ctx), len(turns))
+	for i, turn := range turns {
+		log.Printf("oracle input: id=%s turn=%d role=%s chars=%d text=%q", requestID(ctx), i, turn.Role, len([]rune(turn.Text)), turn.Text)
+	}
 	provider, err := newProvider()
 	if err != nil {
 		return nil, toUnavailable(err)
@@ -281,6 +286,7 @@ func buildOracleResponse(ctx context.Context, body any, newProvider func() (AiPr
 		return nil, toUnavailable(err)
 	}
 	// The model answered in prose: nudge it back to the JSON contract once.
+	log.Printf("oracle nudge: id=%s reason=%v", requestID(ctx), err)
 	nudged := append(slices.Clone(messages), ChatMessage{Role: "user", Content: OracleJSONNudge})
 	raw, err = completeOnce(ctx, provider, nudged)
 	if err != nil {

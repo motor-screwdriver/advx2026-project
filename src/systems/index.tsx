@@ -16,6 +16,8 @@ import { DemoPanel } from './DemoPanel'
 import { scheduleEinkPush } from './eink'
 import { EinkCardHost } from './einkCard'
 import { configureNotificationHandler, syncNotifications } from './notifications'
+import { initWakeReminderListener, syncWakeReminder } from './wakeReminder'
+import { armWidgetLiveSync, buildWidgetData, syncHomeWidgets } from './widgets'
 
 let initialized = false
 
@@ -25,8 +27,13 @@ export function initSystems(): void {
   }
   initialized = true
   configureNotificationHandler()
+  initWakeReminderListener()
   void resyncNotifications()
+  void syncWakeReminder()
   useGameStore.subscribe(onStoreChange)
+  // Widget taps in this shared context are redrawn by the subscription —
+  // the headless click handler must not draw a second time (flicker).
+  armWidgetLiveSync()
   // Re-arm the schedule when the user comes back (morning summary re-arms).
   AppState.addEventListener('change', (status) => {
     if (status === 'active') {
@@ -41,6 +48,9 @@ function onStoreChange(state: GameStore, prev: GameStore): void {
   if (g.window !== p.window || g.nights !== p.nights) {
     void resyncNotifications()
   }
+  if (state.pendingBedTime !== prev.pendingBedTime) {
+    void syncWakeReminder()
+  }
   const lastEvent = state.events[state.events.length - 1]
   const prevLastEvent = prev.events[prev.events.length - 1]
   // Push whenever any field shown on the Dot widgets changes: hero (sprite/
@@ -54,6 +64,18 @@ function onStoreChange(state: GameStore, prev: GameStore): void {
     g.equipped !== p.equipped
   if (lastEvent !== prevLastEvent || cardChanged) {
     scheduleEinkPush(g)
+  }
+  // Android home-screen widgets mirror everything on the home TopBar + hero,
+  // plus the asleep flag (the 2x1 toggle flips START SLEEP / WAKE UP).
+  const widgetChanged =
+    g.hero !== p.hero ||
+    g.hp !== p.hp ||
+    g.nights !== p.nights ||
+    g.perfectWeekStreak !== p.perfectWeekStreak ||
+    g.onboardingDone !== p.onboardingDone ||
+    state.pendingBedTime !== prev.pendingBedTime
+  if (widgetChanged) {
+    void syncHomeWidgets(buildWidgetData(g, state.pendingBedTime))
   }
 }
 

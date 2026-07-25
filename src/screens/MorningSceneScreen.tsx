@@ -146,7 +146,7 @@ export function MorningSceneScreen() {
 
         <GoldButton
           label={strings.morning_continue.toUpperCase()}
-          onPress={() => router.dismissTo('/')}
+          onPress={() => router.replace('/morning-chat')}
         />
       </View>
     </TavernFrame>

@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log"
 	"net"
 	"net/http"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -24,6 +26,10 @@ type rateBucket struct {
 	count    int
 	resetsAt time.Time
 }
+
+// oracleRequestSeq numbers oracle requests so one request's log lines can be
+// correlated across the handler, oracle builder and provider layers.
+var oracleRequestSeq atomic.Uint64
 
 // rateLimiter is a fixed-window per-client-IP limiter, mirroring the in-memory
 // buckets of app/api/oracle+api.ts.
@@ -89,6 +95,7 @@ func newServer(providerFactory func() (AiProvider, error)) *Server {
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /api/oracle", s.handleOracle)
+	mux.HandleFunc("POST /api/morning-oracle", s.handleMorningOracle)
 	mux.HandleFunc("GET /healthz", s.handleHealthz)
 	s.handler = corsMiddleware(mux)
 	return s
@@ -99,7 +106,11 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleOracle(w http.ResponseWriter, r *http.Request) {
-	if !s.limiter.allow(clientID(r)) {
+	id := oracleRequestSeq.Add(1)
+	start := time.Now()
+	client := clientID(r)
+	if !s.limiter.allow(client) {
+		log.Printf("oracle rate limited: id=%d client=%s", id, client)
 		writeJSON(w, http.StatusTooManyRequests, errorResponse{Error: "Too many requests. Try again shortly."})
 		return
 	}
@@ -107,28 +118,80 @@ func (s *Server) handleOracle(w http.ResponseWriter, r *http.Request) {
 	// rate limiter above already bounded request frequency, this bounds memory.
 	payload, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 64*1024))
 	if err != nil {
+		log.Printf("oracle body unreadable: id=%d client=%s err=%v", id, client, err)
 		writeJSON(w, http.StatusInternalServerError, errorResponse{Error: "The oracle is unavailable."})
 		return
 	}
+	log.Printf("oracle request: id=%d client=%s bytes=%d", id, client, len(payload))
 	var body any
 	if err := json.Unmarshal(payload, &body); err != nil {
+		log.Printf("oracle malformed JSON: id=%d client=%s body=%q", id, client, truncateRunes(string(payload), 200))
 		writeJSON(w, http.StatusInternalServerError, errorResponse{Error: "The oracle is unavailable."})
 		return
 	}
-	response, err := buildOracleResponse(r.Context(), body, s.providerFactory)
+	response, err := buildOracleResponse(withRequestID(r.Context(), id), body, s.providerFactory)
 	if err != nil {
+		latency := time.Since(start).Round(time.Millisecond)
 		var inputErr *OracleInputError
 		var unavailableErr *OracleUnavailableError
 		switch {
 		case errors.As(err, &inputErr):
+			log.Printf("oracle bad input: id=%d client=%s latency=%s err=%v", id, client, latency, err)
 			writeJSON(w, http.StatusBadRequest, errorResponse{Error: inputErr.msg})
 		case errors.As(err, &unavailableErr):
+			log.Printf("oracle unavailable: id=%d client=%s latency=%s err=%v", id, client, latency, err)
 			writeJSON(w, http.StatusServiceUnavailable, errorResponse{Error: "The oracle is unavailable."})
 		default:
+			log.Printf("oracle error: id=%d client=%s latency=%s err=%v", id, client, latency, err)
 			writeJSON(w, http.StatusInternalServerError, errorResponse{Error: "The oracle is unavailable."})
 		}
 		return
 	}
+	log.Printf("oracle ok: id=%d client=%s latency=%s recommendation=%t", id, client, time.Since(start).Round(time.Millisecond), response.Reply.Recommendation != nil)
+	writeJSON(w, http.StatusOK, response)
+}
+
+func (s *Server) handleMorningOracle(w http.ResponseWriter, r *http.Request) {
+	id := oracleRequestSeq.Add(1)
+	start := time.Now()
+	client := clientID(r)
+	if !s.limiter.allow(client) {
+		log.Printf("morning-oracle rate limited: id=%d client=%s", id, client)
+		writeJSON(w, http.StatusTooManyRequests, errorResponse{Error: "Too many requests. Try again shortly."})
+		return
+	}
+	payload, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 64*1024))
+	if err != nil {
+		log.Printf("morning-oracle body unreadable: id=%d client=%s err=%v", id, client, err)
+		writeJSON(w, http.StatusInternalServerError, errorResponse{Error: "The oracle is unavailable."})
+		return
+	}
+	log.Printf("morning-oracle request: id=%d client=%s bytes=%d", id, client, len(payload))
+	var body any
+	if err := json.Unmarshal(payload, &body); err != nil {
+		log.Printf("morning-oracle malformed JSON: id=%d client=%s body=%q", id, client, truncateRunes(string(payload), 200))
+		writeJSON(w, http.StatusInternalServerError, errorResponse{Error: "The oracle is unavailable."})
+		return
+	}
+	response, err := buildMorningOracleResponse(withRequestID(r.Context(), id), body, s.providerFactory)
+	if err != nil {
+		latency := time.Since(start).Round(time.Millisecond)
+		var inputErr *OracleInputError
+		var unavailableErr *OracleUnavailableError
+		switch {
+		case errors.As(err, &inputErr):
+			log.Printf("morning-oracle bad input: id=%d client=%s latency=%s err=%v", id, client, latency, err)
+			writeJSON(w, http.StatusBadRequest, errorResponse{Error: inputErr.msg})
+		case errors.As(err, &unavailableErr):
+			log.Printf("morning-oracle unavailable: id=%d client=%s latency=%s err=%v", id, client, latency, err)
+			writeJSON(w, http.StatusServiceUnavailable, errorResponse{Error: "The oracle is unavailable."})
+		default:
+			log.Printf("morning-oracle error: id=%d client=%s latency=%s err=%v", id, client, latency, err)
+			writeJSON(w, http.StatusInternalServerError, errorResponse{Error: "The oracle is unavailable."})
+		}
+		return
+	}
+	log.Printf("morning-oracle ok: id=%d client=%s latency=%s", id, client, time.Since(start).Round(time.Millisecond))
 	writeJSON(w, http.StatusOK, response)
 }
 

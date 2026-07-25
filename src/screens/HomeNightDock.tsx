@@ -7,6 +7,7 @@ import { HeartRow } from '../ui/HeartRow'
 import { strings } from '../ui/strings'
 import { GoldButton, TavernBar, WoodPanel, tavernColors } from '../ui/tavern'
 import { theme } from '../ui/theme'
+import { HomeNav } from './HomeNav'
 
 const MAX_HP = 7
 
@@ -33,6 +34,7 @@ export function TopBar({ hp, streak, level }: { hp: number; streak: number; leve
         <View style={styles.xpBarWrap}>
           <TavernBar value={streak} max={MAX_HP} />
         </View>
+        <HomeNav />
       </View>
     </WoodPanel>
   )
