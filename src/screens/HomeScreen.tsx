@@ -1,9 +1,8 @@
 import { useFocusEffect } from 'expo-router'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { playMusic } from '../systems/audio'
 import { DayNightBackground } from '../ui/DayNightBackground'
 import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
@@ -38,13 +37,6 @@ function NoHeroHome() {
   )
 }
 
-/** Cozy day theme while awake; hushed night theme once tucked in. */
-function usePhaseMusic(asleep: boolean) {
-  useEffect(() => {
-    playMusic(asleep ? 'music_night' : 'music_day')
-  }, [asleep])
-}
-
 /** WAKE UP pushes to /death or /morning-scene and keeps Home mounted below
  * the stack; wakeNow() flips the game state synchronously, but Home should
  * only render that new state once it's actually back in focus — otherwise
@@ -70,8 +62,6 @@ function HeroHome() {
   const tapLock = useRef(false)
   const focused = useHomeFocusGate(tapLock)
   const asleep = pendingBedTime !== null && focused
-
-  usePhaseMusic(asleep)
 
   // Tapping SLEEP tucks the hero in right here — the book crossfades into
   // the living night world in place (see HeroStage), no separate screen to

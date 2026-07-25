@@ -6,12 +6,9 @@
 import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio'
 
 import { AUDIO } from '../../assets/manifest'
-
-export type MusicKey = 'music_day' | 'music_night'
-export type SfxKey = 'sfx_chest' | 'sfx_damage' | 'sfx_death' | 'sfx_victory'
+import { SFX_KEYS, type MusicKey, type SfxKey } from './audioTracks'
 
 const MUSIC_VOLUME = 0.5
-const SFX_KEYS: readonly SfxKey[] = ['sfx_chest', 'sfx_damage', 'sfx_death', 'sfx_victory']
 // Sleep/Wake track swap: old theme dies down, then the new one enters.
 // 250 + 300 ms ≈ the 550 ms book<->night stage crossfade (HomeSleepStage),
 // so the ear and the eye finish the scene change together.
@@ -21,9 +18,12 @@ const FADE_STEP_MS = 30
 
 let musicPlayer: AudioPlayer | null = null
 let musicKey: MusicKey | null = null
+let desiredMusicKey: MusicKey | null = null
 // Undoes whatever transition is in flight (fade timer + pending player).
 let cancelTransition: (() => void) | null = null
+const liveMusicPlayers = new Set<AudioPlayer>()
 const sfxPlayers: Partial<Record<SfxKey, AudioPlayer>> = {}
+let activeSfxCount = 0
 let enabled = true
 let initialized = false
 
@@ -56,6 +56,7 @@ function getSfxPlayer(key: SfxKey): AudioPlayer {
 function releasePlayer(player: AudioPlayer): void {
   player.pause()
   player.remove()
+  liveMusicPlayers.delete(player)
 }
 
 /** Linear volume ramp on a setInterval; returns a cancel function. */
@@ -84,6 +85,7 @@ function fadeVolume(
 /** Create the new track at zero volume and ease it in. */
 function startMusic(key: MusicKey): void {
   const player = createAudioPlayer(AUDIO[key].source)
+  liveMusicPlayers.add(player)
   player.loop = true
   player.volume = 0
   player.play()
@@ -94,19 +96,50 @@ function startMusic(key: MusicKey): void {
   cancelTransition = cancelFade
 }
 
+function pauseMusicPlayers(): void {
+  cancelTransition?.()
+  cancelTransition = null
+  for (const player of liveMusicPlayers) {
+    player.pause()
+  }
+}
+
+function resumeDesiredMusic(): void {
+  if (!enabled || activeSfxCount > 0 || !desiredMusicKey) {
+    return
+  }
+  const key = desiredMusicKey
+  if (musicPlayer && musicKey === key) {
+    musicPlayer.volume = MUSIC_VOLUME
+    musicPlayer.play()
+    return
+  }
+  playMusic(key)
+}
+
 /** Master switch for the Settings sound toggle. Off also stops music. */
 export function setAudioEnabled(on: boolean): void {
   enabled = on
   if (!on) {
     stopMusic()
+    return
   }
+  resumeDesiredMusic()
 }
 
 /** Swap to a looping music track: fade the current one out, then fade the
  * new one in. No-op if it's already playing (or being faded in). */
 export function playMusic(key: MusicKey): void {
+  desiredMusicKey = key
   init()
-  if (!enabled || musicKey === key) {
+  if (!enabled) {
+    return
+  }
+  if (activeSfxCount > 0) {
+    pauseMusicPlayers()
+    return
+  }
+  if (musicKey === key && musicPlayer) {
     return
   }
   // A rapid re-switch lands here mid-transition: finish the old one now
@@ -141,12 +174,21 @@ export function stopMusic(): void {
   musicKey = null
 }
 
+function finishSfx(): void {
+  activeSfxCount = Math.max(0, activeSfxCount - 1)
+  if (activeSfxCount === 0) {
+    resumeDesiredMusic()
+  }
+}
+
 /** Play a one-shot sound effect on its preloaded, cached player. */
 export function playSfx(key: SfxKey): void {
   init()
   if (!enabled) {
     return
   }
+  activeSfxCount += 1
+  pauseMusicPlayers()
   const player = getSfxPlayer(key)
   // Rewind only on replay: seekTo() is async, and awaiting it before every
   // play() pushed even the very first shot behind the button press.
@@ -154,4 +196,5 @@ export function playSfx(key: SfxKey): void {
     player.seekTo(0)
   }
   player.play()
+  setTimeout(finishSfx, AUDIO[key].durationSec * 1000)
 }

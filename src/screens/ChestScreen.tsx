@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import type { ChestLoot } from '../contracts/types'
 import { playSfx } from '../systems/audio'
+import { SFX_TRACKS } from '../systems/audioTracks'
 import { makePop, makeShake } from '../ui/animations'
 import { useScreenTransition } from '../ui/screenTransition'
 import { useGame } from '../ui/useGame'
@@ -23,7 +24,7 @@ export function ChestScreen() {
 
   // The whole stage is the tap target — no tiny button to hunt for.
   const open = () => {
-    playSfx('sfx_chest')
+    playSfx(SFX_TRACKS.CHEST)
     makeShake(shakeX, 8).start(() => {
       const result = openChest()
       setLoot(result)
