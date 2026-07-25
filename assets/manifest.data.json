@@ -433,6 +433,62 @@
       "height": 160,
       "path": "design/gen/tutorial_p3.png",
       "width": 160
+    },
+    "onboarding_button_begin_plaque": {
+      "frameHeight": 452,
+      "frameWidth": 1558,
+      "frames": 1,
+      "height": 452,
+      "path": "design/onboarding/17-button-begin-plaque.png",
+      "width": 1558
+    },
+    "onboarding_caption_min_hours": {
+      "frameHeight": 70,
+      "frameWidth": 874,
+      "frames": 1,
+      "height": 70,
+      "path": "design/onboarding/18-caption-min-hours.png",
+      "width": 874
+    },
+    "onboarding_logo_text": {
+      "frameHeight": 774,
+      "frameWidth": 1508,
+      "frames": 1,
+      "height": 774,
+      "path": "design/onboarding/15-logo-text.png",
+      "width": 1508
+    },
+    "onboarding_panel_rules_card": {
+      "frameHeight": 1028,
+      "frameWidth": 1848,
+      "frames": 1,
+      "height": 1028,
+      "path": "design/onboarding/16-panel-rules-card.png",
+      "width": 1848
+    },
+    "onboarding_picker_window_bedtime": {
+      "frameHeight": 364,
+      "frameWidth": 282,
+      "frames": 1,
+      "height": 364,
+      "path": "design/onboarding/12-picker-window-bedtime.png",
+      "width": 282
+    },
+    "onboarding_picker_window_wakeup": {
+      "frameHeight": 364,
+      "frameWidth": 282,
+      "frames": 1,
+      "height": 364,
+      "path": "design/onboarding/13-picker-window-wakeup.png",
+      "width": 282
+    },
+    "onboarding_selection_arrow": {
+      "frameHeight": 40,
+      "frameWidth": 32,
+      "frames": 1,
+      "height": 40,
+      "path": "design/onboarding/14-selection-arrow.png",
+      "width": 32
     }
   },
   "icons": {

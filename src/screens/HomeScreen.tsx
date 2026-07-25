@@ -1,26 +1,19 @@
 import { useFocusEffect, useRouter } from 'expo-router'
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { useMiFitnessStore } from '../state/mifitStore'
 import { playMusic } from '../systems/audio'
-import { BookView } from '../ui/BookView'
 import { DayNightBackground } from '../ui/DayNightBackground'
-import { HeroSprite } from '../ui/HeroSprite'
-import { NightWorld } from '../ui/NightWorld'
 import { strings } from '../ui/strings'
 import { GoldButton, WoodPanel } from '../ui/tavern'
 import { theme } from '../ui/theme'
 import { getDayPhase, type DayPhase } from '../ui/timeOfDay'
 import { useGame } from '../ui/useGame'
 import { DevTools } from './DevTools'
-import { Dock, TopBar } from './HomeNightDock'
+import { AsleepHUD, HeroStage } from './HomeSleepStage'
 
 const MAX_HP = 7
-// Reference proportions: the knight is ~0.19 of screen height, feet on the
-// blade/soil line of the grass band (NightWorld puts it at 0.79H -> bottom 21%).
-const HERO_SIZE = 148
 
 export function HomeScreen() {
   const { state } = useGame()
@@ -51,34 +44,43 @@ function usePhaseMusic(asleep: boolean) {
   }, [asleep])
 }
 
+/** WAKE UP pushes to /death or /morning-scene and keeps Home mounted below
+ * the stack; wakeNow() flips the game state synchronously, but Home should
+ * only render that new state once it's actually back in focus — otherwise
+ * the world/UI underneath swaps the instant the button is tapped and
+ * flashes behind the sliding push transition. Re-entrant taps caused
+ * phantom wakes/self-sleeps, so the tap lock resets on the same refocus. */
+function useHomeFocusGate(tapLock: { current: boolean }) {
+  const [focused, setFocused] = useState(true)
+  useFocusEffect(
+    useCallback(() => {
+      tapLock.current = false
+      setFocused(true)
+      return () => setFocused(false)
+    }, [tapLock]),
+  )
+  return focused
+}
+
 function HeroHome() {
   const router = useRouter()
   const { state, pendingBedTime, sleepNow, wakeNow } = useGame()
   const hero = state.hero!
-  const asleep = pendingBedTime !== null
+  const tapLock = useRef(false)
+  const focused = useHomeFocusGate(tapLock)
+  const asleep = pendingBedTime !== null && focused
 
   usePhaseMusic(asleep)
 
-  // The wake/sleep pushes keep Home mounted below the stack, and its buttons
-  // stay live during the transition — re-entrant taps caused phantom wakes and
-  // self-sleeps. Locked until the screen refocuses (returning from the
-  // transition / dismissTo('/') resurfaces this same instance).
-  const tapLock = useRef(false)
-  useFocusEffect(
-    useCallback(() => {
-      tapLock.current = false
-    }, []),
-  )
-
-  // Tapping SLEEP tucks the hero in and carries the player over to the sleep
-  // transition; WAKE UP evaluates the night and rolls on to morning.
+  // Tapping SLEEP tucks the hero in right here — the book crossfades into
+  // the living night world in place (see HeroStage), no separate screen to
+  // navigate to or glitch through. WAKE UP evaluates the night and rolls on
+  // to morning.
   const onSleep = () => {
-    if (tapLock.current) {
+    if (pendingBedTime !== null) {
       return
     }
-    tapLock.current = true
     sleepNow()
-    router.push('/sleep-transition')
   }
   const onWake = () => {
     if (tapLock.current) {
@@ -95,56 +97,17 @@ function HeroHome() {
       <HeroStage asleep={asleep} state={state} onSleep={onSleep} />
       <SafeAreaView style={styles.safe} pointerEvents="box-none">
         {asleep ? (
-          <TopBar hp={state.hp} streak={state.perfectWeekStreak} level={hero.level} />
-        ) : null}
-        <View style={styles.stageSpacer} pointerEvents="none" />
-        {asleep ? <Dock onWake={onWake} /> : null}
+          <AsleepHUD
+            hp={state.hp}
+            streak={state.perfectWeekStreak}
+            level={hero.level}
+            onWake={onWake}
+          />
+        ) : (
+          <View style={styles.stageSpacer} pointerEvents="none" />
+        )}
         <DevTools />
       </SafeAreaView>
-    </View>
-  )
-}
-
-/** Awake: the inked character-sheet book (nav lives on the page). Asleep: the living night world. */
-function HeroStage({
-  asleep,
-  state,
-  onSleep,
-}: {
-  asleep: boolean
-  state: ReturnType<typeof useGame>['state']
-  onSleep: () => void
-}) {
-  const router = useRouter()
-  const mifitConnected = useMiFitnessStore((s) => s.connected)
-  const hero = state.hero!
-  if (!asleep) {
-    return (
-      <BookView
-        heroType={hero.type}
-        hp={state.hp}
-        level={hero.level}
-        streak={state.perfectWeekStreak}
-        onSleep={onSleep}
-        onBag={() => router.push('/inventory')}
-        onMosaic={() => router.push('/mosaic')}
-        onSettings={() => router.push('/settings')}
-        onSleepPlan={mifitConnected ? () => router.push('/sleep-plan') : undefined}
-      />
-    )
-  }
-  return (
-    <View style={StyleSheet.absoluteFill}>
-      <NightWorld />
-      <View style={styles.walkSlot} pointerEvents="none">
-        <HeroSprite
-          type={hero.type}
-          size={HERO_SIZE}
-          walking
-          fps={6}
-          gold={state.perfectWeekStreak >= MAX_HP}
-        />
-      </View>
     </View>
   )
 }
@@ -176,7 +139,6 @@ const styles = StyleSheet.create({
     gap: theme.screenPad,
   },
   stageSpacer: { flex: 1 },
-  walkSlot: { position: 'absolute', left: 0, right: 0, bottom: '21%', alignItems: 'center' },
   emptyBox: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   emptyWell: { alignItems: 'center', gap: theme.spacing(5) },
   empty: {

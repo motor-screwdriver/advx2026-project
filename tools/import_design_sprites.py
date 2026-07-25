@@ -78,7 +78,12 @@ def main():
     used = used_design_keys()
     count = 0
     data = manifest_lib.load_data()
-    data["design"] = {}  # rebuild from scratch so dropped slices don't linger
+    # Rebuild only the keys managed by DIRS so dropped slices don't linger;
+    # design entries from other sources (e.g. gen_*) are preserved.
+    managed = tuple(f"{key}_" for key in DIRS.values())
+    data["design"] = {
+        k: v for k, v in data.get("design", {}).items() if not k.startswith(managed)
+    }
     for dirname, key in sorted(DIRS.items()):
         src_dir = os.path.join(SRC, dirname)
         dst_dir = os.path.join(DST, key)

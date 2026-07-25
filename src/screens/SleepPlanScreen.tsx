@@ -20,8 +20,7 @@ import { SleepPlanResult } from './SleepPlanResult'
 
 type Phase = 'loading' | 'result' | 'error' | 'expired'
 
-export function SleepPlanScreen() {
-  const router = useRouter()
+function useSleepPlanFetch() {
   const { sleepPlan, setSleepPlan } = useMiFitnessStore()
   const [phase, setPhase] = useState<Phase>(
     sleepPlan && isSleepPlanFresh(sleepPlan) ? 'result' : 'loading',
@@ -61,8 +60,13 @@ export function SleepPlanScreen() {
     }
   }, [sleepPlan, doFetch])
 
+  return { phase, result, doFetch }
+}
+
+export function SleepPlanScreen() {
+  const router = useRouter()
+  const { phase, result, doFetch } = useSleepPlanFetch()
   const goHome = () => router.dismissTo('/')
-  const goSettings = () => router.push('/settings')
 
   return (
     <View style={styles.screen}>
@@ -74,7 +78,9 @@ export function SleepPlanScreen() {
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
           {phase === 'loading' && <LoadingState />}
           {phase === 'error' && <ErrorState onRetry={doFetch} onBack={goHome} />}
-          {phase === 'expired' && <ExpiredState onReconnect={goSettings} onBack={goHome} />}
+          {phase === 'expired' && (
+            <ExpiredState onReconnect={() => router.push('/settings')} onBack={goHome} />
+          )}
           {phase === 'result' && result && <SleepPlanResult plan={result} onDone={goHome} />}
         </ScrollView>
       </SafeAreaView>
