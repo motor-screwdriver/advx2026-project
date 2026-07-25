@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router'
 import React, { useEffect, useRef, useState } from 'react'
 import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 
@@ -9,6 +8,7 @@ import { syncWakeReminder } from '../systems/wakeReminder'
 import { PixelButton } from '../ui/PixelButton'
 import { PixelPanel } from '../ui/PixelPanel'
 import { Screen } from '../ui/Screen'
+import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
@@ -33,7 +33,7 @@ function useNotificationsToggle(): [boolean, () => void] {
 }
 
 export function SettingsScreen() {
-  const router = useRouter()
+  const go = useScreenTransition()
   const { state, resetProgress, toggleDemoMode } = useGame()
   const [notificationsOn, toggleNotifications] = useNotificationsToggle()
   const taps = useRef<number[]>([])
@@ -46,7 +46,7 @@ export function SettingsScreen() {
         style: 'destructive',
         onPress: () => {
           resetProgress()
-          router.replace('/oracle')
+          go('/oracle', { replace: true })
         },
       },
     ])
@@ -64,7 +64,7 @@ export function SettingsScreen() {
     <Screen title={strings.settings_title} scroll>
       <WindowPanel
         window={state.window}
-        onChange={() => router.push({ pathname: '/onboarding', params: { mode: 'change' } })}
+        onChange={() => go('/onboarding', { params: { mode: 'change' } })}
       />
       <PixelPanel>
         <View style={styles.row}>

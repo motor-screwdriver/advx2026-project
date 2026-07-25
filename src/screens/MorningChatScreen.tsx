@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router'
 import React, { useEffect, useMemo, useState } from 'react'
 import {
   KeyboardAvoidingView,
@@ -15,6 +14,7 @@ import type { MorningContext } from '../systems/aiMorningChat'
 import { MorningChatOverlay, MorningErrorOverlay } from '../ui/LumaMorningOverlays'
 import { LumaTavernScene } from '../ui/LumaTavernScene'
 import { fitStage, type StageSize } from '../ui/lumaTavernLayout'
+import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
@@ -50,7 +50,7 @@ function dialogueFor(state: MorningChatState, busy: boolean): string {
  * artwork, and the stage lifts above the keyboard while typing.
  */
 export function MorningChatScreen() {
-  const router = useRouter()
+  const go = useScreenTransition()
   const chat = useMorningChat(useMorningContext())
   const [stage, setStage] = useState<StageSize | null>(null)
 
@@ -62,7 +62,7 @@ export function MorningChatScreen() {
   const busy = chat.state.loading || chat.state.phase === 'greeting'
   const raw = dialogueFor(chat.state, busy)
   const typed = useTypewriter(raw, !busy)
-  const goHome = () => router.dismissTo('/')
+  const goHome = () => go.dismissTo('/')
 
   const onLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout

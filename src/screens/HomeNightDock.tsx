@@ -1,9 +1,9 @@
-import { useRouter } from 'expo-router'
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import { GearButton } from '../ui/GearButton'
 import { HeartRow } from '../ui/HeartRow'
+import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
 import { GoldButton, TavernBar, WoodPanel, tavernColors } from '../ui/tavern'
 import { theme } from '../ui/theme'
@@ -40,11 +40,11 @@ export function TopBar({ hp, xp, level }: { hp: number; xp: number; level: numbe
 
 /** Night dock, one row like the reference mockup: big gold WAKE UP + gear. */
 export function Dock({ onWake }: { onWake: () => void }) {
-  const router = useRouter()
+  const go = useScreenTransition()
   return (
     <WoodPanel contentStyle={styles.dockWell}>
       <GoldButton style={styles.sleepBtn} label={strings.home_wakeup} onPress={onWake} />
-      <GearButton onPress={() => router.push('/settings')} />
+      <GearButton onPress={() => go('/settings')} />
     </WoodPanel>
   )
 }

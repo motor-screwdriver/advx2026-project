@@ -33,12 +33,12 @@ export function MorningSceneScreen() {
 
   const onContinue = () => {
     if (!lastEvaluation) {
-      go('/', { effect: 'wipe', replace: true })
+      go('/', { replace: true })
       return
     }
-    if (pendingChest) go('/chest', { effect: 'wipe' })
-    else if (lastEvaluation.outcome === 'MISSED') go('/', { effect: 'wipe', replace: true })
-    else go('/morning-chat', { effect: 'wipe', replace: true })
+    if (pendingChest) go('/chest')
+    else if (lastEvaluation.outcome === 'MISSED') go('/', { replace: true })
+    else go('/morning-chat', { replace: true })
   }
 
   return (

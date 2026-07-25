@@ -22,7 +22,7 @@ export function HomeNav() {
           scale={1}
           delay={delay}
           label={label}
-          onPress={() => go(href, { effect: 'wipe' })}
+          onPress={() => go(href)}
         />
       ))}
     </View>

@@ -1,61 +1,37 @@
-import { useRouter } from 'expo-router'
 import React, { useState } from 'react'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { playSfx } from '../systems/audio'
+import { useScreenTransition } from '../ui/screenTransition'
 import { SoulTether } from '../ui/SoulTether'
-import { TetherScene } from '../ui/SoulTetherParts'
+import { ROUND_COUNT } from '../ui/soulTetherLogic'
+import { SoulTetherSheet } from '../ui/SoulTetherSheet'
 import { strings } from '../ui/strings'
-import {
-  GoldButton,
-  Parchment,
-  ScreenTitle,
-  TavernFrame,
-  WoodButton,
-  WoodPanel,
-  tavernColors,
-} from '../ui/tavern'
-import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
 
 type Phase = 'playing' | 'won' | 'lost'
 
-/** Header: riveted wood plaque with the title. */
-function Header() {
-  return (
-    <WoodPanel style={styles.headerPanel} contentStyle={styles.headerWell}>
-      <ScreenTitle title={strings.death_soul_tether} size={20} />
-    </WoodPanel>
-  )
-}
-
-/** Outcome: verdict on parchment plus the way out (revive or new hero). */
-function ResultPhase({ phase, onFinish }: { phase: Phase; onFinish: () => void }) {
-  return (
-    <View style={styles.game}>
-      <TetherScene />
-      <Parchment>
-        <Text style={[styles.resultText, phase === 'lost' && styles.resultLost]}>
-          {phase === 'won' ? strings.soul_success : strings.soul_fail}
-        </Text>
-      </Parchment>
-      {phase === 'won' ? (
-        <GoldButton label={strings.morning_continue} onPress={onFinish} />
-      ) : (
-        <WoodButton label={strings.death_new_hero} onPress={onFinish} />
-      )}
-    </View>
-  )
-}
-
+/**
+ * Soul Tether — a 1:1 rendition of the mockup sheet: frame, crest, wraith
+ * scene, bar bezel, parchment and gold plate are the sprite itself; the
+ * round text, pips, golden zone, sparkle cursor and labels are overlaid.
+ *
+ * After the last round the same sheet shows the verdict in the parchment
+ * and the plate becomes CONTINUE / NEW HERO (tap anywhere to proceed).
+ */
 export function ResurrectionGameScreen() {
-  const router = useRouter()
+  const go = useScreenTransition()
   const { resurrect, startNewHero } = useGame()
+  const { width, height } = useWindowDimensions()
+  // Fit the whole sheet on screen so the plate is always visible.
+  const sheetWidth = Math.min(width, (height * 1125) / 1999)
   const [phase, setPhase] = useState<Phase>('playing')
+  const [results, setResults] = useState<boolean[]>([])
 
-  const onResult = (success: boolean) => {
+  const onResult = (success: boolean, finalResults: boolean[]) => {
     setPhase(success ? 'won' : 'lost')
+    setResults(finalResults)
     if (success) {
       resurrect()
       playSfx('sfx_victory')
@@ -64,39 +40,38 @@ export function ResurrectionGameScreen() {
 
   const finish = () => {
     if (phase === 'won') {
-      router.dismissTo('/')
+      go.dismissTo('/')
       return
     }
     startNewHero()
-    router.dismissTo('/hero-ceremony')
+    go.dismissTo('/hero-ceremony')
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <TavernFrame>
-        <ScrollView contentContainerStyle={styles.stack} showsVerticalScrollIndicator={false}>
-          <Header />
-          {phase === 'playing' ? (
-            <SoulTether onResult={onResult} />
-          ) : (
-            <ResultPhase phase={phase} onFinish={finish} />
-          )}
-        </ScrollView>
-      </TavernFrame>
+    <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
+      <View style={styles.center}>
+        {phase === 'playing' ? (
+          <SoulTether width={sheetWidth} onResult={onResult} />
+        ) : (
+          <Pressable onPress={finish}>
+            <SoulTetherSheet
+              width={sheetWidth}
+              round={ROUND_COUNT - 1}
+              results={results}
+              zone={null}
+              cursor={null}
+              feedback={phase === 'won' ? strings.soul_success : strings.soul_fail}
+              feedbackDanger={phase === 'lost'}
+              label={phase === 'won' ? strings.morning_continue : strings.death_new_hero}
+            />
+          </Pressable>
+        )}
+      </View>
     </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#150d08' },
-  stack: { gap: theme.spacing(3) },
-  headerPanel: { width: '100%' },
-  headerWell: { alignItems: 'center' },
-  game: { gap: theme.spacing(3) },
-  resultText: {
-    ...theme.type.body,
-    color: tavernColors.inkOnParchment,
-    textAlign: 'center',
-  },
-  resultLost: { color: tavernColors.danger },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 })

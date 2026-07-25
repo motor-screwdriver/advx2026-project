@@ -1391,14 +1391,6 @@ export const DESIGN = {
     frameWidth: 64,
     frameHeight: 64,
   },
-  gen_tether_scene: {
-    source: require('./design/gen/tether_scene.png'),
-    width: 200,
-    height: 200,
-    frames: 1,
-    frameWidth: 200,
-    frameHeight: 200,
-  },
   gen_tutorial_p1: {
     source: require('./design/gen/tutorial_p1.png'),
     width: 160,

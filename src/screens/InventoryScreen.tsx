@@ -1,10 +1,10 @@
-import { useRouter } from 'expo-router'
 import React from 'react'
 import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { DESIGN } from '../../assets/manifest'
 import { PixelSprite } from '../ui/PixelSprite'
+import { useScreenTransition } from '../ui/screenTransition'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
 
@@ -12,7 +12,7 @@ import { buildBagItems, type Section, SECTIONS, sectionTitle } from './bagMeta'
 import { EquipSlot, ItemsPanel } from './BagParts'
 
 export function InventoryScreen() {
-  const router = useRouter()
+  const go = useScreenTransition()
   const { width } = useWindowDimensions()
   const { state, equip, unequip, equipCosmetic, useHourglass } = useGame()
   const { equipped, artifacts, cosmetics } = state
@@ -45,7 +45,7 @@ export function InventoryScreen() {
           ))}
         </View>
         <ItemsPanel width={contentW} title={sectionTitle(section)} items={items} />
-        <Pressable onPress={() => router.back()} style={({ pressed }) => pressed && styles.pressed}>
+        <Pressable onPress={() => go.back()} style={({ pressed }) => pressed && styles.pressed}>
           <PixelSprite sprite={DESIGN.bag_button_close} size={contentW * 0.55} />
         </Pressable>
       </View>

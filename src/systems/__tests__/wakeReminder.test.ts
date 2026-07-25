@@ -37,6 +37,10 @@ const routerPush = jest.fn()
 
 jest.mock('expo-router', () => ({ router: { push: (...args: unknown[]) => routerPush(...args) } }))
 
+// screenTransition.tsx is JSX (untransformable in this node env); the
+// reminder only uses cloudGo to navigate home on notification tap.
+jest.mock('../../ui/screenTransition', () => ({ cloudGo: jest.fn() }))
+
 jest.mock('expo', () => ({ isRunningInExpoGo: () => false }))
 
 jest.mock('react-native', () => ({ Platform: { OS: 'android' } }))

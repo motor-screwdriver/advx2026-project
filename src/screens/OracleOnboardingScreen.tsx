@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router'
 import React, { useState } from 'react'
 import {
   KeyboardAvoidingView,
@@ -20,6 +19,7 @@ import {
 } from '../ui/LumaTavernOverlays'
 import { LumaTavernScene } from '../ui/LumaTavernScene'
 import { fitStage, type StageSize } from '../ui/lumaTavernLayout'
+import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
@@ -27,15 +27,14 @@ import { useOracleChat } from '../ui/useOracleChat'
 import { useTypewriter } from '../ui/useTypewriter'
 
 function useOracleActions(recommendation: SleepRecommendation | null) {
-  const router = useRouter()
+  const go = useScreenTransition()
   const { completeOnboarding } = useGame()
-  const manual = () => router.replace('/onboarding')
+  const manual = () => go('/onboarding', { replace: true })
   const adjust = () => {
     if (!recommendation) {
       return
     }
-    router.push({
-      pathname: '/onboarding',
+    go('/onboarding', {
       params: {
         source: 'oracle',
         bedMin: String(recommendation.bedMin),
@@ -48,7 +47,7 @@ function useOracleActions(recommendation: SleepRecommendation | null) {
       return
     }
     completeOnboarding(recommendation)
-    router.replace('/')
+    go('/tutorial', { replace: true })
   }
   return { manual, adjust, accept }
 }
