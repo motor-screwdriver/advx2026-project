@@ -1,11 +1,19 @@
 import { useRouter } from 'expo-router'
-import React, { createContext, useCallback, useContext, useRef, useState } from 'react'
-import { Animated, Easing, Image, StyleSheet, useWindowDimensions } from 'react-native'
+import React, { createContext, useCallback, useContext, useState } from 'react'
+import { Image, StyleSheet, useWindowDimensions } from 'react-native'
+import Animated, {
+  Easing,
+  runOnJS,
+  type SharedValue,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated'
 
 /**
- * Pixel-art screen transition (native driver only): a dark panel slides
- * across, the route swaps underneath, the panel slides off. Used for both
- * menu navigation and ritual beats (morning, death, chest).
+ * Pixel-art screen transition on the Reanimated UI thread: a cloud curtain
+ * slides across, the route swaps underneath, the curtain slides off. Stack
+ * native transitions should be `animation: 'none'` so they don't fight this.
  * Usage: const go = useScreenTransition(); go('/chest', { effect: 'wipe' }).
  */
 export type TransitionEffect = 'wipe'
@@ -35,9 +43,16 @@ const CLOUD_CURTAIN = require('../../assets/design/gen/cloud_curtain.png')
 
 export function TransitionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
-  const wipe = useRef(new Animated.Value(0)).current // 0 left, 1 cover, 2 right
+  // 0 left → 1 cover → 2 right; lives on the UI thread so router work can't stall it.
+  const wipe = useSharedValue(0)
   const [active, setActive] = useState(false)
-  const busy = useRef(false)
+  const busyRef = React.useRef(false)
+
+  const finish = useCallback(() => {
+    setActive(false)
+    busyRef.current = false
+    wipe.value = 0
+  }, [wipe])
 
   const go: Go = useCallback(
     (href, options = {}) => {
@@ -49,39 +64,28 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
           router.push(target)
         }
       }
-      if (!options.effect || busy.current) {
+      if (!options.effect || busyRef.current) {
         navigate()
         return
       }
-      busy.current = true
+      busyRef.current = true
       setActive(true)
-      Animated.timing(wipe, {
-        toValue: 1,
-        duration: WIPE_LEG_MS,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }).start(() => {
-        // Swap the route under the cover and keep moving right away.
-        navigate()
-        Animated.timing(wipe, {
-          toValue: 2,
-          duration: WIPE_LEG_MS,
-          easing: Easing.linear,
-          useNativeDriver: true,
-        }).start(() => {
-          setActive(false)
-          busy.current = false
-          wipe.setValue(0)
+      wipe.value = 0
+      wipe.value = withTiming(1, { duration: WIPE_LEG_MS, easing: Easing.linear }, (done) => {
+        if (!done) return
+        runOnJS(navigate)()
+        wipe.value = withTiming(2, { duration: WIPE_LEG_MS, easing: Easing.linear }, (done2) => {
+          if (done2) runOnJS(finish)()
         })
       })
     },
-    [router, wipe],
+    [router, wipe, finish],
   )
 
   return (
     <TransitionContext.Provider value={go}>
       {children}
-      {active && <WipePanel wipe={wipe} />}
+      <WipePanel wipe={wipe} active={active} />
     </TransitionContext.Provider>
   )
 }
@@ -90,19 +94,20 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
  * are never cropped into hard vertical borders. */
 const CURTAIN_ASPECT = 2
 
-function WipePanel({ wipe }: { wipe: Animated.Value }) {
+function WipePanel({ wipe, active }: { wipe: SharedValue<number>; active: boolean }) {
   const { width, height } = useWindowDimensions()
-  // Full-height curtain sized by the image aspect: on portrait screens this
-  // makes it much wider than the screen, so the middle solid-cloud zone (60%)
-  // covers the UI while the transparent puffy edges drift across visibly.
   const curtainH = height * 1.02
   const curtainW = Math.max(curtainH * CURTAIN_ASPECT, width * 1.75)
-  // center the solid zone over the screen at the covered keyframe
   const covered = -(curtainW - width) / 2
-  const wipeX = wipe.interpolate({
-    inputRange: [0, 1, 2],
-    outputRange: [-curtainW, covered, width],
-  })
+
+  const style = useAnimatedStyle(() => {
+    const x =
+      wipe.value <= 1
+        ? -curtainW + (covered - -curtainW) * wipe.value
+        : covered + (width - covered) * (wipe.value - 1)
+    return { transform: [{ translateX: x }] }
+  }, [curtainW, covered, width])
+
   return (
     <Animated.View
       style={[
@@ -111,10 +116,11 @@ function WipePanel({ wipe }: { wipe: Animated.Value }) {
           width: curtainW,
           height: curtainH,
           top: -(curtainH - height) / 2,
-          transform: [{ translateX: wipeX }],
+          opacity: active ? 1 : 0,
         },
+        style,
       ]}
-      pointerEvents="auto"
+      pointerEvents={active ? 'auto' : 'none'}
     >
       <Image
         source={CLOUD_CURTAIN}

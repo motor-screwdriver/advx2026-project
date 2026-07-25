@@ -58,7 +58,8 @@ export function ScrollBand({
           source={sprite.source}
           style={{ width: tileW, height }}
           contentFit="fill"
-          transition={500}
+          cachePolicy="memory-disk"
+          transition={0}
         />
       ))}
     </Animated.View>
@@ -106,25 +107,34 @@ export function Cloud({
   top: number
   height: number
   duration: number
+  /** Non-negative start delay (ms). */
   delay: number
   opacity: number
   screenW: number
 }) {
   const width = (height * sprite.frameWidth) / sprite.frameHeight
+  const span = screenW + width * 2
   const t = useSharedValue(0)
   useEffect(() => {
+    t.value = 0
     t.value = withDelay(
-      delay,
+      Math.max(0, delay),
       withRepeat(withTiming(1, { duration, easing: Easing.linear }), -1, false),
     )
   }, [t, duration, delay])
   const style = useAnimatedStyle(() => ({
     opacity,
-    transform: [{ translateX: screenW + width - t.value * (screenW + width * 2) }],
+    transform: [{ translateX: screenW + width - t.value * span }],
   }))
   return (
     <Animated.View style={[{ position: 'absolute', top, width, height }, style]}>
-      <ExpoImage source={sprite.source} style={{ width, height }} contentFit="fill" />
+      <ExpoImage
+        source={sprite.source}
+        style={{ width, height }}
+        contentFit="fill"
+        cachePolicy="memory-disk"
+        transition={0}
+      />
     </Animated.View>
   )
 }
@@ -169,6 +179,8 @@ export function Leaf({
         source={sprite.source}
         style={{ width: size, height: size }}
         contentFit="contain"
+        cachePolicy="memory-disk"
+        transition={0}
       />
     </Animated.View>
   )

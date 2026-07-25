@@ -65,7 +65,8 @@ function Sky({ W, H }: { W: number; H: number }) {
           source={ATMO.moon_full.source}
           style={{ width: moonSize, height: moonSize }}
           contentFit="contain"
-          transition={700}
+          cachePolicy="memory-disk"
+          transition={0}
         />
       </Animated.View>
       <Cloud
@@ -82,7 +83,7 @@ function Sky({ W, H }: { W: number; H: number }) {
         top={H * 0.17}
         height={H * 0.04}
         duration={65000}
-        delay={-30000}
+        delay={8000}
         opacity={0.35}
         screenW={W}
       />

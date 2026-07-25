@@ -1,5 +1,5 @@
 import { Image as ExpoImage } from 'expo-image'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native'
 
 import { SCENES } from '../../assets/manifest'
@@ -9,21 +9,14 @@ import { strings } from './strings'
 // The awake home is one authored 9:16 phone screen (docs/start_screen, published
 // by tools/start_screen.py): the storybook on a candle-lit table with the SLEEP
 // and MOSAIC/BAG/SETTINGS plaques and the empty HP strip already drawn in. The
-// UI adds only what changes — the candle flame, the hero's hearts/level, and the
-// darker pressed art of whichever plaque is held down.
-const BOOK_FRAMES = [SCENES.start_book_frame_1, SCENES.start_book_frame_2]
-const BOOK_FLIP_MS = 500
-const ASPECT = BOOK_FRAMES[0].width / BOOK_FRAMES[0].height // 2160 / 3840
-
-// Everything below is a fraction of the backdrop, measured in tools/start_screen.py.
-const CANDLE_RECT = { l: 60 / 2160, t: 375 / 3840, w: 300 / 2160, h: 495 / 3840 }
-const FLAME_FRAMES = [
-  SCENES.start_candle_1,
-  SCENES.start_candle_2,
-  SCENES.start_candle_3,
-  SCENES.start_candle_4,
-]
-const FLICKER_MS = 150
+// UI adds only what changes — the hero's hearts/level, and the darker pressed
+// art of whichever plaque is held down.
+//
+// One static frame only: the alternate book_frame was a candle flicker that
+// forced two ~8MP bitmaps to composite every 500ms and made the gold cover
+// clouds look like a 2fps stutter, especially during wipe navigation.
+const BOOK = SCENES.start_book_frame_1
+const ASPECT = BOOK.width / BOOK.height // 2160 / 3840
 
 interface Rect {
   l: number
@@ -77,34 +70,6 @@ function place({ l, t, w, h }: Rect, bookW: number, bookH: number) {
   }
 }
 
-/** Cycles 0..count-1 to page the flame frames. */
-function useFlicker(count: number, ms: number) {
-  const [frame, setFrame] = useState(0)
-  useEffect(() => {
-    const id = setInterval(() => setFrame((f) => (f + 1) % count), ms)
-    return () => clearInterval(id)
-  }, [count, ms])
-  return frame
-}
-
-/** The candle's breathing flame, patched over the still backdrop. All frames
- * stay mounted and toggle opacity so paging them never flashes. */
-function Flame({ bookW, bookH }: { bookW: number; bookH: number }) {
-  const frame = useFlicker(FLAME_FRAMES.length, FLICKER_MS)
-  return (
-    <View style={place(CANDLE_RECT, bookW, bookH)} pointerEvents="none">
-      {FLAME_FRAMES.map((f, i) => (
-        <ExpoImage
-          key={i}
-          source={f.source}
-          style={[StyleSheet.absoluteFill, { opacity: i === frame ? 1 : 0 }]}
-          contentFit="fill"
-        />
-      ))}
-    </View>
-  )
-}
-
 /** A plaque painted into the backdrop: a hit area over the resting art with the
  * designer's darker pressed version laid on top, revealed while it's held down.
  * The overlay stays mounted so the very first tap can't catch it still loading. */
@@ -132,6 +97,8 @@ function Plaque({
           source={PRESSED[name].source}
           style={[StyleSheet.absoluteFill, { opacity: pressed ? 1 : 0 }]}
           contentFit="fill"
+          cachePolicy="memory-disk"
+          transition={0}
         />
       )}
     </Pressable>
@@ -151,19 +118,17 @@ export function StartScreen({ hp, level, onSleep, onBag, onMosaic, onSettings }:
   const { width: W, height: H } = useWindowDimensions()
   const bookW = Math.min(W, H * ASPECT)
   const bookH = bookW / ASPECT
-  const bookFrame = useFlicker(BOOK_FRAMES.length, BOOK_FLIP_MS)
   return (
     <View style={styles.root}>
       <View style={{ width: bookW, height: bookH }}>
-        {BOOK_FRAMES.map((f, i) => (
-          <ExpoImage
-            key={i}
-            source={f.source}
-            style={[StyleSheet.absoluteFill, { opacity: i === bookFrame ? 1 : 0 }]}
-            contentFit="fill"
-          />
-        ))}
-        <Flame bookW={bookW} bookH={bookH} />
+        <ExpoImage
+          source={BOOK.source}
+          style={StyleSheet.absoluteFill}
+          contentFit="fill"
+          cachePolicy="memory-disk"
+          transition={0}
+          priority="high"
+        />
         <View style={place(STRIP_RECT, bookW, bookH)} pointerEvents="none">
           <StartStatusStrip hp={hp} level={level} height={bookH * STRIP_RECT.h} />
         </View>

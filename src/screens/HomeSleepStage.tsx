@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Animated, StyleSheet, View } from 'react-native'
 
 import { useFadeIn } from '../ui/animations'
@@ -32,9 +32,24 @@ function useAsleepProgress(asleep: boolean) {
   return progress
 }
 
+/** Keep the night world off the tree while awake so menu navigation isn't
+ * fighting parallax/sprite timers under an invisible layer. Stay mounted
+ * through the wake crossfade, then drop. */
+function useNightMounted(asleep: boolean) {
+  const [mounted, setMounted] = useState(asleep)
+  useEffect(() => {
+    if (asleep) {
+      setMounted(true)
+      return
+    }
+    const id = setTimeout(() => setMounted(false), STAGE_FADE_MS)
+    return () => clearTimeout(id)
+  }, [asleep])
+  return asleep || mounted
+}
+
 /** Awake: the start screen, the storybook waiting on the candle-lit table.
- * Asleep: the living night world. Both stay mounted and simply crossfade into
- * one another right here on Home — no separate transition screen, no hard pop. */
+ * Asleep: the living night world. Crossfade in place — no separate screen. */
 export function HeroStage({
   asleep,
   state,
@@ -47,6 +62,7 @@ export function HeroStage({
   const go = useScreenTransition()
   const hero = state.hero!
   const nightFade = useAsleepProgress(asleep)
+  const nightMounted = useNightMounted(asleep)
   const bookFade = useMemo(
     () => nightFade.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }),
     [nightFade],
@@ -67,21 +83,23 @@ export function HeroStage({
           onSettings={() => go('/settings', { effect: 'wipe' })}
         />
       </Animated.View>
-      <Animated.View
-        style={[StyleSheet.absoluteFill, { opacity: nightFade }]}
-        pointerEvents={asleep ? 'auto' : 'none'}
-      >
-        <NightWorld />
-        <View style={styles.walkSlot} pointerEvents="none">
-          <HeroSprite
-            type={hero.type}
-            size={HERO_SIZE}
-            walking
-            fps={6}
-            gold={state.perfectWeekStreak >= MAX_HP}
-          />
-        </View>
-      </Animated.View>
+      {nightMounted && (
+        <Animated.View
+          style={[StyleSheet.absoluteFill, { opacity: nightFade }]}
+          pointerEvents={asleep ? 'auto' : 'none'}
+        >
+          <NightWorld />
+          <View style={styles.walkSlot} pointerEvents="none">
+            <HeroSprite
+              type={hero.type}
+              size={HERO_SIZE}
+              walking
+              fps={6}
+              gold={state.perfectWeekStreak >= MAX_HP}
+            />
+          </View>
+        </Animated.View>
+      )}
     </View>
   )
 }

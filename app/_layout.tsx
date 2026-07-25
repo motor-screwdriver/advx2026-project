@@ -19,8 +19,9 @@ export default function RootLayout() {
         <Stack
           screenOptions={{
             headerShown: false,
-            animation: 'fade',
-            animationDuration: 400,
+            // Custom cloud wipe owns transitions; a Stack fade on top of it
+            // double-composites and makes the curtain look like it's hitching.
+            animation: 'none',
             contentStyle: { backgroundColor: theme.colors.bg },
           }}
         />

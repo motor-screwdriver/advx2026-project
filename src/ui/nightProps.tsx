@@ -82,7 +82,13 @@ function PropSprite({
         style,
       ]}
     >
-      <ExpoImage source={sprite.source} style={{ width, height }} contentFit="contain" />
+      <ExpoImage
+        source={sprite.source}
+        style={{ width, height }}
+        contentFit="contain"
+        cachePolicy="memory-disk"
+        transition={0}
+      />
     </Animated.View>
   )
 }

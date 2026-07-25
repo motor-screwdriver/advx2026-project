@@ -1,15 +1,20 @@
-import React from 'react'
-import { Animated, Image, StyleSheet, useWindowDimensions } from 'react-native'
+import { Image as ExpoImage } from 'expo-image'
+import React, { useEffect } from 'react'
+import { StyleSheet, useWindowDimensions } from 'react-native'
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated'
 
 import { ATMO, type SpriteEntry } from '../../assets/manifest'
 import { DayPhase } from './timeOfDay'
-import { useDrift } from './usePixelMotion'
 
 /**
- * Pixel-art cloud sprites that drift across the sky in stepped whole-pixel
- * jumps. Each cloud slot uses a generated sprite pre-tinted per day phase;
- * slots keep their own height and speed so the parallax feels layered rather
- * than uniform.
+ * Pixel-art cloud sprites that drift across the sky. Motion runs on the
+ * Reanimated UI thread so taps/navigation on the JS thread can't stall them.
  */
 const CLOUD_A: Record<DayPhase, SpriteEntry> = {
   morning: ATMO.cloud_a_morning,
@@ -30,30 +35,45 @@ interface CloudDef {
   /** Rendered width in px; height scales to keep the frame aspect. */
   width: number
   top: number
+  /** Whole-pixel step size; duration is derived from span / (stepPx * fps). */
   stepPx: number
   fps: number
 }
 
 const CLOUDS: readonly CloudDef[] = [
-  { sprites: CLOUD_A, width: 190, top: 0.14, stepPx: 1, fps: 6 },
-  { sprites: CLOUD_B, width: 110, top: 0.26, stepPx: 1, fps: 4 },
-  { sprites: CLOUD_A, width: 150, top: 0.08, stepPx: 2, fps: 5 },
-  { sprites: CLOUD_B, width: 90, top: 0.36, stepPx: 1, fps: 3 },
+  { sprites: CLOUD_A, width: 190, top: 0.14, stepPx: 1, fps: 18 },
+  { sprites: CLOUD_B, width: 110, top: 0.26, stepPx: 1, fps: 14 },
+  { sprites: CLOUD_A, width: 150, top: 0.08, stepPx: 2, fps: 16 },
+  { sprites: CLOUD_B, width: 90, top: 0.36, stepPx: 1, fps: 12 },
 ]
 
 function Cloud({ def, phase }: { def: CloudDef; phase: DayPhase }) {
   const { width, height } = useWindowDimensions()
   const sprite = def.sprites[phase]
   const cloudH = (def.width * sprite.frameHeight) / sprite.frameWidth
-  const x = useDrift(-def.width, width + 20, def.stepPx, def.fps)
+  const from = -def.width
+  const to = width + 20
+  const x = useSharedValue(from)
+
+  useEffect(() => {
+    const span = to - from
+    const duration = (span / def.stepPx) * (1000 / def.fps)
+    x.value = from
+    x.value = withRepeat(withTiming(to, { duration, easing: Easing.linear }), -1, false)
+  }, [x, from, to, def.stepPx, def.fps])
+
+  const style = useAnimatedStyle(() => ({
+    transform: [{ translateX: x.value }],
+  }))
+
   return (
-    <Animated.View
-      style={[styles.cloud, { top: height * def.top, transform: [{ translateX: x }] }]}
-    >
-      <Image
+    <Animated.View style={[styles.cloud, { top: height * def.top }, style]}>
+      <ExpoImage
         source={sprite.source}
-        resizeMode="stretch"
+        contentFit="fill"
         style={{ width: def.width, height: cloudH }}
+        cachePolicy="memory-disk"
+        transition={0}
       />
     </Animated.View>
   )
