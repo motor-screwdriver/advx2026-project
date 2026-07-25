@@ -88,6 +88,7 @@ export const strings = {
   home_hearts: 'Hearts',
   home_streak: 'Perfect week',
   home_level: 'LV',
+  home_lvl: 'LVL',
   home_window: 'Sleep window',
   home_sleep: 'Sleep',
   home_wakeup: 'Wake up',
