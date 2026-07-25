@@ -4,10 +4,7 @@ import type {
   OracleRequest,
   OracleResponse,
 } from '../contracts/aiOnboarding'
-
-type ProcessLike = {
-  env?: Record<string, string | undefined>
-}
+import { apiEndpoint } from './api'
 
 /**
  * In production (and when testing the client against the deployed Go backend)
@@ -15,9 +12,7 @@ type ProcessLike = {
  * Empty means same-origin relative requests.
  */
 function resolveEndpoint(): string {
-  const origin = (globalThis as typeof globalThis & { process?: ProcessLike }).process?.env
-    ?.EXPO_PUBLIC_API_ORIGIN
-  return origin ? `${origin.replace(/\/+$/, '')}/api/oracle` : '/api/oracle'
+  return apiEndpoint('/api/oracle')
 }
 
 export const ORACLE_ENDPOINT = resolveEndpoint()

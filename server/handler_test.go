@@ -71,6 +71,9 @@ func TestCORSPreflight(t *testing.T) {
 	if got := recorder.Header().Get("Access-Control-Allow-Headers"); got != "Content-Type, Authorization" {
 		t.Fatalf("Allow-Headers = %q", got)
 	}
+	if got := recorder.Header().Get("Access-Control-Allow-Private-Network"); got != "true" {
+		t.Fatalf("Allow-Private-Network = %q", got)
+	}
 }
 
 func TestCORSAllowOriginOnPost(t *testing.T) {

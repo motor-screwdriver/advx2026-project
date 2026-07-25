@@ -30,6 +30,33 @@ export const stringsExtra = {
   guide_reminders_body:
     'Bedtime push 1 h before your window. Wake reminder pinned in the shade while the hero sleeps. Morning summary 15 min after wake time. Toggle in Settings.',
 
+  // Mi Fitness
+  mifit_title: 'Mi Fitness',
+  mifit_login: 'Login to Xiaomi account',
+  mifit_region: 'Region',
+  mifit_region_de: 'de - Europe',
+  mifit_region_cn: 'cn - China Mainland',
+  mifit_region_ru: 'ru - Russia',
+  mifit_region_i2: 'i2 - India',
+  mifit_region_sg: 'sg - Singapore / international',
+  mifit_region_us: 'us - United States',
+  mifit_region_help:
+    'Use the region selected in your Mi Fitness profile, not necessarily your Xiaomi Account country. If unsure, check Mi Fitness > Profile > Settings > Region.',
+  mifit_username: 'Xiaomi login',
+  mifit_password: 'Password',
+  mifit_connect: 'Connect',
+  mifit_connecting: 'Connecting...',
+  mifit_email_sent: 'Xiaomi sent a one-time code to your account email.',
+  mifit_email_code: 'Email code',
+  mifit_verify: 'Verify code',
+  mifit_verifying: 'Verifying...',
+  mifit_security:
+    'We never save your Xiaomi password or email code. After login, only an encrypted session token is stored on this device so you can stay connected.',
+  mifit_connected: 'Mi Fitness connected',
+  mifit_saved_device: 'Saved on this device',
+  mifit_disconnect: 'Disconnect',
+  mifit_error_generic: 'Mi Fitness login failed.',
+
   // Debug (temporary, M0-M1)
   debug_title: '-- Debug (temporary) --',
   debug_presets: 'State presets',

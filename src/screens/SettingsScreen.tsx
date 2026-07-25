@@ -13,6 +13,7 @@ import { strings } from '../ui/strings'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
 import { formatClock } from '../ui/window'
+import { MiFitnessPanel } from './MiFitnessPanel'
 
 const DEMO_TAP_COUNT = 5
 const DEMO_TAP_WINDOW_MS = 1500
@@ -75,6 +76,7 @@ export function SettingsScreen() {
           />
         </View>
       </PixelPanel>
+      <MiFitnessPanel />
       {FLAGS.eink && <EinkPanel />}
       <PixelButton label={strings.settings_reset} onPress={confirmReset} />
       <Pressable onPress={versionTap}>
