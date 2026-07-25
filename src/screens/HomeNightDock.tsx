@@ -9,14 +9,12 @@ import { GoldButton, TavernBar, WoodPanel, tavernColors } from '../ui/tavern'
 import { theme } from '../ui/theme'
 import { HomeNav } from './HomeNav'
 
-const MAX_HP = 7
-
-// Local copy (design-mockup label; not in strings.ts).
 const XP_LABEL = 'XP'
+const XP_PER_LEVEL = 700 // engine value copy (screens stay off direct engine imports)
 
 /** Riveted wood panel: hearts row on top, LV badge + XP bar below (compact,
  * reference mockup: the HUD hugs the top so the moon stays clear of it). */
-export function TopBar({ hp, streak, level }: { hp: number; streak: number; level: number }) {
+export function TopBar({ hp, xp, level }: { hp: number; xp: number; level: number }) {
   return (
     <WoodPanel contentStyle={styles.topPanelWell}>
       <View style={styles.heartsRow}>
@@ -32,7 +30,7 @@ export function TopBar({ hp, streak, level }: { hp: number; streak: number; leve
         </View>
         <Text style={styles.xpLabel}>{XP_LABEL}</Text>
         <View style={styles.xpBarWrap}>
-          <TavernBar value={streak} max={MAX_HP} />
+          <TavernBar value={xp % XP_PER_LEVEL} max={XP_PER_LEVEL} />
         </View>
         <HomeNav />
       </View>

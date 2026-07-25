@@ -1,10 +1,10 @@
 /**
- * Full night turn: scoring + modifiers + streak/level + consumables.
+ * Full night turn: scoring + modifiers + streak/XP level + consumables.
  * Pure orchestration over night.ts / levels.ts — the store stays thin.
  */
 import type { GameState, NightEvaluation, NightRecord } from '../contracts/types'
 import { consumeArtifact } from './artifacts'
-import { applyNightOutcome, updateStreak } from './levels'
+import { applyNightOutcome, levelForXp, updateStreak } from './levels'
 import { evaluateNight, missedEvaluation, type ScoringModifiers } from './night'
 
 export interface NightTurnOptions {
@@ -18,7 +18,7 @@ export interface NightTurnOptions {
 export interface NightTurnResult {
   game: GameState
   evaluation: NightEvaluation // hpDelta is the final applied delta
-  leveledUp: boolean
+  leveledUp: boolean // crossed a 700-XP level boundary this night
   died: boolean
   ironArmorConsumed: boolean
   secondWindUsed: boolean
@@ -39,6 +39,8 @@ export function applyNightTurn(state: GameState, options: NightTurnOptions): Nig
     ironArmorEquipped: state.equipped.armor === 'iron_armor',
   })
   const streak = updateStreak(state.perfectWeekStreak, applied.hpDelta, raw.outcome)
+  const xp = state.hero ? state.hero.xp + applied.xp : 0
+  const levelGain = state.hero ? levelForXp(xp) - levelForXp(state.hero.xp) : 0
   let artifacts = applied.ironArmorConsumed
     ? consumeArtifact(state.artifacts, 'iron_armor')
     : state.artifacts
@@ -48,8 +50,8 @@ export function applyNightTurn(state: GameState, options: NightTurnOptions): Nig
     hero: state.hero
       ? {
           ...state.hero,
-          level: state.hero.level + (streak.leveledUp ? 1 : 0),
-          xp: state.hero.xp + applied.xp,
+          level: state.hero.level + levelGain,
+          xp,
         }
       : null,
     perfectWeekStreak: streak.streak,
@@ -60,7 +62,7 @@ export function applyNightTurn(state: GameState, options: NightTurnOptions): Nig
   return {
     game,
     evaluation: { ...raw, hpDelta: applied.hpDelta },
-    leveledUp: streak.leveledUp,
+    leveledUp: levelGain > 0,
     died: applied.died,
     ironArmorConsumed: applied.ironArmorConsumed,
     secondWindUsed: applied.secondWindUsed,

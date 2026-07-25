@@ -7,6 +7,12 @@ import { clamp } from './night'
 
 export const MAX_HP = 7
 export const PERFECT_WEEK_NIGHTS = 7
+export const XP_PER_LEVEL = 700
+
+/** Level grows purely from XP: level 1 at 0 XP, +1 every 700 XP. */
+export function levelForXp(xp: number): number {
+  return Math.floor(xp / XP_PER_LEVEL) + 1
+}
 
 export interface NightModifierContext {
   artifacts: ArtifactId[]
@@ -60,22 +66,23 @@ export function applyNightOutcome(
 
 export interface StreakUpdate {
   streak: number
-  leveledUp: boolean
+  completedWeek: boolean
 }
 
 /**
- * Perfect Week (spec §4.1): 7 consecutive nights without HP loss → level up.
- * Any HP loss resets the streak; a MISSED night neither builds nor breaks it.
+ * Perfect Week (spec §4.1): 7 consecutive nights without HP loss completes the
+ * week and restarts the counter. Any HP loss resets the streak; a MISSED night
+ * neither builds nor breaks it. Levels come from XP only (see levelForXp).
  */
 export function updateStreak(streak: number, hpDelta: number, outcome: NightOutcome): StreakUpdate {
   if (hpDelta < 0) {
-    return { streak: 0, leveledUp: false }
+    return { streak: 0, completedWeek: false }
   }
   if (outcome === 'MISSED') {
-    return { streak, leveledUp: false }
+    return { streak, completedWeek: false }
   }
   const next = streak + 1
   return next >= PERFECT_WEEK_NIGHTS
-    ? { streak: 0, leveledUp: true }
-    : { streak: next, leveledUp: false }
+    ? { streak: 0, completedWeek: true }
+    : { streak: next, completedWeek: false }
 }

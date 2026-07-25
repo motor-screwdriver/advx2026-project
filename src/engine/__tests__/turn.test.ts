@@ -16,14 +16,24 @@ describe('applyNightTurn basic flow', () => {
     expect(result.died).toBe(false)
   })
 
-  it('levels up and flags the chest after 7 clean nights', () => {
+  it('levels up and flags the chest on crossing a 700-XP boundary', () => {
+    const result = applyNightTurn(
+      makeGame({ hero: { type: 'knight', name: 'Knight', level: 1, xp: 650 } }),
+      { ...TURN, bedTime: 690, wakeTime: 1140 },
+    )
+    expect(result.leveledUp).toBe(true)
+    expect(result.game.hero!.level).toBe(2)
+    expect(result.game.hero!.xp).toBe(750)
+  })
+
+  it('completing a Perfect Week resets the streak without a level-up', () => {
     const result = applyNightTurn(makeGame({ perfectWeekStreak: 6 }), {
       ...TURN,
       bedTime: 690,
       wakeTime: 1140,
     })
-    expect(result.leveledUp).toBe(true)
-    expect(result.game.hero!.level).toBe(2)
+    expect(result.leveledUp).toBe(false)
+    expect(result.game.hero!.level).toBe(1)
     expect(result.game.perfectWeekStreak).toBe(0)
   })
 
