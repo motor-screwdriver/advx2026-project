@@ -1,161 +1,66 @@
 import { useRouter } from 'expo-router'
 import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { ICONS } from '../../assets/manifest'
+import { DESIGN } from '../../assets/manifest'
 import { PixelSprite } from '../ui/PixelSprite'
-import { strings } from '../ui/strings'
-import {
-  ScreenTitle,
-  tavernColors,
-  TavernFrame,
-  tavernLayout,
-  WoodButton,
-  WoodPanel,
-} from '../ui/tavern'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
 
-function humanize(id: string): string {
-  return id
-    .split('_')
-    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-    .join(' ')
-}
-
-function slotIcon(id: string) {
-  const artKey = `art_${id}` as keyof typeof ICONS
-  if (ICONS[artKey]) return ICONS[artKey]
-  const cosKey = `cos_${id.replace('cosmetic_', '')}` as keyof typeof ICONS
-  return ICONS[cosKey] ?? null
-}
+import { buildBagItems, type Section, SECTIONS, sectionTitle } from './bagMeta'
+import { EquipSlot, ItemsPanel } from './BagParts'
 
 export function InventoryScreen() {
   const router = useRouter()
-  const { state } = useGame()
-  const { equipped } = state
+  const { width } = useWindowDimensions()
+  const { state, equip, unequip, equipCosmetic, useHourglass } = useGame()
+  const { equipped, artifacts, cosmetics } = state
+  const [section, setSection] = React.useState<Section | null>(null)
+  const toggle = (key: Section) => setSection((prev) => (prev === key ? null : key))
+  const items = buildBagItems(section, artifacts, cosmetics ?? [], equipped, {
+    equip,
+    unequip,
+    equipCosmetic,
+    useHourglass,
+  })
+
+  const contentW = Math.min(width - theme.spacing(4), 480)
+  const slotW = (contentW - theme.spacing(2) * 2) / 3
 
   return (
     <SafeAreaView style={styles.safe}>
-      <TavernFrame>
-        <View style={styles.stack}>
-          <ScreenTitle title={strings.inventory_title.toUpperCase()} />
-          <View style={styles.slots}>
+      <View style={styles.stage}>
+        <PixelSprite sprite={DESIGN.bag_title} size={contentW * 0.78} />
+        <View style={[styles.slots, { width: contentW }]}>
+          {SECTIONS.map(({ key, label }) => (
             <EquipSlot
-              label={strings.inventory_armor}
-              artifact={equipped.armor}
-              onPress={() => router.push({ pathname: '/equip-slot', params: { slot: 'armor' } })}
+              key={key}
+              label={label}
+              artifact={equipped[key]}
+              size={slotW}
+              active={section === key}
+              onPress={() => toggle(key)}
             />
-            <EquipSlot
-              label={strings.inventory_utilities}
-              artifact={equipped.utilities}
-              onPress={() =>
-                router.push({ pathname: '/equip-slot', params: { slot: 'utilities' } })
-              }
-            />
-            <EquipSlot
-              label={strings.inventory_charm}
-              artifact={equipped.charm}
-              onPress={() => router.push({ pathname: '/equip-slot', params: { slot: 'charm' } })}
-            />
-          </View>
-          <Text style={styles.hint}>{strings.inventory_hint}</Text>
-          <WoodButton label="CLOSE" onPress={() => router.back()} style={styles.close} />
+          ))}
         </View>
-      </TavernFrame>
+        <ItemsPanel width={contentW} title={sectionTitle(section)} items={items} />
+        <Pressable onPress={() => router.back()} style={({ pressed }) => pressed && styles.pressed}>
+          <PixelSprite sprite={DESIGN.bag_button_close} size={contentW * 0.55} />
+        </Pressable>
+      </View>
     </SafeAreaView>
   )
 }
 
-interface SlotProps {
-  label: string
-  artifact: string | null
-  onPress: () => void
-}
-
-function EquipSlot({ label, artifact, onPress }: SlotProps) {
-  const icon = artifact ? slotIcon(artifact) : null
-  return (
-    <View style={styles.slotColumn}>
-      <Text style={styles.slotLabel}>{label.toUpperCase()}</Text>
-      <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
-        <WoodPanel contentStyle={styles.slotWell}>
-          {artifact ? (
-            <>
-              {icon ? (
-                <PixelSprite sprite={icon} size={48} animated={false} />
-              ) : (
-                <View style={styles.charmBadge}>
-                  <Text style={styles.charmEmoji}>{charmEmoji(artifact)}</Text>
-                </View>
-              )}
-              <Text style={styles.slotValue}>{humanize(artifact)}</Text>
-            </>
-          ) : (
-            <View style={styles.dashedWell}>
-              <Text style={styles.slotPlus}>+</Text>
-            </View>
-          )}
-        </WoodPanel>
-      </TouchableOpacity>
-    </View>
-  )
-}
-
-const CHARM_EMOJI: Record<string, string> = {
-  cosmetic_ember: '🔥',
-  cosmetic_hat: '🎩',
-  cosmetic_aura: '✨',
-  cosmetic_pet: '🐾',
-  cosmetic_frame: '🖼️',
-  cosmetic_gold: '👑',
-}
-function charmEmoji(id: string): string {
-  return CHARM_EMOJI[id] ?? '💎'
-}
-
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#150d08' },
-  stack: { gap: tavernLayout.sectionGap, paddingBottom: theme.spacing(2) },
-  slots: { flexDirection: 'row', gap: theme.spacing(2), marginTop: theme.spacing(8) },
-  slotColumn: { flex: 1, gap: theme.spacing(1) },
-  slotLabel: {
-    ...theme.type.body,
-    color: tavernColors.gold,
-    textAlign: 'center',
-    letterSpacing: 2,
-    fontSize: 8,
-  },
-  slotWell: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: theme.spacing(1),
-    minHeight: 110,
-  },
-  slotValue: { ...theme.type.label, color: tavernColors.gold, textAlign: 'center' },
-  charmBadge: {
-    width: 48,
-    height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#2a1a0e',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: tavernColors.gold,
-  },
-  charmEmoji: { fontSize: 24 },
-  dashedWell: {
-    alignSelf: 'stretch',
+  stage: {
     flex: 1,
-    minHeight: 80,
     alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderStyle: 'dashed',
-    borderColor: tavernColors.dark,
+    justifyContent: 'space-evenly',
+    paddingVertical: theme.spacing(2),
   },
-  slotPlus: { ...theme.type.title, fontSize: 24, lineHeight: 32, color: theme.colors.textDim },
-  hint: { ...theme.type.label, color: theme.colors.textDim, textAlign: 'center' },
-  close: { marginHorizontal: theme.spacing(6) },
+  slots: { flexDirection: 'row', gap: theme.spacing(2) },
+  pressed: { opacity: 0.7, transform: [{ translateY: 2 }] },
 })

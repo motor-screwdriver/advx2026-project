@@ -1143,6 +1143,46 @@ export const ATMO = {
 } as const satisfies Record<string, SpriteEntry>
 
 export const DESIGN = {
+  bag_button_close: {
+    source: require('./design/bag/gen/button_close.png'),
+    width: 1200,
+    height: 380,
+    frames: 1,
+    frameWidth: 1200,
+    frameHeight: 380,
+  },
+  bag_panel_consumables: {
+    source: require('./design/bag/gen/panel_consumables.png'),
+    width: 1920,
+    height: 1540,
+    frames: 1,
+    frameWidth: 1920,
+    frameHeight: 1540,
+  },
+  bag_slot_empty: {
+    source: require('./design/bag/gen/slot_empty.png'),
+    width: 840,
+    height: 870,
+    frames: 1,
+    frameWidth: 840,
+    frameHeight: 870,
+  },
+  bag_slot_frame: {
+    source: require('./design/bag/gen/slot_frame.png'),
+    width: 840,
+    height: 870,
+    frames: 1,
+    frameWidth: 840,
+    frameHeight: 870,
+  },
+  bag_title: {
+    source: require('./design/bag/gen/title.png'),
+    width: 1648,
+    height: 201,
+    frames: 1,
+    frameWidth: 1648,
+    frameHeight: 201,
+  },
   chest_button_claim: {
     source: require('./design/chest/30-button-claim.png'),
     width: 626,
