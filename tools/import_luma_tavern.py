@@ -50,6 +50,19 @@ BUTTONS = {
     "btn_adjust_down": "кнопки/кнопка_adjust_нажата.png",
 }
 
+# "Welcome" pose of screen 1 (before the player has said anything) — same
+# frame set as s1_*, but the art already lives at final size in assets/luma/
+# (no raw source to copy/downscale from).
+START = {
+    "s1_base_start": "s1_base_start.png",
+    "s1_env2_start": "s1_env2_start.png",
+    "s1_env3_start": "s1_env3_start.png",
+    "s1_env4_start": "s1_env4_start.png",
+    "s1_blink_start": "s1_blink_start.png",
+    "s1_talk_half_start": "s1_talk_half_start.png",
+    "s1_talk_open_start": "s1_talk_open_start.png",
+}
+
 
 def import_one(data, key, rel_src, has_alpha):
     src = os.path.join(SRC, rel_src)
@@ -65,18 +78,34 @@ def import_one(data, key, rel_src, has_alpha):
     })
 
 
+def register_existing(data, key, filename):
+    """Register a file that already lives in assets/luma/ (no raw source)."""
+    with Image.open(os.path.join(DST, filename)) as im:
+        w, h = im.size
+    manifest_lib.add_entry(data, "luma", key, {
+        "path": f"luma/{filename}",
+        "width": w, "height": h, "frames": 1,
+        "frameWidth": w, "frameHeight": h,
+    })
+
+
 def main():
     os.makedirs(DST, exist_ok=True)
     data = manifest_lib.load_data()
-    data["luma"] = {}  # rebuild from scratch so dropped frames don't linger
-    for key, rel in sorted(SCENES.items()):
-        import_one(data, key, rel, has_alpha=False)
-    for key, rel in sorted(BUTTONS.items()):
-        import_one(data, key, rel, has_alpha=True)
+    if os.path.isdir(SRC):
+        data["luma"] = {}  # rebuild from scratch so dropped frames don't linger
+        for key, rel in sorted(SCENES.items()):
+            import_one(data, key, rel, has_alpha=False)
+        for key, rel in sorted(BUTTONS.items()):
+            import_one(data, key, rel, has_alpha=True)
+    else:
+        print(f"raw source {SRC} not found — keeping existing luma/* manifest entries")
+    for key, filename in sorted(START.items()):
+        register_existing(data, key, filename)
     manifest_lib.save_data(data)
     manifest_lib.write_manifest_ts(data)
     total = sum(os.path.getsize(os.path.join(DST, f)) for f in os.listdir(DST))
-    print(f"imported {len(SCENES) + len(BUTTONS)} luma sprites -> assets/luma/ ({total // 1024}K)")
+    print(f"luma manifest now has {len(data['luma'])} entries -> assets/luma/ ({total // 1024}K)")
 
 
 if __name__ == "__main__":

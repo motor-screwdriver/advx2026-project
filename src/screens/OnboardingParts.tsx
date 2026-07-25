@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import { Pressable, ScrollView, Text, View } from 'react-native'
 
 import { ICONS, SPRITES } from '../../assets/manifest'
 import { PixelSprite } from '../ui/PixelSprite'
 import { strings } from '../ui/strings'
-import { GoldButton, Parchment, SunkenButton, WoodPanel } from '../ui/tavern'
+import { GoldButton, Parchment, WoodPanel } from '../ui/tavern'
 import { formatClock } from '../ui/window'
 import { styles, WHEEL_ITEM_H } from './onboardingStyles'
 
@@ -76,7 +76,11 @@ export function ProposalStep({
         </Text>
       </View>
       <GoldButton label={COPY.accept} onPress={onAccept} />
-      <SunkenButton label={COPY.adjust} onPress={onAdjust} />
+      <Pressable onPress={onAdjust} style={({ pressed }) => pressed && styles.pressed}>
+        <View style={styles.adjustBtn}>
+          <Text style={styles.adjustLabel}>{COPY.adjust}</Text>
+        </View>
+      </Pressable>
     </View>
   )
 }
@@ -161,7 +165,14 @@ function RuleRow({ icon, text }: { icon: React.ReactNode; text: string }) {
 }
 
 function ChoiceButton({ label, onPress }: { label: string; onPress: () => void }) {
-  return <SunkenButton label={label} onPress={onPress} />
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [styles.choice, pressed && styles.pressed]}
+    >
+      <Text style={styles.choiceLabel}>{label}</Text>
+    </Pressable>
+  )
 }
 
 function CaptionDiamond() {

@@ -28,9 +28,38 @@ export const styles = StyleSheet.create({
     color: tavernColors.inkOnParchment,
     textAlign: 'center',
   },
+  adjustBtn: {
+    backgroundColor: tavernColors.dark,
+    borderWidth: 2,
+    borderColor: tavernColors.rivet,
+    borderTopColor: tavernColors.light,
+    paddingVertical: theme.spacing(2.5),
+    paddingHorizontal: theme.spacing(6),
+    alignItems: 'center',
+  },
+  adjustLabel: {
+    ...theme.type.label,
+    color: tavernColors.goldLight,
+    letterSpacing: 2,
+  },
+  pressed: { transform: [{ translateY: 2 }] },
   choices: {
     alignSelf: 'stretch',
     gap: theme.spacing(3),
+  },
+  choice: {
+    backgroundColor: tavernColors.dark,
+    borderWidth: 2,
+    borderColor: tavernColors.rivet,
+    borderTopColor: tavernColors.light,
+    paddingVertical: theme.spacing(3.5),
+    alignItems: 'center',
+  },
+  choiceLabel: {
+    fontFamily: theme.fontFamily,
+    fontSize: 12,
+    letterSpacing: 2,
+    color: theme.colors.text,
   },
   windowInset: {
     alignSelf: 'stretch',

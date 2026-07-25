@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router'
 import React from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 
-import { BUTTONS, type SpriteEntry } from '../../assets/manifest'
+import { type SpriteEntry } from '../../assets/manifest'
 import type { HeroType } from '../contracts/types'
 import { strings } from '../ui/strings'
 import { tavernColors, WoodPanel } from '../ui/tavern'
@@ -86,13 +86,10 @@ export function NavBar() {
         accessibilityLabel={strings.home_sleep}
         onPress={() => router.dismissTo('/')}
       />
-      <View style={styles.navTile} accessibilityLabel={strings.home_nav_heroes}>
-        <Image
-          source={BUTTONS.chip_arrow_active.source}
-          resizeMode="stretch"
-          style={styles.navImage}
-        />
-        <Text style={styles.navGlyph}>HERO</Text>
+      <View style={styles.navActive} accessibilityLabel={strings.home_nav_heroes}>
+        <View style={styles.navActiveBody}>
+          <Text style={styles.navGlyph}>HERO</Text>
+        </View>
       </View>
       <NavButton
         glyph="GEAR"
@@ -113,17 +110,14 @@ function NavButton({
   accessibilityLabel: string
 }) {
   return (
-    <Pressable onPress={onPress} accessibilityLabel={accessibilityLabel} style={styles.navTile}>
-      {({ pressed }) => (
-        <>
-          <Image
-            source={pressed ? BUTTONS.chip_arrow_pressed.source : BUTTONS.chip_arrow.source}
-            resizeMode="stretch"
-            style={styles.navImage}
-          />
-          <Text style={styles.navGlyph}>{glyph}</Text>
-        </>
-      )}
+    <Pressable
+      onPress={onPress}
+      accessibilityLabel={accessibilityLabel}
+      style={({ pressed }) => [styles.navBtn, pressed && { transform: [{ translateY: 2 }] }]}
+    >
+      <View style={styles.navBtnBody}>
+        <Text style={styles.navGlyph}>{glyph}</Text>
+      </View>
     </Pressable>
   )
 }
@@ -207,20 +201,34 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     paddingVertical: theme.spacing(2),
   },
-  navTile: {
-    width: 64,
-    height: 64,
-    alignItems: 'center',
-    justifyContent: 'center',
+  navBtn: {
+    borderWidth: 2,
+    borderColor: tavernColors.edge,
+    backgroundColor: tavernColors.edge,
   },
-  navImage: {
-    ...StyleSheet.absoluteFillObject,
-    width: '100%',
-    height: '100%',
+  navBtnBody: {
+    backgroundColor: tavernColors.mid,
+    borderTopWidth: 2,
+    borderTopColor: tavernColors.light,
+    borderBottomWidth: 2,
+    borderBottomColor: tavernColors.dark,
+    padding: theme.spacing(1.5),
+  },
+  navActive: {
+    borderWidth: 2,
+    borderColor: tavernColors.gold,
+    backgroundColor: tavernColors.goldEdge,
+  },
+  navActiveBody: {
+    backgroundColor: tavernColors.mid,
+    borderTopWidth: 2,
+    borderTopColor: tavernColors.goldLight,
+    borderBottomWidth: 2,
+    borderBottomColor: tavernColors.goldEdge,
+    padding: theme.spacing(1.5),
   },
   navGlyph: {
     ...theme.type.label,
-    fontSize: 10,
     color: tavernColors.gold,
     letterSpacing: 1,
   },

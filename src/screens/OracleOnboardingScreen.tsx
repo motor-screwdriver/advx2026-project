@@ -129,7 +129,13 @@ export function OracleOnboardingScreen() {
             {stage && (
               <View style={{ width: stage.width, height: stage.height }}>
                 <LumaTavernScene
-                  variant={state.phase === 'result' ? 'result' : 'question'}
+                  variant={
+                    state.phase === 'result'
+                      ? 'result'
+                      : state.phase === 'welcome'
+                        ? 'welcome'
+                        : 'question'
+                  }
                   speaking={speaking}
                   stage={stage}
                 />

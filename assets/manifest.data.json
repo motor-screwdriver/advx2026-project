@@ -305,168 +305,6 @@
       "path": "audio/sfx_victory.wav"
     }
   },
-  "buttons": {
-    "btn_gear": {
-      "frameHeight": 434,
-      "frameWidth": 438,
-      "frames": 1,
-      "height": 434,
-      "path": "buttons/gen/btn_gear.png",
-      "width": 438
-    },
-    "btn_gear_pressed": {
-      "frameHeight": 434,
-      "frameWidth": 438,
-      "frames": 1,
-      "height": 434,
-      "path": "buttons/gen/btn_gear_pressed.png",
-      "width": 438
-    },
-    "btn_gold": {
-      "frameHeight": 236,
-      "frameWidth": 636,
-      "frames": 1,
-      "height": 236,
-      "path": "buttons/gen/btn_gold.png",
-      "width": 636
-    },
-    "btn_gold_cta": {
-      "frameHeight": 242,
-      "frameWidth": 626,
-      "frames": 1,
-      "height": 242,
-      "path": "buttons/gen/btn_gold_cta.png",
-      "width": 626
-    },
-    "btn_gold_cta_pressed": {
-      "frameHeight": 242,
-      "frameWidth": 626,
-      "frames": 1,
-      "height": 242,
-      "path": "buttons/gen/btn_gold_cta_pressed.png",
-      "width": 626
-    },
-    "btn_gold_pressed": {
-      "frameHeight": 236,
-      "frameWidth": 636,
-      "frames": 1,
-      "height": 236,
-      "path": "buttons/gen/btn_gold_pressed.png",
-      "width": 636
-    },
-    "btn_nav_round": {
-      "frameHeight": 320,
-      "frameWidth": 322,
-      "frames": 1,
-      "height": 320,
-      "path": "buttons/gen/btn_nav_round.png",
-      "width": 322
-    },
-    "btn_nav_round_pressed": {
-      "frameHeight": 320,
-      "frameWidth": 322,
-      "frames": 1,
-      "height": 320,
-      "path": "buttons/gen/btn_nav_round_pressed.png",
-      "width": 322
-    },
-    "btn_sunken": {
-      "frameHeight": 248,
-      "frameWidth": 602,
-      "frames": 1,
-      "height": 248,
-      "path": "buttons/gen/btn_sunken.png",
-      "width": 602
-    },
-    "btn_sunken_pressed": {
-      "frameHeight": 248,
-      "frameWidth": 602,
-      "frames": 1,
-      "height": 248,
-      "path": "buttons/gen/btn_sunken_pressed.png",
-      "width": 602
-    },
-    "btn_wood": {
-      "frameHeight": 214,
-      "frameWidth": 638,
-      "frames": 1,
-      "height": 214,
-      "path": "buttons/gen/btn_wood.png",
-      "width": 638
-    },
-    "btn_wood_compact": {
-      "frameHeight": 141,
-      "frameWidth": 578,
-      "frames": 1,
-      "height": 141,
-      "path": "buttons/gen/btn_wood_compact.png",
-      "width": 578
-    },
-    "btn_wood_compact_pressed": {
-      "frameHeight": 141,
-      "frameWidth": 578,
-      "frames": 1,
-      "height": 141,
-      "path": "buttons/gen/btn_wood_compact_pressed.png",
-      "width": 578
-    },
-    "btn_wood_pressed": {
-      "frameHeight": 214,
-      "frameWidth": 638,
-      "frames": 1,
-      "height": 214,
-      "path": "buttons/gen/btn_wood_pressed.png",
-      "width": 638
-    },
-    "chip_arrow": {
-      "frameHeight": 358,
-      "frameWidth": 357,
-      "frames": 1,
-      "height": 358,
-      "path": "buttons/gen/chip_arrow.png",
-      "width": 357
-    },
-    "chip_arrow_active": {
-      "frameHeight": 342,
-      "frameWidth": 344,
-      "frames": 1,
-      "height": 342,
-      "path": "buttons/gen/chip_arrow_active.png",
-      "width": 344
-    },
-    "chip_arrow_active_pressed": {
-      "frameHeight": 342,
-      "frameWidth": 344,
-      "frames": 1,
-      "height": 342,
-      "path": "buttons/gen/chip_arrow_active_pressed.png",
-      "width": 344
-    },
-    "chip_arrow_pressed": {
-      "frameHeight": 358,
-      "frameWidth": 357,
-      "frames": 1,
-      "height": 358,
-      "path": "buttons/gen/chip_arrow_pressed.png",
-      "width": 357
-    },
-    "chip_dark": {
-      "frameHeight": 236,
-      "frameWidth": 610,
-      "frames": 1,
-      "height": 236,
-      "path": "buttons/gen/chip_dark.png",
-      "width": 610
-    },
-    "chip_dark_pressed": {
-      "frameHeight": 236,
-      "frameWidth": 610,
-      "frames": 1,
-      "height": 236,
-      "path": "buttons/gen/chip_dark_pressed.png",
-      "width": 610
-    }
-  },
   "design": {
     "gen_book_page_right_crop": {
       "frameHeight": 233,
@@ -976,12 +814,28 @@
       "path": "luma/s1_base.png",
       "width": 1080
     },
+    "s1_base_start": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_base_start.png",
+      "width": 1080
+    },
     "s1_blink": {
       "frameHeight": 1920,
       "frameWidth": 1080,
       "frames": 1,
       "height": 1920,
       "path": "luma/s1_blink.png",
+      "width": 1080
+    },
+    "s1_blink_start": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_blink_start.png",
       "width": 1080
     },
     "s1_env2": {
@@ -992,12 +846,28 @@
       "path": "luma/s1_env2.png",
       "width": 1080
     },
+    "s1_env2_start": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_env2_start.png",
+      "width": 1080
+    },
     "s1_env3": {
       "frameHeight": 1920,
       "frameWidth": 1080,
       "frames": 1,
       "height": 1920,
       "path": "luma/s1_env3.png",
+      "width": 1080
+    },
+    "s1_env3_start": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_env3_start.png",
       "width": 1080
     },
     "s1_env4": {
@@ -1008,6 +878,14 @@
       "path": "luma/s1_env4.png",
       "width": 1080
     },
+    "s1_env4_start": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_env4_start.png",
+      "width": 1080
+    },
     "s1_talk_half": {
       "frameHeight": 1920,
       "frameWidth": 1080,
@@ -1016,12 +894,28 @@
       "path": "luma/s1_talk_half.png",
       "width": 1080
     },
+    "s1_talk_half_start": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_talk_half_start.png",
+      "width": 1080
+    },
     "s1_talk_open": {
       "frameHeight": 1920,
       "frameWidth": 1080,
       "frames": 1,
       "height": 1920,
       "path": "luma/s1_talk_open.png",
+      "width": 1080
+    },
+    "s1_talk_open_start": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_talk_open_start.png",
       "width": 1080
     },
     "s2_base": {
