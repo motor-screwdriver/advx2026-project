@@ -31,6 +31,10 @@ docs
 assets/_src/
 **__pycache__**
 
+# Raw hand-drawn art drops — imported into assets/ by tools/import_luma_*.py
+luma_tavern_icons/
+экран_утро_сон/
+
 # macOS
 .DS_Store
 *.pem

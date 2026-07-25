@@ -96,9 +96,9 @@ export const stringsExtra = {
   phoenix_gone: 'The phoenix has flown. No feather remains.',
 
   // Morning chat with Luma
-  morning_chat_top_label: 'Morning Reflection',
   morning_chat_skip: 'SKIP',
   morning_chat_done: 'Continue your quest',
+  morning_chat_input_hint: 'Write your answer...',
   morning_chat_greeting_loading: 'Luma stirs her morning tea...',
   morning_chat_error_title: 'The morning mist is thick',
   morning_chat_error_body: 'Could not reach Luma. Skip or retry.',
