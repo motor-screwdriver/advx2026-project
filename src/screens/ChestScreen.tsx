@@ -6,17 +6,20 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import type { ChestLoot } from '../contracts/types'
 import { playSfx } from '../systems/audio'
 import { makePop, makeShake } from '../ui/animations'
-import { TavernFrame } from '../ui/tavern'
 import { useGame } from '../ui/useGame'
-import { ClosedStage, RevealStage } from './ChestParts'
+import { ClosedStage } from './ChestParts'
+import { RevealStage } from './ChestReveal'
 
 export function ChestScreen() {
   const router = useRouter()
-  const { openChest } = useGame()
+  const { state, openChest } = useGame()
   const [loot, setLoot] = useState<ChestLoot | null>(null)
   const [triedEmpty, setTriedEmpty] = useState(false)
   const shakeX = useRef(new Animated.Value(0)).current
   const pop = useRef(new Animated.Value(0)).current
+
+  // A held Lucky Coin turns the closed stage gold (mockup 26).
+  const lucky = state.artifacts.includes('lucky_coin')
 
   // The whole stage is the tap target — no tiny button to hunt for.
   const open = () => {
@@ -33,13 +36,11 @@ export function ChestScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <TavernFrame>
-        {!loot ? (
-          <ClosedStage shakeX={shakeX} triedEmpty={triedEmpty} onOpen={open} />
-        ) : (
-          <RevealStage loot={loot} pop={pop} onTake={() => router.back()} />
-        )}
-      </TavernFrame>
+      {!loot ? (
+        <ClosedStage lucky={lucky} shakeX={shakeX} triedEmpty={triedEmpty} onOpen={open} />
+      ) : (
+        <RevealStage loot={loot} pop={pop} onTake={() => router.back()} />
+      )}
     </SafeAreaView>
   )
 }

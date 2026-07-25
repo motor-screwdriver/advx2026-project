@@ -306,6 +306,118 @@
     }
   },
   "design": {
+    "chest_button_claim": {
+      "frameHeight": 186,
+      "frameWidth": 626,
+      "frames": 1,
+      "height": 186,
+      "path": "design/chest/30-button-claim.png",
+      "width": 626
+    },
+    "chest_candle_l": {
+      "frameHeight": 310,
+      "frameWidth": 110,
+      "frames": 1,
+      "height": 310,
+      "path": "design/chest/23-candle-l.png",
+      "width": 110
+    },
+    "chest_candle_r": {
+      "frameHeight": 310,
+      "frameWidth": 158,
+      "frames": 1,
+      "height": 310,
+      "path": "design/chest/24-candle-r.png",
+      "width": 158
+    },
+    "chest_card_frame": {
+      "frameHeight": 626,
+      "frameWidth": 522,
+      "frames": 1,
+      "height": 626,
+      "path": "design/chest/28-card-frame.png",
+      "width": 522
+    },
+    "chest_chest_gold": {
+      "frameHeight": 544,
+      "frameWidth": 626,
+      "frames": 1,
+      "height": 544,
+      "path": "design/chest/34-chest-gold.png",
+      "width": 626
+    },
+    "chest_chest_open_glow": {
+      "frameHeight": 486,
+      "frameWidth": 612,
+      "frames": 1,
+      "height": 486,
+      "path": "design/chest/29-chest-open-glow.png",
+      "width": 612
+    },
+    "chest_chest_steel": {
+      "frameHeight": 478,
+      "frameWidth": 626,
+      "frames": 1,
+      "height": 478,
+      "path": "design/chest/22-chest-steel.png",
+      "width": 626
+    },
+    "chest_plaque_ready": {
+      "frameHeight": 154,
+      "frameWidth": 582,
+      "frames": 1,
+      "height": 154,
+      "path": "design/chest/21-plaque-ready.png",
+      "width": 582
+    },
+    "chest_ribbon_lucky": {
+      "frameHeight": 90,
+      "frameWidth": 622,
+      "frames": 1,
+      "height": 90,
+      "path": "design/chest/35-ribbon-lucky.png",
+      "width": 622
+    },
+    "chest_ribbon_rare": {
+      "frameHeight": 146,
+      "frameWidth": 382,
+      "frames": 1,
+      "height": 146,
+      "path": "design/chest/27-ribbon-rare.png",
+      "width": 382
+    },
+    "chest_sparkle_1": {
+      "frameHeight": 42,
+      "frameWidth": 38,
+      "frames": 1,
+      "height": 42,
+      "path": "design/chest/31-sparkle-1.png",
+      "width": 38
+    },
+    "chest_title_weekly_chest": {
+      "frameHeight": 156,
+      "frameWidth": 622,
+      "frames": 1,
+      "height": 156,
+      "path": "design/chest/20-title-weekly-chest.png",
+      "width": 622
+    },
+    "chest_title_weekly_chest_gold": {
+      "frameHeight": 158,
+      "frameWidth": 612,
+      "frames": 1,
+      "height": 158,
+      "path": "design/chest/33-title-weekly-chest-gold.png",
+      "width": 612
+    },
+    "chest_title_weekly_loot": {
+      "frameHeight": 128,
+      "frameWidth": 612,
+      "frames": 1,
+      "height": 128,
+      "path": "design/chest/26-title-weekly-loot.png",
+      "width": 612
+    },
     "gen_book_page_right_crop": {
       "frameHeight": 233,
       "frameWidth": 244,
