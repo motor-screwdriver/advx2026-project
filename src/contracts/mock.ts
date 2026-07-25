@@ -19,6 +19,7 @@ import type {
 
 const MAX_HP = 7
 const PERFECT_WEEK_NIGHTS = 7
+const XP_PER_LEVEL = 700 // level 1 at 0 XP, +1 level every 700 XP
 const MAX_DEVIATION_MIN = 120
 const OVERSLEEP_GRACE_MIN = 120
 const OVERSLEEP_PENALTY = 10
@@ -107,11 +108,14 @@ export function applyNightResult(
 ): GameState {
   const hp = clamp(state.hp + evaluation.hpDelta, 0, MAX_HP)
   const streak = evaluation.hpDelta < 0 ? 0 : state.perfectWeekStreak + 1
-  const leveledUp = streak >= PERFECT_WEEK_NIGHTS
+  const completedWeek = streak >= PERFECT_WEEK_NIGHTS
   const hero = state.hero
     ? {
         ...state.hero,
-        level: state.hero.level + (leveledUp ? 1 : 0),
+        level:
+          state.hero.level +
+          Math.floor((state.hero.xp + evaluation.xp) / XP_PER_LEVEL) -
+          Math.floor(state.hero.xp / XP_PER_LEVEL),
         xp: state.hero.xp + evaluation.xp,
       }
     : null
@@ -128,7 +132,7 @@ export function applyNightResult(
     ...state,
     hp,
     hero,
-    perfectWeekStreak: leveledUp ? 0 : streak,
+    perfectWeekStreak: completedWeek ? 0 : streak,
     nights: [...state.nights, record],
   }
 }
@@ -150,7 +154,7 @@ const FAKE_NIGHTS: readonly [NightOutcome, number][] = [
 export function mockGameState(): GameState {
   return {
     window: { bedMin: 690, wakeMin: 1140 }, // 23:30 -> 07:00
-    hero: { type: 'knight', name: 'Knight', level: 2, xp: 140 },
+    hero: { type: 'knight', name: 'Knight', level: 2, xp: 840 }, // 700 + 140 into level 2
     hp: 6,
     perfectWeekStreak: 3,
     nights: fakeNights(),

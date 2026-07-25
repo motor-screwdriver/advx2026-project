@@ -86,16 +86,16 @@ export function HeroStage({
   )
 }
 
-/** Night HUD (hearts/streak/level up top, WAKE UP dock at the bottom):
+/** Night HUD (hearts/XP/level up top, WAKE UP dock at the bottom):
  * fades in and floats up gently on mount so it never just snaps into place. */
 export function AsleepHUD({
   hp,
-  streak,
+  xp,
   level,
   onWake,
 }: {
   hp: number
-  streak: number
+  xp: number
   level: number
   onWake: () => void
 }) {
@@ -117,7 +117,7 @@ export function AsleepHUD({
       style={[styles.hud, { opacity: fade, transform: [{ translateY: rise }] }]}
       pointerEvents="box-none"
     >
-      <TopBar hp={hp} streak={streak} level={level} />
+      <TopBar hp={hp} xp={xp} level={level} />
       <View style={styles.stageSpacer} pointerEvents="none" />
       <Dock onWake={onWake} />
     </Animated.View>

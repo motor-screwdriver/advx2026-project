@@ -98,12 +98,7 @@ function HeroHome() {
       <HeroStage asleep={asleep} state={state} onSleep={onSleep} />
       <SafeAreaView style={styles.safe} pointerEvents="box-none">
         {asleep ? (
-          <AsleepHUD
-            hp={state.hp}
-            streak={state.perfectWeekStreak}
-            level={hero.level}
-            onWake={onWake}
-          />
+          <AsleepHUD hp={state.hp} xp={hero.xp} level={hero.level} onWake={onWake} />
         ) : (
           <View style={styles.stageSpacer} pointerEvents="none" />
         )}

@@ -1,5 +1,5 @@
 import type { NightEvaluation } from '../../contracts/types'
-import { applyNightOutcome, NightModifierContext, updateStreak } from '../levels'
+import { applyNightOutcome, levelForXp, NightModifierContext, updateStreak } from '../levels'
 
 const terrible: NightEvaluation = {
   bedTime: 690,
@@ -80,19 +80,29 @@ describe('applyNightOutcome modifiers (spec §2 step 7 order)', () => {
 
 describe('updateStreak (Perfect Week, spec §4.1)', () => {
   it('increments on nights without HP loss', () => {
-    expect(updateStreak(3, 0, 'GOOD')).toEqual({ streak: 4, leveledUp: false })
-    expect(updateStreak(3, 1, 'PERFECT')).toEqual({ streak: 4, leveledUp: false })
+    expect(updateStreak(3, 0, 'GOOD')).toEqual({ streak: 4, completedWeek: false })
+    expect(updateStreak(3, 1, 'PERFECT')).toEqual({ streak: 4, completedWeek: false })
   })
 
   it('resets on any HP loss', () => {
-    expect(updateStreak(6, -1, 'BAD')).toEqual({ streak: 0, leveledUp: false })
+    expect(updateStreak(6, -1, 'BAD')).toEqual({ streak: 0, completedWeek: false })
   })
 
-  it('levels up and resets at 7 consecutive nights', () => {
-    expect(updateStreak(6, 1, 'PERFECT')).toEqual({ streak: 0, leveledUp: true })
+  it('completes and resets at 7 consecutive nights', () => {
+    expect(updateStreak(6, 1, 'PERFECT')).toEqual({ streak: 0, completedWeek: true })
   })
 
   it('a MISSED night neither builds nor breaks the streak', () => {
-    expect(updateStreak(4, 0, 'MISSED')).toEqual({ streak: 4, leveledUp: false })
+    expect(updateStreak(4, 0, 'MISSED')).toEqual({ streak: 4, completedWeek: false })
+  })
+})
+
+describe('levelForXp (a level every 700 XP)', () => {
+  it('starts at level 1 and steps up on each 700-XP boundary', () => {
+    expect(levelForXp(0)).toBe(1)
+    expect(levelForXp(699)).toBe(1)
+    expect(levelForXp(700)).toBe(2)
+    expect(levelForXp(1399)).toBe(2)
+    expect(levelForXp(1400)).toBe(3)
   })
 })
