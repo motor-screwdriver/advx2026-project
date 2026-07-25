@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Animated, Pressable, StyleSheet, Text } from 'react-native'
+import { Animated, Pressable } from 'react-native'
 
-import { HintStrip, RoundPips, TapButtonVisual, TetherBar, TetherScene } from './SoulTetherParts'
 import {
   ROUNDS_TO_WIN,
   ROUND_COUNT,
@@ -9,12 +8,11 @@ import {
   roundZoneWidth,
   type GoldenZone,
 } from './soulTetherLogic'
+import { SoulTetherSheet } from './SoulTetherSheet'
 import { strings } from './strings'
-import { WoodPanel, tavernColors } from './tavern'
-import { theme } from './theme'
 
 /** Copy from the soul tether mockup that has no strings.ts key yet (local only). */
-const copy = { of: 'OF' } as const
+const copy = { tap: 'TAP' } as const
 
 /**
  * Cursor speed per round (ms per half-sweep). Round 1 is forgiving so the
@@ -25,7 +23,8 @@ const copy = { of: 'OF' } as const
 const ROUND_MS = [1400, 1200, 1000] as const
 
 interface Props {
-  onResult: (success: boolean) => void
+  width: number
+  onResult: (success: boolean, results: boolean[]) => void
 }
 
 function makeZone(round: number): GoldenZone {
@@ -34,7 +33,7 @@ function makeZone(round: number): GoldenZone {
 }
 
 /** Soul Tether: oscillating cursor, tap ANYWHERE inside the golden zone. */
-export function SoulTether({ onResult }: Props) {
+export function SoulTether({ width, onResult }: Props) {
   const [round, setRound] = useState(0)
   const [results, setResults] = useState<boolean[]>([])
   const [zone, setZone] = useState<GoldenZone>(() => makeZone(0))
@@ -53,7 +52,7 @@ export function SoulTether({ onResult }: Props) {
     setFeedback(hit ? strings.soul_hit : strings.soul_miss)
     if (round >= ROUND_COUNT - 1) {
       const hits = nextResults.filter(Boolean).length
-      onResult(hits >= ROUNDS_TO_WIN)
+      onResult(hits >= ROUNDS_TO_WIN, nextResults)
       return
     }
     const nextRound = round + 1
@@ -65,18 +64,17 @@ export function SoulTether({ onResult }: Props) {
   return (
     // onPressIn: the hit must register at touch-down, not finger-lift,
     // otherwise the cursor visibly leaves the zone before the tap lands.
-    <Pressable style={styles.game} onPressIn={tap}>
-      <WoodPanel rivets={false} style={styles.roundPill} contentStyle={styles.roundPillWell}>
-        <Text style={styles.roundText}>
-          {strings.soul_round.toUpperCase()} {round + 1} {copy.of} {ROUND_COUNT}
-        </Text>
-      </WoodPanel>
-      <RoundPips results={results} />
-      <TetherScene />
-      <TetherBar cursor={tether.cursor} zone={zone} />
-      <HintStrip feedback={feedback} />
-      <TapButtonVisual />
-      <Text style={styles.goal}>{strings.soul_goal}</Text>
+    <Pressable onPressIn={tap}>
+      <SoulTetherSheet
+        width={width}
+        round={round}
+        results={results}
+        zone={zone}
+        cursor={tether.cursor}
+        feedback={feedback}
+        feedbackDanger={feedback === strings.soul_miss}
+        label={copy.tap}
+      />
     </Pressable>
   )
 }
@@ -115,16 +113,3 @@ function useTetherCursor() {
 
   return { cursor, cursorPct, oscillation, armed, startOscillation }
 }
-
-const styles = StyleSheet.create({
-  game: { gap: theme.spacing(3) },
-  roundPill: { alignSelf: 'center' },
-  roundPillWell: { paddingVertical: theme.spacing(2), paddingHorizontal: theme.spacing(4) },
-  roundText: {
-    ...theme.type.label,
-    color: tavernColors.goldLight,
-    letterSpacing: 2,
-    textAlign: 'center',
-  },
-  goal: { ...theme.type.label, color: theme.colors.textDim, textAlign: 'center' },
-})

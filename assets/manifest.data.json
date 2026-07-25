@@ -514,14 +514,6 @@
       "path": "design/gen/heroes_bust_warlock.png",
       "width": 64
     },
-    "gen_tether_scene": {
-      "frameHeight": 200,
-      "frameWidth": 200,
-      "frames": 1,
-      "height": 200,
-      "path": "design/gen/tether_scene.png",
-      "width": 200
-    },
     "gen_tutorial_p1": {
       "frameHeight": 160,
       "frameWidth": 160,

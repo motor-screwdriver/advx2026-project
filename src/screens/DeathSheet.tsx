@@ -1,5 +1,5 @@
 import React from 'react'
-import { ImageBackground, Pressable, StyleSheet, View } from 'react-native'
+import { ImageBackground, Pressable, StyleSheet } from 'react-native'
 
 import { strings } from '../ui/strings'
 import { MorningGlow, type GlowSpec } from './MorningGlow'
@@ -33,8 +33,6 @@ interface SheetProps {
   width: number
   /** Label reflects the actual action: soul tether or phoenix feather. */
   tetherLabel: string
-  /** When false the gold plate is dimmed and inert (no charge, no feather). */
-  tetherEnabled: boolean
   onTether: () => void
   onLetGo: () => void
 }
@@ -43,23 +41,19 @@ interface SheetProps {
  * Full-bleed death screen: the mockup sheet itself with a breathing moon
  * glow and two button hotspots over the baked SOUL TETHER / LET GO plates.
  */
-export function DeathSheet({ width, tetherLabel, tetherEnabled, onTether, onLetGo }: SheetProps) {
+export function DeathSheet({ width, tetherLabel, onTether, onLetGo }: SheetProps) {
   const k = width / SRC.w
   const tether = SRC.soulTether
   const letGo = SRC.letGo
   return (
     <ImageBackground source={SHEET} style={{ width, height: SRC.h * k }}>
       <MorningGlow spec={MOON_GLOW} k={k} />
-      {tetherEnabled ? (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={tetherLabel}
-          onPress={onTether}
-          style={({ pressed }) => [rect(tether, k), pressed && styles.pressed]}
-        />
-      ) : (
-        <View style={[rect(tether, k), styles.disabled]} />
-      )}
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={tetherLabel}
+        onPress={onTether}
+        style={({ pressed }) => [rect(tether, k), pressed && styles.pressed]}
+      />
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={strings.death_let_go}
@@ -82,5 +76,4 @@ function rect(r: { x: number; y: number; w: number; h: number }, k: number) {
 
 const styles = StyleSheet.create({
   pressed: { backgroundColor: '#00000030' },
-  disabled: { backgroundColor: '#000000a0', borderRadius: 6 },
 })

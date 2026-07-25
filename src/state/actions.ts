@@ -19,7 +19,6 @@ import { missedEvaluation } from '../engine/night'
 import {
   applyDeathPenalty,
   applyResurrection as applyResurrectionEngine,
-  canResurrect as canResurrectEngine,
 } from '../engine/resurrection'
 import { isWithinMs, todayDate, WEEK_MS } from '../engine/time'
 import { applyNightTurn, NightTurnResult } from '../engine/turn'
@@ -66,12 +65,13 @@ function pushEvents(events: GameEvent[], next: GameEvent[]): GameEvent[] {
   return [...events, ...next].slice(-100)
 }
 
-/** Soul Tether result: success revives at 3 HP and starts the 7-day cooldown. */
+/**
+ * Soul Tether result: success revives at 3 HP, failure is permanent death.
+ * Entry is never blocked — the death screen always offers the tether; the
+ * lastResurrectionAt stamp is kept for stats only.
+ */
 export function tryResurrect(get: GetState, set: SetState, success: boolean, now: Date): void {
   const { game, events } = get()
-  if (!canResurrectEngine(game.lastResurrectionAt, now)) {
-    return
-  }
   set({
     game: applyResurrectionEngine(game, success, now),
     events: success ? pushEvents(events, [event('RESURRECTED', now)]) : events,

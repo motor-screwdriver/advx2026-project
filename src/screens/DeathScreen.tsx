@@ -30,11 +30,11 @@ function NoHeroScreen({ onBack }: { onBack: () => void }) {
  * SOUL TETHER / LET GO hotspots and the moon glow are dynamic.
  *
  * The gold plate runs the phoenix feather when one is held, otherwise a
- * soul-tether resurrection; with neither available it is dimmed out.
+ * soul-tether resurrection — always available on death.
  */
 export function DeathScreen() {
   const go = useScreenTransition()
-  const { state, canResurrect, startNewHero, usePhoenix: activatePhoenix } = useGame()
+  const { state, startNewHero, usePhoenix: activatePhoenix } = useGame()
   const { width, height } = useWindowDimensions()
   // Fit the whole 9:16 sheet on screen so LET GO is always visible.
   const sheetWidth = Math.min(width, (height * 9) / 16)
@@ -69,7 +69,6 @@ export function DeathScreen() {
         <DeathSheet
           width={sheetWidth}
           tetherLabel={hasFeather ? strings.phoenix_offer : strings.death_soul_tether}
-          tetherEnabled={hasFeather || canResurrect()}
           onTether={onTether}
           onLetGo={onLetGo}
         />
