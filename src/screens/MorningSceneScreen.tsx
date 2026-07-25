@@ -1,10 +1,10 @@
-import { useRouter } from 'expo-router'
 import React, { useEffect } from 'react'
 import { StyleSheet, useWindowDimensions, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import type { NightOutcome } from '../contracts/types'
 import { playSfx } from '../systems/audio'
+import { useScreenTransition } from '../ui/screenTransition'
 import { useGame } from '../ui/useGame'
 import { MorningSheet } from './MorningSheet'
 
@@ -17,7 +17,7 @@ import { MorningSheet } from './MorningSheet'
  * coming back here it proceeds to the morning chat as usual.
  */
 export function MorningSceneScreen() {
-  const router = useRouter()
+  const go = useScreenTransition()
   const { state, lastEvaluation, pendingChest } = useGame()
   const { width, height } = useWindowDimensions()
   // Fit the whole 9:16 sheet on screen so CONTINUE is always visible.
@@ -33,11 +33,12 @@ export function MorningSceneScreen() {
 
   const onContinue = () => {
     if (!lastEvaluation) {
-      router.back()
+      go('/', { effect: 'wipe', replace: true })
       return
     }
-    if (pendingChest) router.push('/chest')
-    else router.replace('/morning-chat')
+    if (pendingChest) go('/chest', { effect: 'wipe' })
+    else if (lastEvaluation.outcome === 'MISSED') go('/', { effect: 'wipe', replace: true })
+    else go('/morning-chat', { effect: 'wipe', replace: true })
   }
 
   return (

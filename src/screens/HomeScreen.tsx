@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { playMusic } from '../systems/audio'
 import { DayNightBackground } from '../ui/DayNightBackground'
+import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
 import { GoldButton, WoodPanel } from '../ui/tavern'
 import { theme } from '../ui/theme'
@@ -63,7 +64,7 @@ function useHomeFocusGate(tapLock: { current: boolean }) {
 }
 
 function HeroHome() {
-  const router = useRouter()
+  const go = useScreenTransition()
   const { state, pendingBedTime, sleepNow, wakeNow } = useGame()
   const hero = state.hero!
   const tapLock = useRef(false)
@@ -89,7 +90,7 @@ function HeroHome() {
     tapLock.current = true
     const evaluation = wakeNow()
     const hpAfter = Math.min(Math.max(state.hp + evaluation.hpDelta, 0), MAX_HP)
-    router.push(hpAfter === 0 ? '/death' : '/morning-scene')
+    go(hpAfter === 0 ? '/death' : '/morning-scene', { effect: 'wipe' })
   }
 
   return (
