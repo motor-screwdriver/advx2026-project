@@ -1,108 +1,40 @@
 # 8bit Sleep
 
-A pixel-art tamagotchi (Soul Knight style) where your hero stays alive only while
-**you** sleep. 7 hearts = 7 days of the week. Bad nights deal damage; 0 HP = death
-with one resurrection attempt per 7 days. A perfect week = level up + loot chest.
+Pixel-art sleep tamagotchi. Your hero stays alive only while **you** sleep — bad nights deal damage, a perfect week levels you up and opens a loot chest.
+
+<p align="center">
+  <img src="assets/pixellab/root/icon.png" alt="8bit Sleep" width="96" height="96" />
+</p>
+
+<p align="center">
+  <img alt="Expo" src="https://img.shields.io/badge/Expo-54-000000?style=flat-square&logo=expo&logoColor=white" />
+  <img alt="React Native" src="https://img.shields.io/badge/React_Native-0.81-61DAFB?style=flat-square&logo=react&logoColor=black" />
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" />
+  <img alt="Zustand" src="https://img.shields.io/badge/Zustand-5-443E38?style=flat-square" />
+  <img alt="Go" src="https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat-square&logo=go&logoColor=white" />
+  <img alt="Jest" src="https://img.shields.io/badge/Jest-29-C21325?style=flat-square&logo=jest&logoColor=white" />
+  <img alt="pnpm" src="https://img.shields.io/badge/pnpm-9-F69220?style=flat-square&logo=pnpm&logoColor=white" />
+</p>
 
 ## Stack
 
-- Expo **SDK 54** + React Native + TypeScript, Expo Router (`app/` = thin routes).
-  Do NOT upgrade the Expo SDK beyond what the store Expo Go app supports —
-  the hackathon demo runs by scanning a QR with store Expo Go (check
-  `expoGoSdkVersion` at https://api.expo.dev/v2/versions before bumping).
-- Zustand + AsyncStorage (state/persistence, offline-first, no accounts)
-- Expo Notifications (local only)
-- Jest + ts-jest (engine tests)
+- **App:** Expo SDK 54 · React Native · TypeScript · Expo Router
+- **State:** Zustand + AsyncStorage (offline-first)
+- **Backend:** Go (`server/`) — AI oracle, morning chat, Mi Fitness
+- **Tests:** Jest · ESLint · `pnpm run check`
+
+> Demo runs in store **Expo Go** — don't bump Expo past what Expo Go supports.
 
 ## Run
 
 ```bash
 pnpm install
-pnpm start          # Expo dev server — scan the QR with Expo Go
+cp .env.example .env    # set EXPO_PUBLIC_API_ORIGIN if you need the API
+pnpm start              # scan QR with Expo Go
 ```
-
-## Verify
 
 ```bash
-pnpm run check      # = lint (eslint + boundaries) + typecheck (tsc) + jest
+pnpm run check          # lint + typecheck + jest (before commit)
 ```
 
-`pnpm run check` must be green before every commit. No file may exceed 250 lines
-and no function 60 lines — ESLint enforces both.
-
-Import boundaries are enforced by `eslint-plugin-boundaries` (see
-`eslint.config.js`): contracts imports nothing, engine never imports UI,
-screens never import `engine` directly.
-
-## AI oracle backend (Go)
-
-First-run onboarding is a conversation with Luma (tavern-style sleep oracle).
-The client POSTs chat turns to `/api/oracle`; the only backend is the Go
-service in `server/` (stdlib only, LLM API key + system prompt stay
-server-side). The Go service proxies to a self-hosted vLLM server
-(Qwen2.5-7B-Instruct on a rented RTX 5090), reached through a reverse SSH
-tunnel on host loopback (`AI_BASE_URL`, default `http://127.0.0.1:8000/v1`).
-Wire contract: `src/contracts/aiOnboarding.ts`.
-
-Local client development runs against the deployed backend — set
-`EXPO_PUBLIC_API_ORIGIN` in `.env` (see `.env.example`). Backend changes:
-
-```bash
-cd server && go test ./...    # toolchain note: see below
-```
-
-## Deploy (CI only)
-
-`.github/workflows/deploy-server.yml` deploys on manual dispatch only
-(Actions → Deploy server → Run workflow, from any branch): `go vet` +
-`go test`, rsyncs `server/` to the host, writes `/opt/8bit-sleep/server.env`
-(chmod 600) from secrets, then `docker build` + `docker run` on the host. The
-container runs with `--network=host` (so it can reach the LLM tunnel on
-host loopback) and binds `HOST_PORT` (8080) itself; clients call the API
-directly at `http://<host>:8080` (`/api/oracle`, `/healthz`). There is no
-TLS proxy in front — plain HTTP only.
-
-Required GitHub secrets: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_PASSWORD`,
-`AI_API_KEY`, `AI_BASE_URL`; optional: `AI_MODEL`. The host firewall must
-allow inbound TCP on `HOST_PORT` (8080). The GPU box must be up with the
-reverse tunnel active before deploy, or the post-deploy oracle check fails.
-
-A Go toolchain lives in `tools/.go/` locally (gitignored): prefix commands
-with `tools/.go/go/bin/` or add it to PATH.
-
-## Git rules (trunk-based)
-
-- Everyone works on `main`. No branches, no pull requests.
-- `git pull` before starting work. Commit small and often.
-- Commit only inside your own folders. Unfinished work hides behind
-  `FLAGS` in `src/contracts/flags.ts` — `main` must always boot.
-
-## Systems (Dev D)
-
-- **Notifications** (`src/systems/notifications.ts`): daily bedtime reminder at
-  bedMin − 60 (hero-persona copy pool) + morning summary at wakeMin + 15 when
-  not checked in yet. Local pushes only; denial is graceful. Re-synced on app
-  open, window change and every night result via `initSystems()`.
-- **Demo mode** (`src/systems/demoMode.ts` + `DemoPanel.tsx`): hidden 5-tap
-  gesture on the Settings version label → floating panel
-  [PERFECT] [BAD] [DEATH] [RESET]. Nights run through the real store (the true
-  morning-scene/death flow); [RESET] restores the pre-demo snapshot.
-- **E-ink** (`src/systems/eink.ts`, FLAGS.eink): Dot Quote/0 hero + stats cards
-  pushed from the phone after night results / resurrection / level-ups / equips
-  (5 s debounce, all failures silent). Setup: flip `FLAGS.eink`, enter device ID
-  - API key in Settings → "Send test card".
-- **Sharing** (`src/systems/share.ts`): `shareViewAsPng(ref, title)` captures any
-  view (Mosaic) via react-native-view-shot → expo-sharing.
-- **Health auto-detect**: CUT — see the spike note in `src/systems/healthSync.ts`
-  (needs a dev build; the demo must stay on store Expo Go). Manual check-in stays.
-
-### E-ink fallback (booth insurance)
-
-If the Dot API misbehaves on-site, push a static card from a laptop — the booth
-never goes dark:
-
-```bash
-curl -X POST https://dot.mindreset.tech/api/authV2/open/device/DEVICE_ID/image \
-  -H 'Authorization: Bearer dot_app_KEY' -H 'Content-Type: application/json' \
-  -d '{"image": "<base64 PNG>", "border": 1, "ditherType": "NONE"}'
-```
+Keep your sleep.
