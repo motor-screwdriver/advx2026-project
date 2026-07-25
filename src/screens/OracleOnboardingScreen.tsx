@@ -1,37 +1,30 @@
 import { useRouter } from 'expo-router'
-import React from 'react'
+import React, { useState } from 'react'
 import {
   KeyboardAvoidingView,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
-  useWindowDimensions,
   View,
+  type LayoutChangeEvent,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import type { SleepRecommendation } from '../contracts/aiOnboarding'
-import { DayNightBackground } from '../ui/DayNightBackground'
-import { OracleChatPanel } from '../ui/OracleChatPanel'
-import { OracleErrorPanel, OracleResultPanel, OracleWelcomePanel } from '../ui/OraclePanels'
-import { OracleStage } from '../ui/OracleStage'
+import {
+  LumaChatOverlay,
+  LumaErrorOverlay,
+  LumaResultOverlay,
+  LumaWelcomeOverlay,
+} from '../ui/LumaTavernOverlays'
+import { LumaTavernScene } from '../ui/LumaTavernScene'
+import { fitStage, type StageSize } from '../ui/lumaTavernLayout'
 import { strings } from '../ui/strings'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
 import { useOracleChat } from '../ui/useOracleChat'
-
-function TopBar({ hidden, onSkip }: { hidden: boolean; onSkip: () => void }) {
-  return (
-    <View style={styles.topBar}>
-      <Text style={styles.topLabel}>{strings.oracle_top_label}</Text>
-      {!hidden && (
-        <Pressable accessibilityRole="button" onPress={onSkip} hitSlop={10}>
-          <Text style={styles.skip}>{strings.oracle_skip}</Text>
-        </Pressable>
-      )}
-    </View>
-  )
-}
+import { useTypewriter } from '../ui/useTypewriter'
 
 function useOracleActions(recommendation: SleepRecommendation | null) {
   const router = useRouter()
@@ -60,59 +53,127 @@ function useOracleActions(recommendation: SleepRecommendation | null) {
   return { manual, adjust, accept }
 }
 
+interface TavernOverlayProps {
+  stage: StageSize
+  state: ReturnType<typeof useOracleChat>['state']
+  text: string
+  start: () => void
+  send: (text: string) => void
+  retry: () => void
+  manual: () => void
+  adjust: () => void
+  accept: () => void
+}
+
+/** Phase-dependent content layered over the baked areas of the artwork. */
+function TavernOverlay(props: TavernOverlayProps) {
+  const { stage, state } = props
+  if (state.phase === 'welcome') {
+    return <LumaWelcomeOverlay stage={stage} onStart={props.start} onManual={props.manual} />
+  }
+  if (state.phase === 'chat') {
+    return (
+      <LumaChatOverlay
+        stage={stage}
+        text={props.text}
+        suggestions={state.suggestions}
+        loading={state.loading}
+        onSend={props.send}
+      />
+    )
+  }
+  if (state.phase === 'error') {
+    return <LumaErrorOverlay stage={stage} onRetry={props.retry} onManual={props.manual} />
+  }
+  if (state.phase === 'result' && state.recommendation) {
+    return (
+      <LumaResultOverlay
+        stage={stage}
+        recommendation={state.recommendation}
+        message={props.text}
+        onAccept={props.accept}
+        onAdjust={props.adjust}
+      />
+    )
+  }
+  return null
+}
+
+/**
+ * First-run chat with Luma inside the hand-drawn Hearthlight Tavern scene.
+ * The 9:16 stage letterboxes into the free space; dialogue, answer slots and
+ * the input row sit exactly on the baked areas of the artwork.
+ */
 export function OracleOnboardingScreen() {
-  const { height } = useWindowDimensions()
   const { state, start, send, retry } = useOracleChat()
   const { manual, adjust, accept } = useOracleActions(state.recommendation)
-  const compact = height < 700
+  const [stage, setStage] = useState<StageSize | null>(null)
   const lastOracleText = [...state.messages].reverse().find((m) => m.role === 'oracle')?.text ?? ''
+  const rawText = state.loading ? strings.oracle_thinking : lastOracleText
+  const typed = useTypewriter(rawText, state.phase !== 'welcome' && !state.loading)
+  const speaking = !state.loading && !typed.done
+
+  const onLayout = (event: LayoutChangeEvent) => {
+    const { width, height } = event.nativeEvent.layout
+    setStage(fitStage(width, height))
+  }
+
   return (
     <View style={styles.screen}>
-      <DayNightBackground phase="night" />
-      <View pointerEvents="none" style={styles.scrim} />
-      <SafeAreaView style={[styles.safe, compact && styles.safeCompact]}>
-        <KeyboardAvoidingView style={styles.avoider}>
-          <TopBar hidden={state.phase === 'result'} onSkip={manual} />
-          <OracleStage thinking={state.loading} compact={compact} />
-          <View style={styles.panelWrap}>
-            {state.phase === 'welcome' && <OracleWelcomePanel onStart={start} onManual={manual} />}
-            {state.phase === 'chat' && (
-              <OracleChatPanel
-                messages={state.messages}
-                suggestions={state.suggestions}
-                loading={state.loading}
-                onSend={send}
-              />
-            )}
-            {state.phase === 'error' && <OracleErrorPanel onRetry={retry} onManual={manual} />}
-            {state.phase === 'result' && state.recommendation && (
-              <OracleResultPanel
-                recommendation={state.recommendation}
-                message={lastOracleText}
-                onAccept={accept}
-                onAdjust={adjust}
-              />
+      <SafeAreaView style={styles.safe}>
+        <KeyboardAvoidingView
+          style={styles.avoider}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          <View style={styles.center} onLayout={onLayout}>
+            {stage && (
+              <View style={{ width: stage.width, height: stage.height }}>
+                <LumaTavernScene
+                  variant={state.phase === 'result' ? 'result' : 'question'}
+                  speaking={speaking}
+                  stage={stage}
+                />
+                <TavernOverlay
+                  stage={stage}
+                  state={state}
+                  text={typed.shown}
+                  start={start}
+                  send={send}
+                  retry={retry}
+                  manual={manual}
+                  adjust={adjust}
+                  accept={accept}
+                />
+              </View>
             )}
           </View>
         </KeyboardAvoidingView>
+        {state.phase !== 'result' && (
+          <Pressable accessibilityRole="button" onPress={manual} hitSlop={10} style={styles.skip}>
+            <Text style={styles.skipText}>{strings.oracle_skip}</Text>
+          </Pressable>
+        )}
       </SafeAreaView>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: theme.colors.bg },
-  scrim: { ...StyleSheet.absoluteFillObject, backgroundColor: '#0a082044' },
-  safe: { flex: 1, padding: theme.spacing(4) },
-  safeCompact: { paddingVertical: theme.spacing(2) },
-  avoider: { flex: 1, gap: theme.spacing(2), justifyContent: 'flex-start' },
-  topBar: {
-    minHeight: 34,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  screen: { flex: 1, backgroundColor: '#150d08' },
+  safe: { flex: 1 },
+  avoider: { flex: 1 },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  skip: {
+    position: 'absolute',
+    top: theme.spacing(2),
+    right: theme.spacing(3),
+    padding: theme.spacing(2),
   },
-  topLabel: { ...theme.type.label, color: theme.colors.textDim, textTransform: 'uppercase' },
-  skip: { ...theme.type.label, color: theme.colors.textDim, padding: theme.spacing(2) },
-  panelWrap: { width: '100%', maxWidth: 520, alignSelf: 'center' },
+  skipText: {
+    ...theme.type.label,
+    color: theme.colors.textDim,
+    textTransform: 'uppercase',
+    textShadowColor: '#000000',
+    textShadowRadius: 3,
+  },
 })

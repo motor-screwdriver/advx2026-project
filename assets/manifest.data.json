@@ -757,6 +757,144 @@
       "width": 32
     }
   },
+  "luma": {
+    "btn_accept": {
+      "frameHeight": 162,
+      "frameWidth": 703,
+      "frames": 1,
+      "height": 162,
+      "path": "luma/btn_accept.png",
+      "width": 703
+    },
+    "btn_accept_down": {
+      "frameHeight": 162,
+      "frameWidth": 703,
+      "frames": 1,
+      "height": 162,
+      "path": "luma/btn_accept_down.png",
+      "width": 703
+    },
+    "btn_adjust": {
+      "frameHeight": 115,
+      "frameWidth": 424,
+      "frames": 1,
+      "height": 115,
+      "path": "luma/btn_adjust.png",
+      "width": 424
+    },
+    "btn_adjust_down": {
+      "frameHeight": 115,
+      "frameWidth": 424,
+      "frames": 1,
+      "height": 115,
+      "path": "luma/btn_adjust_down.png",
+      "width": 424
+    },
+    "btn_empty": {
+      "frameHeight": 129,
+      "frameWidth": 959,
+      "frames": 1,
+      "height": 129,
+      "path": "luma/btn_empty.png",
+      "width": 959
+    },
+    "btn_empty_down": {
+      "frameHeight": 129,
+      "frameWidth": 959,
+      "frames": 1,
+      "height": 129,
+      "path": "luma/btn_empty_down.png",
+      "width": 959
+    },
+    "s1_base": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_base.png",
+      "width": 1080
+    },
+    "s1_blink": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_blink.png",
+      "width": 1080
+    },
+    "s1_env2": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_env2.png",
+      "width": 1080
+    },
+    "s1_env3": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_env3.png",
+      "width": 1080
+    },
+    "s1_env4": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_env4.png",
+      "width": 1080
+    },
+    "s1_talk_half": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_talk_half.png",
+      "width": 1080
+    },
+    "s1_talk_open": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s1_talk_open.png",
+      "width": 1080
+    },
+    "s2_base": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s2_base.png",
+      "width": 1080
+    },
+    "s2_blink": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s2_blink.png",
+      "width": 1080
+    },
+    "s2_env2": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s2_env2.png",
+      "width": 1080
+    },
+    "s2_env3": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/s2_env3.png",
+      "width": 1080
+    }
+  },
   "scenes": {
     "book_menu_1": {
       "frameHeight": 960,

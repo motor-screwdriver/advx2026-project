@@ -42,6 +42,7 @@ export const strings = {
   oracle_mic: 'Voice',
   oracle_mic_stop: 'Stop',
   oracle_result_title: 'Your starting window',
+  oracle_window_strip: 'Your window',
   oracle_result_hint: 'A gentle target, not a test.',
   oracle_change_later: 'You can change it later in Settings.',
   oracle_accept: 'Keep this window',
