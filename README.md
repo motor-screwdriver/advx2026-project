@@ -21,7 +21,7 @@ Pixel-art sleep tamagotchi. Your hero stays alive only while **you** sleep — b
 - **App:** Expo SDK 54 · React Native · TypeScript · Expo Router
 - **State:** Zustand + AsyncStorage (offline-first)
 - **Backend:** Go (`server/`) — AI oracle, morning chat, Mi Fitness
-- **Tests:** Jest · ESLint · `pnpm run check`
+- **Tests and codestyle:** Jest - ESLint - Prettier
 
 > Demo runs in store **Expo Go** — don't bump Expo past what Expo Go supports.
 
