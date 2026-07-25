@@ -3,6 +3,7 @@ import { StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { playSfx } from '../systems/audio'
+import { SFX_TRACKS } from '../systems/audioTracks'
 import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
 import { TavernFrame, WoodButton } from '../ui/tavern'
@@ -42,7 +43,7 @@ export function DeathScreen() {
   const hasFeather = state.artifacts.indexOf('phoenix_feather') >= 0
 
   useEffect(() => {
-    playSfx('sfx_death')
+    playSfx(SFX_TRACKS.DEATH)
   }, [])
 
   if (!hero) {

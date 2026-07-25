@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { playSfx } from '../systems/audio'
+import { SFX_TRACKS } from '../systems/audioTracks'
 import { useScreenTransition } from '../ui/screenTransition'
 import { SoulTether } from '../ui/SoulTether'
 import { ROUND_COUNT } from '../ui/soulTetherLogic'
@@ -34,7 +35,7 @@ export function ResurrectionGameScreen() {
     setResults(finalResults)
     if (success) {
       resurrect()
-      playSfx('sfx_victory')
+      playSfx(SFX_TRACKS.VICTORY)
     }
   }
 

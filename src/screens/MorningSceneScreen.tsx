@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import type { NightOutcome } from '../contracts/types'
 import { playSfx } from '../systems/audio'
+import { SFX_TRACKS } from '../systems/audioTracks'
 import { useScreenTransition } from '../ui/screenTransition'
 import { useGame } from '../ui/useGame'
 import { MorningSheet } from './MorningSheet'
@@ -25,8 +26,8 @@ export function MorningSceneScreen() {
 
   useEffect(() => {
     if (!lastEvaluation) return
-    if (lastEvaluation.hpDelta < 0) playSfx('sfx_damage')
-    else if (lastEvaluation.outcome === 'PERFECT') playSfx('sfx_victory')
+    if (lastEvaluation.hpDelta < 0) playSfx(SFX_TRACKS.DAMAGE)
+    else if (lastEvaluation.outcome === 'PERFECT') playSfx(SFX_TRACKS.VICTORY)
   }, [lastEvaluation])
 
   const outcome: NightOutcome = lastEvaluation?.outcome ?? 'MISSED'
