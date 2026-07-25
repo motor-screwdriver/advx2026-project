@@ -1,16 +1,7 @@
 import React, { useEffect, useRef } from 'react'
-import {
-  Animated,
-  Image,
-  Pressable,
-  StyleSheet,
-  useWindowDimensions,
-  View,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native'
+import { Animated, Image, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native'
 
-import { DESIGN, type SpriteEntry } from '../../assets/manifest'
+import { type SpriteEntry } from '../../assets/manifest'
 import { useReducedMotion } from './useReducedMotion'
 
 /**
@@ -43,9 +34,6 @@ export const spriteColors = {
 /** Sprite sheet metrics: full sheet 2160 wide, plank rows span x 66..2092. */
 export const SHEET_W = 2160
 export const ROW_W = 2026
-const DROPDOWN_TOP_H = 170
-const DROPDOWN_MID_H = 100
-const DROPDOWN_BOTTOM_H = 170
 
 /**
  * Uniform sprite->screen scale. Rows keep the sprite's side margins
@@ -95,40 +83,6 @@ interface SpriteRowProps {
   delay?: number
 }
 
-interface SettingsDropdownPanelProps {
-  k: number
-  children: React.ReactNode
-  contentStyle?: StyleProp<ViewStyle>
-  delay?: number
-}
-
-function DropdownSpriteBackground({ k }: { k: number }) {
-  const top = DESIGN.settings_dropdown_top
-  const mid = DESIGN.settings_dropdown_mid
-  const bottom = DESIGN.settings_dropdown_bottom
-  const topH = top.height * k
-  const bottomH = bottom.height * k
-  return (
-    <>
-      <Image
-        source={mid.source}
-        style={[styles.dropdownMid, { top: topH, bottom: bottomH, width: mid.width * k }]}
-        resizeMode="stretch"
-      />
-      <Image
-        source={top.source}
-        style={[styles.dropdownCap, { width: top.width * k, height: topH, top: 0 }]}
-        resizeMode="stretch"
-      />
-      <Image
-        source={bottom.source}
-        style={[styles.dropdownCap, { width: bottom.width * k, height: bottomH, bottom: 0 }]}
-        resizeMode="stretch"
-      />
-    </>
-  )
-}
-
 /** One plank row rendered as its sprite slice, with press-sink feedback. */
 export function SpriteRow({ entry, k, onPress, children, delay = 0 }: SpriteRowProps) {
   const { opacity, translateY } = useRowEntrance(delay)
@@ -147,45 +101,6 @@ export function SpriteRow({ entry, k, onPress, children, delay = 0 }: SpriteRowP
   )
 }
 
-/** Expandable settings panel matching the wooden plank rows without stretching their bitmap. */
-export function SettingsDropdownPanel({
-  k,
-  children,
-  contentStyle,
-  delay = 0,
-}: SettingsDropdownPanelProps) {
-  const { opacity, translateY } = useRowEntrance(delay)
-  return (
-    <Animated.View
-      style={[
-        styles.dropdownRoot,
-        {
-          width: ROW_W * k,
-          minHeight: (DROPDOWN_TOP_H + DROPDOWN_MID_H + DROPDOWN_BOTTOM_H) * k,
-          opacity,
-          transform: [{ translateY }],
-        },
-      ]}
-    >
-      <DropdownSpriteBackground k={k} />
-      <View
-        style={[
-          styles.dropdownContent,
-          {
-            minHeight: 440 * k,
-            paddingHorizontal: 96 * k,
-            paddingVertical: 70 * k,
-            gap: 34 * k,
-          },
-          contentStyle,
-        ]}
-      >
-        {children}
-      </View>
-    </Animated.View>
-  )
-}
-
 const styles = StyleSheet.create({
   pressed: {
     transform: [{ translateY: 3 }],
@@ -193,20 +108,5 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-  },
-  dropdownRoot: {
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  dropdownCap: {
-    position: 'absolute',
-    left: 0,
-  },
-  dropdownMid: {
-    position: 'absolute',
-    left: 0,
-  },
-  dropdownContent: {
-    position: 'relative',
   },
 })

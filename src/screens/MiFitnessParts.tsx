@@ -3,7 +3,13 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 
 import { MIFIT_REGIONS, type MiFitnessRegion } from '../contracts/mifit'
 import type { MiFitnessLoginPhase } from '../ui/mifitLoginFlow'
-import { PixelButton } from '../ui/PixelButton'
+import {
+  SettingsSpriteButton,
+  settingsHintStyle,
+  settingsInputStyle,
+  settingsOptionStyle,
+  settingsValueStyle,
+} from '../ui/settingsDropdown'
 import { spriteColors } from '../ui/settingsSprite'
 import { strings } from '../ui/strings'
 import { theme } from '../ui/theme'
@@ -18,12 +24,14 @@ const REGION_LABELS: Record<MiFitnessRegion, string> = {
 }
 
 interface ConnectedStateProps {
+  k: number
   region: MiFitnessRegion | null
   savedAt: string | null
   onDisconnect: () => void
 }
 
 interface DisconnectedStateProps {
+  k: number
   phase: MiFitnessLoginPhase
   error: string | null
   region: MiFitnessRegion | null
@@ -39,20 +47,24 @@ interface DisconnectedStateProps {
   verify: () => void
 }
 
-export function ConnectedState({ region, savedAt, onDisconnect }: ConnectedStateProps) {
+export function ConnectedState({ k, region, savedAt, onDisconnect }: ConnectedStateProps) {
   return (
     <View style={panelStyles.block}>
-      <Text style={panelStyles.value}>{strings.mifit_connected}</Text>
-      <Text style={panelStyles.hint}>{region ? `${strings.mifit_region}: ${region}` : ''}</Text>
-      <Text style={panelStyles.hint}>{savedAt ? strings.mifit_saved_device : ''}</Text>
-      <PixelButton compact label={strings.mifit_disconnect} onPress={onDisconnect} />
+      <Text style={[panelStyles.value, settingsValueStyle(k)]}>{strings.mifit_connected}</Text>
+      <Text style={[panelStyles.hint, settingsHintStyle(k)]}>
+        {region ? `${strings.mifit_region}: ${region}` : ''}
+      </Text>
+      <Text style={[panelStyles.hint, settingsHintStyle(k)]}>
+        {savedAt ? strings.mifit_saved_device : ''}
+      </Text>
+      <SettingsSpriteButton k={k} label={strings.mifit_disconnect} onPress={onDisconnect} danger />
     </View>
   )
 }
 
 export function DisconnectedState(props: DisconnectedStateProps) {
   if (props.phase === 'idle') {
-    return <PixelButton compact label={strings.mifit_login} onPress={props.openForm} />
+    return <SettingsSpriteButton k={props.k} label={strings.mifit_login} onPress={props.openForm} />
   }
   const busy = props.phase === 'connecting' || props.phase === 'verifying'
   const emailMode = props.phase === 'email_code' || props.phase === 'verifying'
@@ -63,8 +75,12 @@ export function DisconnectedState(props: DisconnectedStateProps) {
       ) : (
         <CredentialsForm {...props} busy={busy} />
       )}
-      <Text style={panelStyles.security}>{strings.mifit_security}</Text>
-      {props.error && <Text style={panelStyles.error}>{props.error}</Text>}
+      <Text style={[panelStyles.security, settingsHintStyle(props.k)]}>
+        {strings.mifit_security}
+      </Text>
+      {props.error && (
+        <Text style={[panelStyles.error, settingsHintStyle(props.k)]}>{props.error}</Text>
+      )}
     </View>
   )
 }
@@ -73,9 +89,9 @@ function CredentialsForm(props: DisconnectedStateProps & { busy: boolean }) {
   const canConnect = Boolean(props.region && props.username.trim() && props.password && !props.busy)
   return (
     <>
-      <RegionSelector value={props.region} onChange={props.setRegion} />
+      <RegionSelector k={props.k} value={props.region} onChange={props.setRegion} />
       <TextInput
-        style={panelStyles.input}
+        style={[panelStyles.input, settingsInputStyle(props.k)]}
         placeholder={strings.mifit_username}
         placeholderTextColor={spriteColors.tan}
         value={props.username}
@@ -84,7 +100,7 @@ function CredentialsForm(props: DisconnectedStateProps & { busy: boolean }) {
         autoCorrect={false}
       />
       <TextInput
-        style={panelStyles.input}
+        style={[panelStyles.input, settingsInputStyle(props.k)]}
         placeholder={strings.mifit_password}
         placeholderTextColor={spriteColors.tan}
         value={props.password}
@@ -93,8 +109,8 @@ function CredentialsForm(props: DisconnectedStateProps & { busy: boolean }) {
         autoCorrect={false}
         secureTextEntry
       />
-      <PixelButton
-        compact
+      <SettingsSpriteButton
+        k={props.k}
         label={props.busy ? strings.mifit_connecting : strings.mifit_connect}
         onPress={props.connect}
         disabled={!canConnect}
@@ -106,9 +122,9 @@ function CredentialsForm(props: DisconnectedStateProps & { busy: boolean }) {
 function EmailCodeForm(props: DisconnectedStateProps & { busy: boolean }) {
   return (
     <>
-      <Text style={panelStyles.hint}>{strings.mifit_email_sent}</Text>
+      <Text style={[panelStyles.hint, settingsHintStyle(props.k)]}>{strings.mifit_email_sent}</Text>
       <TextInput
-        style={panelStyles.input}
+        style={[panelStyles.input, settingsInputStyle(props.k)]}
         placeholder={strings.mifit_email_code}
         placeholderTextColor={spriteColors.tan}
         value={props.code}
@@ -117,8 +133,8 @@ function EmailCodeForm(props: DisconnectedStateProps & { busy: boolean }) {
         autoCorrect={false}
         keyboardType="number-pad"
       />
-      <PixelButton
-        compact
+      <SettingsSpriteButton
+        k={props.k}
         label={props.busy ? strings.mifit_verifying : strings.mifit_verify}
         onPress={props.verify}
         disabled={!props.code.trim() || props.busy}
@@ -128,15 +144,17 @@ function EmailCodeForm(props: DisconnectedStateProps & { busy: boolean }) {
 }
 
 function RegionSelector({
+  k,
   value,
   onChange,
 }: {
+  k: number
   value: MiFitnessRegion | null
   onChange: (region: MiFitnessRegion) => void
 }) {
   return (
     <View style={panelStyles.block}>
-      <Text style={panelStyles.hint}>{strings.mifit_region_help}</Text>
+      <Text style={[panelStyles.hint, settingsHintStyle(k)]}>{strings.mifit_region_help}</Text>
       <View style={panelStyles.regionGrid}>
         {MIFIT_REGIONS.map((region) => (
           <Pressable
@@ -144,9 +162,15 @@ function RegionSelector({
             accessibilityRole="button"
             accessibilityState={{ selected: value === region }}
             onPress={() => onChange(region)}
-            style={[panelStyles.regionOption, value === region && panelStyles.regionSelected]}
+            style={[
+              panelStyles.regionOption,
+              settingsOptionStyle(k),
+              value === region && panelStyles.regionSelected,
+            ]}
           >
-            <Text style={panelStyles.regionText}>{REGION_LABELS[region]}</Text>
+            <Text style={[panelStyles.regionText, settingsHintStyle(k)]}>
+              {REGION_LABELS[region]}
+            </Text>
           </Pressable>
         ))}
       </View>
@@ -156,38 +180,41 @@ function RegionSelector({
 
 export const panelStyles = StyleSheet.create({
   label: {
-    ...theme.type.label,
+    fontFamily: theme.fontFamily,
     color: spriteColors.tan,
     textTransform: 'uppercase',
+    textShadowColor: spriteColors.outline,
+    textShadowRadius: 0,
   },
   value: {
-    ...theme.type.body,
+    fontFamily: theme.fontFamily,
     color: spriteColors.cream,
+    textShadowColor: spriteColors.outline,
+    textShadowRadius: 0,
   },
   block: {
     gap: theme.spacing(3),
   },
   input: {
-    ...theme.type.body,
+    fontFamily: theme.fontFamily,
     color: spriteColors.cream,
     backgroundColor: spriteColors.trackWell,
-    borderWidth: theme.borderWidth,
+    borderWidth: 3,
     borderColor: spriteColors.outline,
-    borderRadius: theme.borderRadius,
-    padding: theme.spacing(3),
+    borderRadius: 4,
   },
   hint: {
-    ...theme.type.label,
+    fontFamily: theme.fontFamily,
     color: spriteColors.tan,
     textTransform: 'none',
   },
   security: {
-    ...theme.type.label,
+    fontFamily: theme.fontFamily,
     color: spriteColors.goldLight,
     textTransform: 'none',
   },
   error: {
-    ...theme.type.label,
+    fontFamily: theme.fontFamily,
     color: spriteColors.red,
     textTransform: 'none',
   },
@@ -198,17 +225,15 @@ export const panelStyles = StyleSheet.create({
   },
   regionOption: {
     backgroundColor: spriteColors.trackWell,
-    borderWidth: theme.borderWidth,
+    borderWidth: 3,
     borderColor: spriteColors.outline,
-    borderRadius: theme.borderRadius,
-    paddingHorizontal: theme.spacing(2),
-    paddingVertical: theme.spacing(2),
+    borderRadius: 4,
   },
   regionSelected: {
     borderColor: spriteColors.gold,
   },
   regionText: {
-    ...theme.type.label,
+    fontFamily: theme.fontFamily,
     color: spriteColors.cream,
   },
 })
