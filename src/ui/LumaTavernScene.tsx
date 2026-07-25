@@ -5,7 +5,7 @@ import { LUMA } from '../../assets/manifest'
 import type { StageSize } from './lumaTavernLayout'
 import { useReducedMotion } from './useReducedMotion'
 
-export type TavernVariant = 'question' | 'result'
+export type TavernVariant = 'welcome' | 'question' | 'result'
 
 interface FrameSet {
   env: readonly number[]
@@ -15,6 +15,11 @@ interface FrameSet {
 
 /** Frame indices into SOURCES: ambient ping-pong cycle, blink, talking mouths. */
 const FRAMES: Record<TavernVariant, FrameSet> = {
+  welcome: {
+    env: [0, 1, 2, 3],
+    blink: 4,
+    talk: [0, 5, 6, 5],
+  },
   question: {
     env: [0, 1, 2, 3],
     blink: 4,
@@ -28,6 +33,15 @@ const FRAMES: Record<TavernVariant, FrameSet> = {
 }
 
 const SOURCES: Record<TavernVariant, readonly number[]> = {
+  welcome: [
+    LUMA.s1_base_start.source,
+    LUMA.s1_env2_start.source,
+    LUMA.s1_env3_start.source,
+    LUMA.s1_env4_start.source,
+    LUMA.s1_blink_start.source,
+    LUMA.s1_talk_half_start.source,
+    LUMA.s1_talk_open_start.source,
+  ],
   question: [
     LUMA.s1_base.source,
     LUMA.s1_env2.source,

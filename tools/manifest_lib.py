@@ -12,7 +12,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(REPO_ROOT, 'assets', 'manifest.data.json')
 TS_PATH = os.path.join(REPO_ROOT, 'assets', 'manifest.ts')
 
-SECTIONS = ['sprites', 'sprites_1bit', 'scenes', 'icons', 'atmosphere', 'design', 'luma', 'buttons', 'audio']
+SECTIONS = ['sprites', 'sprites_1bit', 'scenes', 'icons', 'atmosphere', 'design', 'luma', 'audio']
 
 
 def load_data():
@@ -81,7 +81,6 @@ SECTION_EXPORTS = {
     'atmosphere': ('ATMO', 'SpriteEntry', _sprite_line),
     'design': ('DESIGN', 'SpriteEntry', _sprite_line),
     'luma': ('LUMA', 'SpriteEntry', _sprite_line),
-    'buttons': ('BUTTONS', 'SpriteEntry', _sprite_line),
     'audio': ('AUDIO', 'AudioEntry', _audio_line),
 }
 

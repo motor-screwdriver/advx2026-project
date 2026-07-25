@@ -1,34 +1,23 @@
 import React from 'react'
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native'
+import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native'
 
-import { BUTTONS, type SpriteEntry } from '../../assets/manifest'
-import { tavernColors as wood } from './tavernBase'
+import { CornerRivets, WoodPanel, tavernColors as wood } from './tavernBase'
 import { theme } from './theme'
 
 /**
  * Tavern UI kit — interactive controls (see tavern.tsx for the barrel
  * export): GoldButton, WoodButton, StatBadge, TavernBar.
  *
- * EVERY button in the app is the same tavern control — a hand-drawn sprite
- * pair (assets/buttons, BUTTONS manifest section) with a pixel-bold label
- * (16 regular / 12 compact); the pressed sprite swaps in while held. Palette
- * is the only difference: honey gold for the primary action, dim wood for
- * secondary (danger = red label), dark chip for the generic control.
+ * EVERY button in the app is the same tavern control — same 2px riveted
+ * edge, same bevel body, same pixel-bold label sizes (16 regular / 12
+ * compact), same press-sink. Palette is the only difference: honey gold for
+ * the primary action, dim wood for secondary (danger = red label).
  */
 
 function BaseButton({
   label,
   onPress,
-  up,
-  down,
+  colors,
   textColor,
   style,
   compact = false,
@@ -36,8 +25,7 @@ function BaseButton({
 }: {
   label: string
   onPress?: () => void
-  up: SpriteEntry
-  down: SpriteEntry
+  colors: { edge: string; top: string; fill: string; bottom: string }
   textColor: string
   style?: StyleProp<ViewStyle>
   compact?: boolean
@@ -48,30 +36,34 @@ function BaseButton({
       accessibilityRole="button"
       accessibilityState={{ disabled }}
       onPress={disabled ? undefined : onPress}
-      style={[styles.btn, disabled && styles.btnDisabled, style]}
+      style={({ pressed }) => [
+        styles.btnEdge,
+        { backgroundColor: colors.edge },
+        pressed && !disabled && { transform: [{ translateY: 2 }] },
+        disabled && styles.btnDisabled,
+        style,
+      ]}
     >
-      {({ pressed }) => (
-        <>
-          <Image
-            source={pressed && !disabled ? down.source : up.source}
-            resizeMode="stretch"
-            fadeDuration={0}
-            style={StyleSheet.absoluteFill}
-          />
-          <View style={compact ? styles.bodyCompact : styles.body}>
-            <Text
-              style={[compact ? styles.btnLabelCompact : styles.btnLabel, { color: textColor }]}
-            >
-              {label}
-            </Text>
-          </View>
-        </>
-      )}
+      <View
+        style={[
+          styles.btnBody,
+          {
+            backgroundColor: colors.fill,
+            borderTopColor: colors.top,
+            borderBottomColor: colors.bottom,
+          },
+        ]}
+      >
+        <Text style={[compact ? styles.btnLabelCompact : styles.btnLabel, { color: textColor }]}>
+          {label}
+        </Text>
+      </View>
+      <CornerRivets size={4} inset={5} />
     </Pressable>
   )
 }
 
-/** Generic tavern button — dark gold-framed chip behind every plain action. */
+/** Generic tavern button — the one unified control behind every app button. */
 export function TavernButton(props: {
   label: string
   onPress?: () => void
@@ -82,9 +74,8 @@ export function TavernButton(props: {
   return (
     <BaseButton
       {...props}
-      up={BUTTONS.chip_dark}
-      down={BUTTONS.chip_dark_pressed}
-      textColor={wood.gold}
+      colors={{ edge: wood.edge, top: wood.light, fill: wood.mid, bottom: wood.dark }}
+      textColor={theme.colors.gold}
     />
   )
 }
@@ -95,14 +86,11 @@ export function GoldButton(props: {
   onPress?: () => void
   style?: StyleProp<ViewStyle>
   compact?: boolean
-  /** Ornate CTA frame for the one big action of a screen (SLEEP / WAKE UP). */
-  cta?: boolean
 }) {
   return (
     <BaseButton
       {...props}
-      up={props.cta ? BUTTONS.btn_gold_cta : BUTTONS.btn_gold}
-      down={props.cta ? BUTTONS.btn_gold_cta_pressed : BUTTONS.btn_gold_pressed}
+      colors={{ edge: wood.edge, top: wood.goldLight, fill: wood.gold, bottom: wood.goldEdge }}
       textColor={wood.inkOnParchment}
     />
   )
@@ -119,26 +107,8 @@ export function WoodButton(props: {
   return (
     <BaseButton
       {...props}
-      up={props.compact ? BUTTONS.btn_wood_compact : BUTTONS.btn_wood}
-      down={props.compact ? BUTTONS.btn_wood_compact_pressed : BUTTONS.btn_wood_pressed}
-      textColor={props.danger ? wood.danger : theme.colors.text}
-    />
-  )
-}
-
-/** Hand-drawn sunken-wood plaque — the quiet answer/secondary tavern button. */
-export function SunkenButton(props: {
-  label: string
-  onPress?: () => void
-  style?: StyleProp<ViewStyle>
-  compact?: boolean
-}) {
-  return (
-    <BaseButton
-      {...props}
-      up={BUTTONS.btn_sunken}
-      down={BUTTONS.btn_sunken_pressed}
-      textColor={wood.goldLight}
+      colors={{ edge: wood.edge, top: wood.light, fill: wood.mid, bottom: wood.dark }}
+      textColor={props.danger ? wood.danger : theme.colors.textDim}
     />
   )
 }
@@ -146,10 +116,10 @@ export function SunkenButton(props: {
 /** Small framed stat badge (LV 2 / STREAK 3 / PERFECT 68%). */
 export function StatBadge({ label, value }: { label: string; value: string }) {
   return (
-    <View style={styles.badgeWell}>
+    <WoodPanel rivets={false} contentStyle={styles.badgeWell}>
       <Text style={styles.badgeLabel}>{label}</Text>
       <Text style={styles.badgeValue}>{value}</Text>
-    </View>
+    </WoodPanel>
   )
 }
 
@@ -176,23 +146,20 @@ export function TavernBar({
 }
 
 const styles = StyleSheet.create({
-  btn: {
+  btnEdge: {
+    borderWidth: 2,
     position: 'relative',
   },
   btnDisabled: {
     opacity: 0.4,
   },
-  body: {
+  btnBody: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: theme.spacing(4),
-    paddingHorizontal: theme.spacing(5),
-  },
-  bodyCompact: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: theme.spacing(2.5),
+    paddingVertical: theme.spacing(3),
     paddingHorizontal: theme.spacing(4),
+    borderTopWidth: 3,
+    borderBottomWidth: 3,
   },
   btnLabel: {
     fontFamily: theme.fontFamily,
@@ -210,9 +177,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: theme.spacing(2),
     gap: theme.spacing(1),
-    backgroundColor: wood.edge,
-    borderWidth: 2,
-    borderColor: wood.dark,
   },
   badgeLabel: { ...theme.type.label, color: theme.colors.textDim },
   badgeValue: { ...theme.type.body, color: wood.goldLight },
