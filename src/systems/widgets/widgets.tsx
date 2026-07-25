@@ -69,7 +69,7 @@ export function SleepStatsWidget({ data }: { data: HomeWidgetData }) {
         </FlexWidget>
       </FlexWidget>
       <FlexWidget style={styles.heroWrap}>
-        <ImageWidget image={data.gold ? hero.gold : hero.normal} imageWidth={92} imageHeight={92} />
+        <ImageWidget image={hero} imageWidth={92} imageHeight={92} />
       </FlexWidget>
       <FlexWidget style={styles.livesPanel}>
         <TextWidget text="LIVES" style={styles.label} />
