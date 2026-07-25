@@ -918,6 +918,54 @@
       "path": "luma/btn_empty_down.png",
       "width": 959
     },
+    "morning_base": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/morning_base.png",
+      "width": 1080
+    },
+    "morning_blink": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/morning_blink.png",
+      "width": 1080
+    },
+    "morning_env2": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/morning_env2.png",
+      "width": 1080
+    },
+    "morning_env3": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/morning_env3.png",
+      "width": 1080
+    },
+    "morning_talk_half": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/morning_talk_half.png",
+      "width": 1080
+    },
+    "morning_talk_open": {
+      "frameHeight": 1920,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1920,
+      "path": "luma/morning_talk_open.png",
+      "width": 1080
+    },
     "s1_base": {
       "frameHeight": 1920,
       "frameWidth": 1080,

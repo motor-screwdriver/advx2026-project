@@ -1,55 +1,29 @@
 import { useRouter } from 'expo-router'
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   KeyboardAvoidingView,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
-  useWindowDimensions,
   View,
+  type LayoutChangeEvent,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import type { MorningContext } from '../systems/aiMorningChat'
-import { DayNightBackground } from '../ui/DayNightBackground'
-import { OracleChatPanel } from '../ui/OracleChatPanel'
-import { OracleStage } from '../ui/OracleStage'
-import { PixelButton } from '../ui/PixelButton'
+import { MorningChatOverlay, MorningErrorOverlay } from '../ui/LumaMorningOverlays'
+import { LumaTavernScene } from '../ui/LumaTavernScene'
+import { fitStage, type StageSize } from '../ui/lumaTavernLayout'
 import { strings } from '../ui/strings'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
-import { useMorningChat } from '../ui/useMorningChat'
+import { useMorningChat, type MorningChatState } from '../ui/useMorningChat'
+import { useTypewriter } from '../ui/useTypewriter'
 
-function TopBar({ onSkip }: { onSkip: () => void }) {
-  return (
-    <View style={styles.topBar}>
-      <Text style={styles.topLabel}>{strings.morning_chat_top_label}</Text>
-      <Pressable accessibilityRole="button" onPress={onSkip} hitSlop={10}>
-        <Text style={styles.skip}>{strings.morning_chat_skip}</Text>
-      </Pressable>
-    </View>
-  )
-}
-
-function ErrorPanel({ onRetry, onSkip }: { onRetry: () => void; onSkip: () => void }) {
-  return (
-    <View style={styles.errorWrap}>
-      <Text style={styles.errorTitle}>{strings.morning_chat_error_title}</Text>
-      <Text style={styles.errorBody}>{strings.morning_chat_error_body}</Text>
-      <PixelButton label={strings.oracle_retry} onPress={onRetry} />
-      <Pressable accessibilityRole="button" onPress={onSkip} hitSlop={8}>
-        <Text style={styles.skipAction}>{strings.morning_chat_skip}</Text>
-      </Pressable>
-    </View>
-  )
-}
-
-export function MorningChatScreen() {
-  const router = useRouter()
-  const { height } = useWindowDimensions()
+function useMorningContext(): MorningContext {
   const { lastEvaluation } = useGame()
-
-  const context: MorningContext = useMemo(
+  return useMemo(
     () => ({
       outcome: lastEvaluation?.outcome ?? 'GOOD',
       hpDelta: lastEvaluation?.hpDelta ?? 0,
@@ -57,67 +31,95 @@ export function MorningChatScreen() {
     }),
     [lastEvaluation],
   )
+}
 
-  const { state, start, send, retry } = useMorningChat(context)
-  const compact = height < 700
+/** Luma's latest line — or what she is busy with while a reply is in flight. */
+function dialogueFor(state: MorningChatState, busy: boolean): string {
+  if (busy) {
+    return state.messages.length === 0
+      ? strings.morning_chat_greeting_loading
+      : strings.oracle_thinking
+  }
+  return [...state.messages].reverse().find((message) => message.role === 'oracle')?.text ?? ''
+}
 
-  // Auto-start conversation on mount
+/**
+ * Morning reflection with Luma in the hand-drawn tavern, matching the
+ * first-run chat: the 9:16 stage letterboxes into the free space; dialogue,
+ * the inline input row and the exit slot sit on the baked areas of the
+ * artwork, and the stage lifts above the keyboard while typing.
+ */
+export function MorningChatScreen() {
+  const router = useRouter()
+  const chat = useMorningChat(useMorningContext())
+  const [stage, setStage] = useState<StageSize | null>(null)
+
   useEffect(() => {
-    start()
+    chat.start()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const busy = chat.state.loading || chat.state.phase === 'greeting'
+  const raw = dialogueFor(chat.state, busy)
+  const typed = useTypewriter(raw, !busy)
   const goHome = () => router.dismissTo('/')
-  const hasOracleReply = state.messages.some((m) => m.role === 'oracle')
+
+  const onLayout = (event: LayoutChangeEvent) => {
+    const { width, height } = event.nativeEvent.layout
+    setStage(fitStage(width, height))
+  }
 
   return (
     <View style={styles.screen}>
-      <DayNightBackground phase="night" />
-      <View pointerEvents="none" style={styles.scrim} />
-      <SafeAreaView style={[styles.safe, compact && styles.safeCompact]}>
-        <KeyboardAvoidingView style={styles.avoider}>
-          <TopBar onSkip={goHome} />
-          <OracleStage thinking={state.loading} compact={compact} />
-          <View style={styles.panelWrap}>
-            {state.phase === 'error' ? (
-              <ErrorPanel onRetry={retry} onSkip={goHome} />
-            ) : (
-              <>
-                <OracleChatPanel
-                  messages={state.messages}
-                  suggestions={state.suggestions}
-                  loading={state.loading}
-                  onSend={send}
-                />
-                {hasOracleReply && !state.loading && (
-                  <PixelButton label={strings.morning_chat_done} onPress={goHome} />
+      <SafeAreaView style={styles.safe}>
+        <KeyboardAvoidingView
+          style={styles.avoider}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          <View style={styles.center} onLayout={onLayout}>
+            {stage ? (
+              <View style={{ width: stage.width, height: stage.height }}>
+                <LumaTavernScene variant="morning" speaking={!busy && !typed.done} stage={stage} />
+                {chat.state.phase === 'error' ? (
+                  <MorningErrorOverlay stage={stage} onRetry={chat.retry} onDone={goHome} />
+                ) : (
+                  <MorningChatOverlay
+                    stage={stage}
+                    text={typed.shown}
+                    showDone={chat.state.messages.some((m) => m.role === 'oracle')}
+                    loading={busy}
+                    onSend={chat.send}
+                    onDone={goHome}
+                  />
                 )}
-              </>
-            )}
+              </View>
+            ) : null}
           </View>
         </KeyboardAvoidingView>
+        <Pressable accessibilityRole="button" onPress={goHome} hitSlop={10} style={styles.skip}>
+          <Text style={styles.skipText}>{strings.morning_chat_skip}</Text>
+        </Pressable>
       </SafeAreaView>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: theme.colors.bg },
-  scrim: { ...StyleSheet.absoluteFillObject, backgroundColor: '#0a082044' },
-  safe: { flex: 1, padding: theme.spacing(4) },
-  safeCompact: { paddingVertical: theme.spacing(2) },
-  avoider: { flex: 1, gap: theme.spacing(2), justifyContent: 'flex-start' },
-  topBar: {
-    minHeight: 34,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  screen: { flex: 1, backgroundColor: '#150d08' },
+  safe: { flex: 1 },
+  avoider: { flex: 1 },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  skip: {
+    position: 'absolute',
+    top: theme.spacing(2),
+    right: theme.spacing(3),
+    padding: theme.spacing(2),
   },
-  topLabel: { ...theme.type.label, color: theme.colors.textDim, textTransform: 'uppercase' },
-  skip: { ...theme.type.label, color: theme.colors.textDim, padding: theme.spacing(2) },
-  panelWrap: { width: '100%', maxWidth: 520, alignSelf: 'center', gap: theme.spacing(2) },
-  errorWrap: { alignItems: 'center', gap: theme.spacing(2) },
-  errorTitle: { ...theme.type.body, color: theme.colors.text, textAlign: 'center' },
-  errorBody: { ...theme.type.body, color: theme.colors.textDim, textAlign: 'center' },
-  skipAction: { ...theme.type.label, color: theme.colors.textDim, textAlign: 'center', padding: 4 },
+  skipText: {
+    ...theme.type.label,
+    color: theme.colors.textDim,
+    textTransform: 'uppercase',
+    textShadowColor: '#000000',
+    textShadowRadius: 3,
+  },
 })

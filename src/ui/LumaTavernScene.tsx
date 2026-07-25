@@ -5,7 +5,7 @@ import { LUMA } from '../../assets/manifest'
 import type { StageSize } from './lumaTavernLayout'
 import { useReducedMotion } from './useReducedMotion'
 
-export type TavernVariant = 'welcome' | 'question' | 'result'
+export type TavernVariant = 'welcome' | 'question' | 'result' | 'morning'
 
 interface FrameSet {
   env: readonly number[]
@@ -30,6 +30,11 @@ const FRAMES: Record<TavernVariant, FrameSet> = {
     blink: 3,
     talk: [0],
   },
+  morning: {
+    env: [0, 1, 2],
+    blink: 3,
+    talk: [0, 4, 5, 4],
+  },
 }
 
 const SOURCES: Record<TavernVariant, readonly number[]> = {
@@ -52,6 +57,14 @@ const SOURCES: Record<TavernVariant, readonly number[]> = {
     LUMA.s1_talk_open.source,
   ],
   result: [LUMA.s2_base.source, LUMA.s2_env2.source, LUMA.s2_env3.source, LUMA.s2_blink.source],
+  morning: [
+    LUMA.morning_base.source,
+    LUMA.morning_env2.source,
+    LUMA.morning_env3.source,
+    LUMA.morning_blink.source,
+    LUMA.morning_talk_half.source,
+    LUMA.morning_talk_open.source,
+  ],
 }
 
 /** Candle/fireplace flicker: ping-pong through the environment frames. */
