@@ -7,11 +7,11 @@
  */
 
 export type HeroType =
-  'monk' | 'ranger' | 'druid' | 'rogue' | 'knight' | 'paladin' | 'ninja' | 'mage' | 'warlock';
+  'monk' | 'ranger' | 'druid' | 'rogue' | 'knight' | 'paladin' | 'ninja' | 'mage' | 'warlock'
 
-export type NightOutcome = 'PERFECT' | 'GOOD' | 'BAD' | 'TERRIBLE' | 'MISSED';
+export type NightOutcome = 'PERFECT' | 'GOOD' | 'BAD' | 'TERRIBLE' | 'MISSED'
 
-export type PixelColor = 'GOLD' | 'GRAY' | 'BLACK';
+export type PixelColor = 'GOLD' | 'GRAY' | 'BLACK'
 
 export type ArtifactId =
   | 'iron_armor'
@@ -22,42 +22,50 @@ export type ArtifactId =
   | 'warm_blanket'
   | 'night_watch'
   | 'lucky_coin'
-  | 'star_map'
-  | 'second_wind';
+  | 'second_wind'
+
+export type CosmeticId =
+  | 'cosmetic_ember'
+  | 'cosmetic_hat'
+  | 'cosmetic_aura'
+  | 'cosmetic_pet'
+  | 'cosmetic_frame'
+  | 'cosmetic_gold'
 
 export interface SleepWindow {
-  bedMin: number;
-  wakeMin: number;
+  bedMin: number
+  wakeMin: number
 } // minutes on a 12:00→36:00 "night line"
 
 export interface Hero {
-  type: HeroType;
-  name: string;
-  level: number;
-  xp: number;
+  type: HeroType
+  name: string
+  level: number
+  xp: number
 }
 
 export interface NightRecord {
-  date: string; // YYYY-MM-DD
-  bedTime: number | null;
-  wakeTime: number | null;
-  score: number;
-  outcome: NightOutcome;
-  hpDelta: number;
-  pixel: PixelColor;
+  date: string // YYYY-MM-DD
+  bedTime: number | null
+  wakeTime: number | null
+  score: number
+  outcome: NightOutcome
+  hpDelta: number
+  pixel: PixelColor
 }
 
 export interface GameState {
-  window: SleepWindow | null;
-  hero: Hero | null;
-  hp: number; // 0..7
-  perfectWeekStreak: number; // nights without HP loss
-  nights: NightRecord[];
-  artifacts: ArtifactId[];
-  equipped: { armor: ArtifactId | null; charm: ArtifactId | null };
-  lastResurrectionAt: string | null;
-  onboardingDone: boolean;
-  demoMode: boolean;
+  window: SleepWindow | null
+  hero: Hero | null
+  hp: number // 0..7
+  perfectWeekStreak: number // nights without HP loss
+  nights: NightRecord[]
+  artifacts: ArtifactId[]
+  cosmetics: CosmeticId[]
+  equipped: { armor: ArtifactId | null; utilities: ArtifactId | null; charm: CosmeticId | null }
+  lastResurrectionAt: string | null
+  onboardingDone: boolean
+  demoMode: boolean
 }
 
 // ---- Derived types (additive, do not rename the frozen ones above) ----
@@ -65,19 +73,19 @@ export interface GameState {
 /** Result of evaluating one night. Echoes the check-in inputs so the
  *  result can be appended to GameState.nights without extra params. */
 export interface NightEvaluation {
-  bedTime: number | null;
-  wakeTime: number | null;
-  score: number; // 0..100
-  outcome: NightOutcome;
-  hpDelta: number; // +1 | 0 | -1 | -2
-  xp: number;
-  pixel: PixelColor;
+  bedTime: number | null
+  wakeTime: number | null
+  score: number // 0..100
+  outcome: NightOutcome
+  hpDelta: number // +1 | 0 | -1 | -2
+  xp: number
+  pixel: PixelColor
 }
 
-export type ChestRarity = 'common' | 'rare' | 'epic';
+export type ChestRarity = 'common' | 'rare' | 'epic'
 
 export interface ChestLoot {
-  rarity: ChestRarity;
-  artifactId: ArtifactId | null; // set when rarity === 'rare'
-  cosmeticId: string | null; // set for common/epic cosmetics
+  rarity: ChestRarity
+  artifactId: ArtifactId | null // set when rarity === 'rare'
+  cosmeticId: string | null // set for common/epic cosmetics
 }

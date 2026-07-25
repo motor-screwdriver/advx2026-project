@@ -36,4 +36,35 @@ export const stringsExtra = {
   debug_empty: 'Empty',
   debug_mid: 'Mid-game',
   debug_death: 'Death',
+
+  // Inventory badges (split from strings.ts for line cap)
+  inventory_badge_auto: 'AUTO',
+  inventory_badge_active: 'ACTIVE',
+  inventory_badge_next_chest: 'NEXT CHEST',
+
+  // Equip slot picker
+  equip_current: 'CURRENTLY EQUIPPED',
+  equip_available: 'AVAILABLE GEAR',
+  equip_none: 'No equipment in your bag yet.',
+  equip_cta: 'EQUIP',
+  equip_in_other: 'In',
+  equip_charm_empty: 'Charms and skins will appear in future updates.',
+
+  // Utility picker sections
+  util_section_equippable: 'EQUIPPABLE GEAR',
+  util_section_tools: 'TOOLS & ITEMS',
+
+  // Utility feedback alerts
+  util_alert_hourglass_ok: 'Night upgraded to GOOD!',
+  util_alert_hourglass_fail: 'No recent rough night to rewrite.',
+  util_alert_lucky_coin: 'Lucky Coin will bless your next chest automatically.',
+  util_alert_phoenix: 'The feather awakens only when the hero falls.',
+  util_alert_timed_active: 'Active — effect running.',
+  util_badge_next_chest: 'NEXT CHEST',
+  util_badge_on_death: 'ON DEATH',
+
+  // Phoenix / Death
+  phoenix_offer: 'USE PHOENIX FEATHER',
+  phoenix_rise: 'RISE FROM THE ASHES',
+  phoenix_gone: 'The phoenix has flown. No feather remains.',
 } as const

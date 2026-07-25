@@ -6,15 +6,18 @@ import type { GameEvent, GameEventType } from '../contracts/events'
 import type {
   ArtifactId,
   ChestLoot,
+  CosmeticId,
   GameState,
   NightEvaluation,
   SleepWindow,
 } from '../contracts/types'
-import { applyHourglass } from '../engine/artifacts'
+import { applyHourglass, consumeArtifact } from '../engine/artifacts'
 import { rollChestLoot } from '../engine/chest'
 import { assignHero, heroName } from '../engine/hero'
+import { MAX_HP } from '../engine/levels'
 import { missedEvaluation } from '../engine/night'
 import {
+  applyDeathPenalty,
   applyResurrection as applyResurrectionEngine,
   canResurrect as canResurrectEngine,
 } from '../engine/resurrection'
@@ -28,6 +31,29 @@ export type SetState = (partial: Partial<GameStore>) => void
 export const freshHero = (window: SleepWindow) => {
   const type = assignHero(window)
   return { type, name: heroName(type), level: 1, xp: 0 }
+}
+
+/** Start a new hero after permanent death: apply death penalty (partial loot loss),
+ *  then assign a fresh hero. Surviving artifacts carry over. */
+export function startNewHeroWithPenalty(game: GameState): GameState {
+  if (!game.window) {
+    return {
+      ...game,
+      hero: null,
+      hp: MAX_HP,
+      perfectWeekStreak: 0,
+      artifacts: [],
+      equipped: { armor: null, utilities: null, charm: null },
+    }
+  }
+  // Apply death penalty: lose ~50% of artifacts
+  const penalized = applyDeathPenalty(game)
+  return {
+    ...penalized,
+    hero: freshHero(game.window),
+    hp: MAX_HP,
+    perfectWeekStreak: 0,
+  }
 }
 
 const event = (type: GameEventType, now: Date, payload?: Record<string, unknown>): GameEvent => ({
@@ -81,9 +107,6 @@ function nightEvents(prev: GameState, result: NightTurnResult, now: Date): GameE
   if (result.leveledUp) {
     events.push(event('LEVEL_UP', now, { level: result.game.hero?.level }))
   }
-  if (result.phoenixUsed) {
-    events.push(event('RESURRECTED', now, { artifact: 'phoenix_feather' }))
-  }
   if (result.died) {
     events.push(event('DEATH', now))
   }
@@ -96,17 +119,22 @@ export function runNightTurn(get: GetState, set: SetState, now: Date): NightEval
   if (s.pendingBedTime === null && s.pendingWakeTime === null) {
     return missedEvaluation(null, null) // nothing pending — re-entrant tap, not a night
   }
+  const nightWatchEquipped = s.game.equipped.utilities === 'night_watch'
   const result = applyNightTurn(s.game, {
     bedTime: s.pendingBedTime,
     wakeTime: s.pendingWakeTime,
     secondWindAvailable:
-      s.game.artifacts.includes('second_wind') &&
+      s.game.equipped.utilities === 'second_wind' &&
       !isWithinMs(s.meta.secondWindUsedAt, now, WEEK_MS),
+    nightWatchAvailable: nightWatchEquipped && !isWithinMs(s.meta.nightWatchUsedAt, now, WEEK_MS),
     date: todayDate(now),
   })
   const meta = { ...s.meta }
   if (result.secondWindUsed) {
     meta.secondWindUsedAt = now.toISOString()
+  }
+  if (result.nightWatchUsed) {
+    meta.nightWatchUsedAt = now.toISOString()
   }
   set({
     game: result.game,
@@ -140,15 +168,39 @@ export function openGrantedChest(
   if (!s.pendingChest) {
     return null
   }
-  const loot = rollChestLoot(rng, s.game.artifacts.includes('lucky_coin'))
+  const loot = rollChestLoot(rng, s.game.artifacts.indexOf('lucky_coin') >= 0)
   const artifacts: ArtifactId[] = s.game.artifacts.filter((id) => id !== 'lucky_coin')
   if (loot.artifactId) {
     artifacts.push(loot.artifactId)
   }
+  let cosmetics = s.game.cosmetics ?? []
+  if (loot.cosmeticId && cosmetics.indexOf(loot.cosmeticId as CosmeticId) < 0) {
+    cosmetics = [...cosmetics, loot.cosmeticId as CosmeticId]
+  }
   set({
-    game: { ...s.game, artifacts },
+    game: { ...s.game, artifacts, cosmetics },
     pendingChest: false,
     events: pushEvents(s.events, [event('CHEST_AWARDED', new Date(), { rarity: loot.rarity })]),
   })
   return loot
+}
+
+/** Phoenix Feather: manual use on death screen. Consumes feather, revives at 3 HP. */
+export function usePhoenixFeather(get: GetState, set: SetState): boolean {
+  const s = get()
+  if (s.game.hp !== 0 || s.game.artifacts.indexOf('phoenix_feather') < 0) {
+    return false
+  }
+  const artifacts = consumeArtifact(s.game.artifacts, 'phoenix_feather')
+  const equipped = { ...s.game.equipped }
+  if (equipped.utilities === ('phoenix_feather' as ArtifactId)) {
+    equipped.utilities = null
+  }
+  set({
+    game: { ...s.game, hp: 3, artifacts, equipped },
+    events: pushEvents(s.events, [
+      event('RESURRECTED', new Date(), { artifact: 'phoenix_feather' }),
+    ]),
+  })
+  return true
 }

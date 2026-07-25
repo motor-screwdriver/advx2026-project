@@ -89,8 +89,9 @@ function NoHeroScreen({ onBack }: { onBack: () => void }) {
 
 export function DeathScreen() {
   const router = useRouter()
-  const { state, canResurrect, startNewHero } = useGame()
+  const { state, canResurrect, startNewHero, usePhoenix: activatePhoenix } = useGame()
   const hero = state.hero
+  const hasFeather = state.artifacts.indexOf('phoenix_feather') >= 0
 
   useEffect(() => {
     playSfx('sfx_death')
@@ -105,6 +106,11 @@ export function DeathScreen() {
     router.dismissTo('/hero-ceremony')
   }
 
+  const riseFromAshes = () => {
+    activatePhoenix()
+    router.dismissTo('/')
+  }
+
   return (
     <SafeAreaView style={styles.safe}>
       <TavernFrame>
@@ -117,24 +123,50 @@ export function DeathScreen() {
             <Text style={styles.watch}>{strings.death_watch_ends}</Text>
             <HeartRow hp={0} />
           </WoodPanel>
-          {canResurrect() ? (
-            <View style={styles.actions}>
-              <GoldButton
-                label={strings.death_soul_tether}
-                onPress={() => router.push('/resurrection')}
-              />
-              <Text style={styles.hint}>{strings.death_hint}</Text>
-            </View>
+          {hasFeather ? (
+            <PhoenixOffer onRise={riseFromAshes} />
           ) : (
-            <View style={styles.actions}>
-              <Text style={styles.hint}>{strings.death_no_charge}</Text>
-              <Text style={styles.gone}>{strings.death_gone}</Text>
-              <WoodButton label={strings.death_let_go} onPress={newHero} />
-            </View>
+            <DeathActions
+              canRes={canResurrect()}
+              onResurrect={() => router.push('/resurrection')}
+              onNewHero={newHero}
+            />
           )}
         </ScrollView>
       </TavernFrame>
     </SafeAreaView>
+  )
+}
+
+function PhoenixOffer({ onRise }: { onRise: () => void }) {
+  return (
+    <View style={styles.actions}>
+      <GoldButton label={strings.phoenix_offer} onPress={onRise} />
+      <Text style={styles.hint}>{strings.phoenix_rise}</Text>
+    </View>
+  )
+}
+
+interface DeathActionsProps {
+  canRes: boolean
+  onResurrect: () => void
+  onNewHero: () => void
+}
+
+function DeathActions({ canRes, onResurrect, onNewHero }: DeathActionsProps) {
+  return canRes ? (
+    <View style={styles.actions}>
+      <GoldButton label={strings.death_soul_tether} onPress={onResurrect} />
+      <Text style={styles.hint}>{strings.death_hint}</Text>
+      <Text style={styles.hint}>{strings.phoenix_gone}</Text>
+    </View>
+  ) : (
+    <View style={styles.actions}>
+      <Text style={styles.hint}>{strings.death_no_charge}</Text>
+      <Text style={styles.hint}>{strings.phoenix_gone}</Text>
+      <Text style={styles.gone}>{strings.death_gone}</Text>
+      <WoodButton label={strings.death_let_go} onPress={onNewHero} />
+    </View>
   )
 }
 
