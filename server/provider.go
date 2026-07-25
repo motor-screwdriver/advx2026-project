@@ -15,12 +15,15 @@ import (
 	"time"
 )
 
-const openRouterURL = "https://openrouter.ai/api/v1/chat/completions"
-const defaultModel = "openrouter/free"
+// The oracle talks to a self-hosted vLLM server (OpenAI-compatible chat
+// completions) running on the GPU box; the deploy host reaches it through a
+// reverse SSH tunnel on loopback.
+const defaultBaseURL = "http://127.0.0.1:8000/v1"
+const defaultModel = "Qwen/Qwen2.5-7B-Instruct"
 const defaultMaxTokens = 300
 
-// requestTimeout: free-tier models can take 30s+ for a structured reply; keep
-// this under the client timeout.
+// requestTimeout: a queued request on the local GPU can wait behind another
+// generation; keep this under the client timeout.
 const requestTimeout = 60 * time.Second
 
 // ChatMessage is one message in the model conversation.
@@ -62,10 +65,10 @@ func requestID(ctx context.Context) string {
 	return "-"
 }
 
-// envelopeSummary extracts the fields that explain free-tier roulette behavior
-// for logs: which model actually answered, how generation ended and how the
-// token budget was spent. Reasoning models can burn the whole completion
-// budget on reasoning tokens, leaving the content empty.
+// envelopeSummary extracts the fields that explain model behavior for logs:
+// which model answered, how generation ended and how the token budget was
+// spent. Reasoning models can burn the whole completion budget on reasoning
+// tokens, leaving the content empty.
 func envelopeSummary(payload []byte) string {
 	var envelope struct {
 		Model   string `json:"model"`
@@ -92,30 +95,30 @@ func envelopeSummary(payload []byte) string {
 		envelope.Usage.CompletionTokens, envelope.Usage.CompletionDetail.ReasoningTokens)
 }
 
-// OpenRouterConfig holds the OpenRouter connection settings.
-type OpenRouterConfig struct {
+// LLMConfig holds the OpenAI-compatible backend connection settings.
+type LLMConfig struct {
 	APIKey    string
+	BaseURL   string
 	Model     string
-	AppURL    string
 	MaxTokens int
 }
 
-// OpenRouterProvider talks to the OpenRouter chat-completions API.
-type OpenRouterProvider struct {
-	config OpenRouterConfig
+// OpenAIProvider talks to an OpenAI-compatible chat-completions API (vLLM).
+type OpenAIProvider struct {
+	config LLMConfig
 	url    string
 	client *http.Client
 }
 
-func newOpenRouterProvider(config OpenRouterConfig) *OpenRouterProvider {
-	return &OpenRouterProvider{
+func newOpenAIProvider(config LLMConfig) *OpenAIProvider {
+	return &OpenAIProvider{
 		config: config,
-		url:    openRouterURL,
+		url:    strings.TrimRight(config.BaseURL, "/") + "/chat/completions",
 		client: &http.Client{Timeout: requestTimeout},
 	}
 }
 
-func (p *OpenRouterProvider) Complete(ctx context.Context, input StructuredCompletionInput) (any, error) {
+func (p *OpenAIProvider) Complete(ctx context.Context, input StructuredCompletionInput) (any, error) {
 	maxTokens := p.config.MaxTokens
 	if maxTokens <= 0 {
 		maxTokens = defaultMaxTokens
@@ -137,32 +140,23 @@ func (p *OpenRouterProvider) Complete(ctx context.Context, input StructuredCompl
 		"temperature": 0.8,
 		"max_tokens":  maxTokens,
 		"stream":      false,
-		// Free-route models are mostly reasoning models now; their chain-of-
-		// thought counts against max_tokens and can starve the actual reply
-		// (finish=length, empty content). The persona contract is strict JSON,
-		// so skip reasoning entirely.
-		"reasoning": map[string]any{"exclude": true},
 	}
 	payload, err := json.Marshal(requestBody)
 	if err != nil {
 		return nil, err
 	}
 	id := requestID(ctx)
-	log.Printf("openrouter request: id=%s model=%s messages=%d maxTokens=%d bytes=%d", id, p.config.Model, len(messages), maxTokens, len(payload))
+	log.Printf("llm request: id=%s model=%s messages=%d maxTokens=%d bytes=%d", id, p.config.Model, len(messages), maxTokens, len(payload))
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, p.url, bytes.NewReader(payload))
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Set("Authorization", "Bearer "+p.config.APIKey)
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-OpenRouter-Title", "8bit Sleep")
-	if p.config.AppURL != "" {
-		req.Header.Set("HTTP-Referer", p.config.AppURL)
-	}
 	start := time.Now()
 	resp, err := p.client.Do(req)
 	if err != nil {
-		log.Printf("openrouter transport error: id=%s model=%s err=%v", id, p.config.Model, err)
+		log.Printf("llm transport error: id=%s model=%s err=%v", id, p.config.Model, err)
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -176,47 +170,47 @@ func (p *OpenRouterProvider) Complete(ctx context.Context, input StructuredCompl
 		if len(detail) > 240 {
 			detail = detail[:240]
 		}
-		log.Printf("openrouter http %d: id=%s model=%s latency=%s body=%q", resp.StatusCode, id, p.config.Model, latency, truncateRunes(string(body), 400))
-		return nil, fmt.Errorf("OpenRouter %d: %s", resp.StatusCode, string(detail))
+		log.Printf("llm http %d: id=%s model=%s latency=%s body=%q", resp.StatusCode, id, p.config.Model, latency, truncateRunes(string(body), 400))
+		return nil, fmt.Errorf("LLM backend %d: %s", resp.StatusCode, string(detail))
 	}
 	content, err := responseContent(body)
 	if err != nil {
-		log.Printf("openrouter unusable: id=%s latency=%s %s err=%v body=%q", id, latency, envelopeSummary(body), err, truncateRunes(string(body), 400))
+		log.Printf("llm unusable: id=%s latency=%s %s err=%v body=%q", id, latency, envelopeSummary(body), err, truncateRunes(string(body), 400))
 		return nil, err
 	}
 	parsed, err := parseJSONContent(content)
 	if err != nil {
-		log.Printf("openrouter non-JSON content: id=%s latency=%s %s err=%v content=%q", id, latency, envelopeSummary(body), err, truncateRunes(content, 300))
+		log.Printf("llm non-JSON content: id=%s latency=%s %s err=%v content=%q", id, latency, envelopeSummary(body), err, truncateRunes(content, 300))
 		return nil, err
 	}
-	log.Printf("openrouter ok: id=%s latency=%s %s content=%d runes", id, latency, envelopeSummary(body), len([]rune(content)))
+	log.Printf("llm ok: id=%s latency=%s %s content=%d runes", id, latency, envelopeSummary(body), len([]rune(content)))
 	return parsed, nil
 }
 
 func responseContent(payload []byte) (string, error) {
 	var raw any
 	if err := json.Unmarshal(payload, &raw); err != nil {
-		return "", errors.New("OpenRouter returned an invalid response")
+		return "", errors.New("model backend returned an invalid response")
 	}
 	obj, ok := raw.(map[string]any)
 	if !ok {
-		return "", errors.New("OpenRouter returned an invalid response")
+		return "", errors.New("model backend returned an invalid response")
 	}
 	choices, ok := obj["choices"].([]any)
 	if !ok || len(choices) == 0 {
-		return "", errors.New("OpenRouter returned no choices")
+		return "", errors.New("model backend returned no choices")
 	}
 	first, ok := choices[0].(map[string]any)
 	if !ok {
-		return "", errors.New("OpenRouter returned no choices")
+		return "", errors.New("model backend returned no choices")
 	}
 	message, ok := first["message"].(map[string]any)
 	if !ok {
-		return "", errors.New("OpenRouter returned no message")
+		return "", errors.New("model backend returned no message")
 	}
 	content, ok := message["content"].(string)
 	if !ok || strings.TrimSpace(content) == "" {
-		return "", errors.New("OpenRouter returned empty content")
+		return "", errors.New("model backend returned empty content")
 	}
 	return content, nil
 }
@@ -232,30 +226,26 @@ func parseJSONContent(content string) (any, error) {
 	start := strings.Index(content, "{")
 	end := strings.LastIndex(content, "}")
 	if start == -1 || end <= start {
-		return nil, &AiResponseError{msg: "OpenRouter returned no JSON object"}
+		return nil, &AiResponseError{msg: "model returned no JSON object"}
 	}
 	if err := json.Unmarshal([]byte(content[start:end+1]), &value); err != nil {
-		return nil, &AiResponseError{msg: "OpenRouter returned malformed JSON"}
+		return nil, &AiResponseError{msg: "model returned malformed JSON"}
 	}
 	return value, nil
 }
 
 func createAiProvider() (AiProvider, error) {
-	provider, set := os.LookupEnv("AI_PROVIDER")
-	if !set {
-		provider = "openrouter"
-	}
-	if provider != "openrouter" {
-		return nil, fmt.Errorf("Unsupported AI provider: %s", provider)
-	}
-	apiKey := os.Getenv("OPENROUTER_API_KEY")
+	apiKey := os.Getenv("AI_API_KEY")
 	if apiKey == "" {
-		return nil, errors.New("OPENROUTER_API_KEY is not configured")
+		return nil, errors.New("AI_API_KEY is not configured")
 	}
-	config := OpenRouterConfig{
-		APIKey: apiKey,
-		Model:  defaultModel,
-		AppURL: os.Getenv("AI_APP_URL"),
+	config := LLMConfig{
+		APIKey:  apiKey,
+		BaseURL: defaultBaseURL,
+		Model:   defaultModel,
+	}
+	if baseURL := strings.TrimSpace(os.Getenv("AI_BASE_URL")); baseURL != "" {
+		config.BaseURL = baseURL
 	}
 	if model := strings.TrimSpace(os.Getenv("AI_MODEL")); model != "" {
 		config.Model = model
@@ -263,5 +253,5 @@ func createAiProvider() (AiProvider, error) {
 	if maxTokens, err := strconv.Atoi(os.Getenv("AI_MAX_TOKENS")); err == nil && maxTokens > 0 {
 		config.MaxTokens = maxTokens
 	}
-	return newOpenRouterProvider(config), nil
+	return newOpenAIProvider(config), nil
 }

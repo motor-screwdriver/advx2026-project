@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import type { PixelColor } from '../contracts/types'
 import { shareViewAsPng } from '../systems/share'
 import { strings } from '../ui/strings'
-import { ScreenTitle, TavernFrame, WoodPanel } from '../ui/tavern'
+import { ScreenTitle, TavernFrame, tavernLayout, WoodPanel } from '../ui/tavern'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
 import { BadgesRow, ShareRow } from './MosaicParts'
@@ -90,7 +90,7 @@ export function MosaicScreen() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#150d08' },
-  stack: { gap: theme.spacing(4) },
+  stack: { gap: tavernLayout.sectionGap },
   gridWell: {
     gap: theme.spacing(4),
   },

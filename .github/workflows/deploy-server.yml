@@ -33,14 +33,15 @@ jobs:
         env:
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          AI_BASE_URL: ${{ secrets.AI_BASE_URL }}
           AI_MODEL: ${{ secrets.AI_MODEL }}
           AI_MAX_TOKENS: '1200'
         run: |
           set -euo pipefail
           : "${DEPLOY_HOST:?}" "${DEPLOY_USER:?}" "${DEPLOY_PASSWORD:?}"
-          if [ -z "${OPENROUTER_API_KEY:-}" ]; then
-            echo "OPENROUTER_API_KEY secret is empty" >&2
+          if [ -z "${AI_API_KEY:-}" ]; then
+            echo "AI_API_KEY secret is empty" >&2
             exit 1
           fi
 
@@ -59,8 +60,9 @@ jobs:
             server/ "$REMOTE:$APP_DIR/src/"
 
           printf '%s\n' \
-            'AI_PROVIDER=openrouter' \
-            "OPENROUTER_API_KEY=$OPENROUTER_API_KEY" \
+            'HOST=0.0.0.0' \
+            "AI_BASE_URL=$AI_BASE_URL" \
+            "AI_API_KEY=$AI_API_KEY" \
             "AI_MODEL=$AI_MODEL" \
             "AI_MAX_TOKENS=$AI_MAX_TOKENS" \
             > /tmp/server.env
@@ -72,12 +74,15 @@ jobs:
           # Drop the old bare-metal unit if it is still around.
           ssh_run "systemctl stop 8bit-sleep 2>/dev/null || true; systemctl disable 8bit-sleep 2>/dev/null || true"
 
+          # Host networking: the container must reach the self-hosted LLM via
+          # the reverse SSH tunnel on host loopback (AI_BASE_URL), and binds
+          # HOST_PORT itself (HOST=0.0.0.0 in server.env).
           ssh_run "docker build -t '$IMAGE:latest' '$APP_DIR/src' \
             && docker stop '$CONTAINER' 2>/dev/null || true \
             && docker rm '$CONTAINER' 2>/dev/null || true \
             && docker run -d --name '$CONTAINER' --restart=always \
+              --network=host \
               --env-file '$APP_DIR/server.env' \
-              -p '${HOST_PORT}:8080' \
               '$IMAGE:latest'"
 
           ORIGIN="http://${DEPLOY_HOST}:${HOST_PORT}"

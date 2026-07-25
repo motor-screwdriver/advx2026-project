@@ -24,6 +24,7 @@
     "plugins": [
       "expo-router",
       "expo-audio",
+      "expo-secure-store",
       [
         "react-native-nfc-manager",
         {

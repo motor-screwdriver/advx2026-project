@@ -25,6 +25,25 @@ const wood = {
 
 export const tavernColors = wood
 
+/**
+ * Shared layout rhythm for every screen. TavernFrame already insets content
+ * (8 outer + 2 border + screenPad inner on each side), so screens add NO
+ * extra horizontal padding/margin on top-level panels and buttons; stacked
+ * panels/buttons sit sectionGap apart, sibling buttons in a row buttonGap.
+ */
+export const tavernLayout = {
+  /** Inner content inset TavernFrame provides (theme.spacing(3) = 12). */
+  screenPad: theme.spacing(3),
+  /** Total inset from the screen edge inside TavernFrame (8 outer + 2 border
+   * + 12 inner = 22). Screens without a TavernFrame use this so blocks and
+   * buttons sit at the same distance from the screen edge everywhere. */
+  edgePad: theme.spacing(2) + 2 + theme.spacing(3),
+  /** Vertical gap between stacked panels and bottom action buttons. */
+  sectionGap: theme.spacing(3),
+  /** Gap between sibling buttons/badges in a row. */
+  buttonGap: theme.spacing(3),
+} as const
+
 function Rivet({ size = 5 }: { size?: number }) {
   return (
     <View style={{ width: size, height: size, backgroundColor: wood.rivet, borderRadius: 1 }} />
@@ -146,7 +165,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: wood.dark,
     backgroundColor: theme.colors.bg,
-    padding: theme.spacing(3),
+    padding: tavernLayout.screenPad,
   },
   titleWrap: { alignItems: 'center', gap: theme.spacing(2) },
   titleRow: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing(3) },

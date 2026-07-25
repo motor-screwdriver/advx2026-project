@@ -16,14 +16,13 @@ var providerInput = StructuredCompletionInput{
 	Schema:     map[string]any{"type": "object"},
 }
 
-// testProvider points an OpenRouterProvider at a local test server, the Go
+// testProvider points an OpenAIProvider at a local test server, the Go
 // equivalent of the TS suite's fetch mock.
-func testProvider(t *testing.T, handler http.HandlerFunc) *OpenRouterProvider {
+func testProvider(t *testing.T, handler http.HandlerFunc) *OpenAIProvider {
 	t.Helper()
 	server := httptest.NewServer(handler)
 	t.Cleanup(server.Close)
-	provider := newOpenRouterProvider(OpenRouterConfig{APIKey: "k", Model: "m"})
-	provider.url = server.URL
+	provider := newOpenAIProvider(LLMConfig{APIKey: "k", BaseURL: server.URL, Model: "m"})
 	return provider
 }
 
@@ -86,18 +85,16 @@ func TestProviderThrowsWhenNoJSONObject(t *testing.T) {
 
 func TestProviderSendsExpectedRequest(t *testing.T) {
 	var (
-		gotMethod  string
-		gotAuth    string
-		gotTitle   string
-		gotReferer string
-		gotCT      string
-		gotBody    map[string]any
+		gotMethod string
+		gotPath   string
+		gotAuth   string
+		gotCT     string
+		gotBody   map[string]any
 	)
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotMethod = r.Method
+		gotPath = r.URL.Path
 		gotAuth = r.Header.Get("Authorization")
-		gotTitle = r.Header.Get("X-OpenRouter-Title")
-		gotReferer = r.Header.Get("HTTP-Referer")
 		gotCT = r.Header.Get("Content-Type")
 		_ = json.NewDecoder(r.Body).Decode(&gotBody)
 		w.Header().Set("Content-Type", "application/json")
@@ -106,8 +103,7 @@ func TestProviderSendsExpectedRequest(t *testing.T) {
 		})
 	}))
 	t.Cleanup(server.Close)
-	provider := newOpenRouterProvider(OpenRouterConfig{APIKey: "k", Model: "m", AppURL: "https://example.test/app"})
-	provider.url = server.URL
+	provider := newOpenAIProvider(LLMConfig{APIKey: "k", BaseURL: server.URL + "/v1/", Model: "m"})
 
 	if _, err := provider.Complete(context.Background(), providerInput); err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -116,14 +112,11 @@ func TestProviderSendsExpectedRequest(t *testing.T) {
 	if gotMethod != http.MethodPost {
 		t.Fatalf("method = %q", gotMethod)
 	}
+	if gotPath != "/v1/chat/completions" {
+		t.Fatalf("path = %q, want /v1/chat/completions", gotPath)
+	}
 	if gotAuth != "Bearer k" {
 		t.Fatalf("Authorization = %q", gotAuth)
-	}
-	if gotTitle != "8bit Sleep" {
-		t.Fatalf("X-OpenRouter-Title = %q", gotTitle)
-	}
-	if gotReferer != "https://example.test/app" {
-		t.Fatalf("HTTP-Referer = %q", gotReferer)
 	}
 	if gotCT != "application/json" {
 		t.Fatalf("Content-Type = %q", gotCT)

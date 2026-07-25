@@ -1,5 +1,14 @@
 import React, { useEffect, useRef } from 'react'
-import { Animated, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import {
+  Animated,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native'
 
 import { ICONS, SPRITES, type SpriteEntry } from '../../assets/manifest'
 import type { ChestLoot, ChestRarity } from '../contracts/types'
@@ -123,6 +132,10 @@ interface RevealProps {
 }
 
 export function RevealStage({ loot, pop, onTake }: RevealProps) {
+  const { width: winW } = useWindowDimensions()
+  // TavernFrame: outer padding 8 + border 2 + inner padding 12 on each side.
+  const sceneW = winW - 2 * (theme.spacing(2) + 2 + theme.spacing(3))
+  const sceneH = Math.round((sceneW * SCENE.frameHeight) / SCENE.frameWidth)
   const rarityColor = RARITY_COLORS[loot.rarity]
   const icon = lootIcon(loot)
   const lootName = loot.artifactId
@@ -134,7 +147,7 @@ export function RevealStage({ loot, pop, onTake }: RevealProps) {
   return (
     <ScrollView contentContainerStyle={styles.revealStack} showsVerticalScrollIndicator={false}>
       <ScreenTitle title={copy.perfectWeek} size={16} />
-      <Image source={SCENE.source} style={styles.scene} resizeMode="contain" />
+      <Image source={SCENE.source} style={{ width: sceneW, height: sceneH }} resizeMode="contain" />
       <Animated.View style={{ transform: [{ scale: pop }] }}>
         <WoodPanel style={styles.lootCard} contentStyle={styles.lootContent}>
           <View style={styles.rarityRow}>
@@ -178,10 +191,6 @@ const styles = StyleSheet.create({
   revealStack: {
     gap: theme.spacing(4),
     paddingBottom: theme.spacing(2),
-  },
-  scene: {
-    width: '100%',
-    aspectRatio: SCENE.frameWidth / SCENE.frameHeight,
   },
   lootCard: {
     borderColor: tavernColors.gold,

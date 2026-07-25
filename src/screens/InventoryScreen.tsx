@@ -6,7 +6,14 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { ICONS } from '../../assets/manifest'
 import { PixelSprite } from '../ui/PixelSprite'
 import { strings } from '../ui/strings'
-import { ScreenTitle, tavernColors, TavernFrame, WoodButton, WoodPanel } from '../ui/tavern'
+import {
+  ScreenTitle,
+  tavernColors,
+  TavernFrame,
+  tavernLayout,
+  WoodButton,
+  WoodPanel,
+} from '../ui/tavern'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
 
@@ -110,7 +117,7 @@ function charmEmoji(id: string): string {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#150d08' },
-  stack: { gap: theme.spacing(4), paddingBottom: theme.spacing(2) },
+  stack: { gap: tavernLayout.sectionGap, paddingBottom: theme.spacing(2) },
   slots: { flexDirection: 'row', gap: theme.spacing(2), marginTop: theme.spacing(8) },
   slotColumn: { flex: 1, gap: theme.spacing(1) },
   slotLabel: {

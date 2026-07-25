@@ -5,19 +5,12 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import type { SpriteEntry } from '../../assets/manifest'
 import { strings } from '../ui/strings'
-import {
-  CornerRivets,
-  GoldButton,
-  Parchment,
-  tavernColors,
-  TavernFrame,
-  WoodPanel,
-} from '../ui/tavern'
+import { CornerRivets, GoldButton, tavernColors, TavernFrame, WoodPanel } from '../ui/tavern'
 import { theme } from '../ui/theme'
 
 // New copy for this screen (kept local; strings.ts is owned elsewhere).
 const COPY = {
-  next: 'NEXT·V3',
+  next: 'NEXT',
   skip: 'SKIP',
 } as const
 
@@ -52,6 +45,17 @@ const PAGE_ART = {
   },
 } as const satisfies Record<Art, SpriteEntry>
 
+// Open book on a tavern desk (PixelLab, 384×240): dark cover/spine on the
+// left, a blank cream page on the right that carries the tutorial text.
+const BOOK_PAGE = {
+  source: require('../../assets/design/gen/book_page_right_crop.png'),
+  width: 244,
+  height: 233,
+  frames: 1,
+  frameWidth: 244,
+  frameHeight: 233,
+} as const satisfies SpriteEntry
+
 /** One page per rule; the mockup shows page 1 of 3 (11-туториал.png). */
 const PAGES: readonly { art: Art; text: string }[] = [
   { art: 'sleep', text: strings.tutorial_card1_body },
@@ -81,10 +85,7 @@ export function TutorialScreen() {
             <ArtWell art={PAGES[page].art} />
             <CornerRivets inset={5} />
           </View>
-          <View style={styles.spacer} />
-          <Parchment>
-            <Text style={styles.parchmentText}>{PAGES[page].text}</Text>
-          </Parchment>
+          <BookPage text={PAGES[page].text} />
         </WoodPanel>
         <View style={styles.dots}>
           {PAGES.map((_, index) => (
@@ -103,12 +104,26 @@ export function TutorialScreen() {
   )
 }
 
-/** Riveted dark well holding the page illustration; a full-width square. */
+/** Riveted dark well holding the page illustration; fixed height, no flex chains. */
 function ArtWell({ art }: { art: Art }) {
   const sprite = PAGE_ART[art]
   return (
     <View style={styles.artWell}>
-      <Image source={sprite.source} resizeMode="cover" style={styles.art} />
+      <Image source={sprite.source} resizeMode="cover" style={StyleSheet.absoluteFill} />
+    </View>
+  )
+}
+
+/** The tutorial "page": book art with the body text inked on the right page. */
+function BookPage({ text }: { text: string }) {
+  return (
+    <View style={styles.bookFrame}>
+      <View style={styles.bookInner}>
+        <Image source={BOOK_PAGE.source} resizeMode="cover" style={StyleSheet.absoluteFill} />
+        <View style={styles.bookTextArea}>
+          <Text style={styles.bookText}>{text}</Text>
+        </View>
+      </View>
     </View>
   )
 }
@@ -132,10 +147,10 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   panel: { flex: 1, marginTop: theme.spacing(2) },
-  panelWell: { flex: 1, gap: theme.spacing(3) },
+  panelWell: { gap: theme.spacing(3) },
   artFrame: {
     width: '100%',
-    aspectRatio: 1,
+    height: 300,
     backgroundColor: tavernColors.edge,
     borderWidth: 2,
     borderColor: tavernColors.dark,
@@ -144,20 +159,40 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   artWell: {
-    flex: 1,
+    width: '100%',
+    height: '100%',
     overflow: 'hidden',
     backgroundColor: '#180e07',
+    position: 'relative',
+  },
+  bookFrame: {
+    width: '100%',
+    height: 240,
+    borderWidth: 2,
+    borderColor: tavernColors.dark,
+    backgroundColor: tavernColors.edge,
     alignItems: 'center',
+    overflow: 'hidden',
+  },
+  bookInner: {
+    width: 251, // 240 * 244/233 — exact book image aspect, so the text map holds
+    height: 240,
+    position: 'relative',
+  },
+  bookTextArea: {
+    position: 'absolute',
+    left: '30%',
+    right: '9%',
+    top: '15%',
+    bottom: '25%',
     justifyContent: 'center',
   },
-  art: { width: '100%', height: '100%' },
-  spacer: { flex: 1 },
-  parchmentText: {
+  bookText: {
     ...theme.type.body,
-    fontSize: 12,
-    lineHeight: 22,
-    color: tavernColors.inkOnParchment,
-    textAlign: 'center',
+    fontSize: 10,
+    lineHeight: 16,
+    color: '#2c1d0f',
+    textAlign: 'left',
   },
   dots: {
     flexDirection: 'row',

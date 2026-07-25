@@ -7,7 +7,14 @@ import { ICONS } from '../../assets/manifest'
 import { HeartRow } from '../ui/HeartRow'
 import { PixelSprite } from '../ui/PixelSprite'
 import { strings } from '../ui/strings'
-import { CornerRivets, TavernBar, tavernColors, TavernFrame, WoodPanel } from '../ui/tavern'
+import {
+  CornerRivets,
+  TavernBar,
+  tavernColors,
+  TavernFrame,
+  tavernLayout,
+  WoodPanel,
+} from '../ui/tavern'
 import { theme } from '../ui/theme'
 import { DevTools } from './DevTools'
 
@@ -154,7 +161,7 @@ export function BookMenu({ hp, streak, level, onSleep }: Props) {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#150d08' },
-  stack: { flex: 1, gap: theme.spacing(3) },
+  stack: { flex: 1, gap: tavernLayout.sectionGap },
   topBarWell: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -220,7 +227,7 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     color: tavernColors.inkOnParchment,
   },
-  navRow: { flexDirection: 'row', gap: theme.spacing(3) },
+  navRow: { flexDirection: 'row', gap: tavernLayout.buttonGap },
   navEdge: {
     flex: 1,
     borderWidth: 2,

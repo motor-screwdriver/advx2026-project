@@ -1,22 +1,22 @@
-import React, { useEffect, useRef } from 'react';
-import { Animated, Pressable, StyleSheet, Text } from 'react-native';
+import React, { useEffect, useRef } from 'react'
+import { Animated, Pressable, StyleSheet, Text } from 'react-native'
 
-import { theme } from './theme';
+import { theme } from './theme'
 
-type Variant = 'primary' | 'default' | 'round';
+type Variant = 'primary' | 'default' | 'round'
 
 /** Stepped hover offsets (px) — discrete frames give a pixel-game bob. */
-const BOB = [0, -2, -4, -6, -4, -2] as const;
-const BOB_FPS = 5;
+const BOB = [0, -2, -4, -6, -4, -2] as const
+const BOB_FPS = 5
 
 interface Props {
-  label?: string;
-  onPress?: () => void;
-  variant?: Variant;
+  label?: string
+  onPress?: () => void
+  variant?: Variant
   /** Stagger the hover so the dock buttons bob out of phase. */
-  delay?: number;
+  delay?: number
   /** Size multiplier for the whole button (paddings, min width, font). */
-  scale?: number;
+  scale?: number
 }
 
 /** A button that hovers above the ground in stepped pixel motion with a shadow. */
@@ -27,26 +27,26 @@ export function FloatingButton({
   delay = 0,
   scale = 1,
 }: Props) {
-  const bob = useRef(new Animated.Value(0)).current;
+  const bob = useRef(new Animated.Value(0)).current
   useEffect(() => {
-    let i = Math.round(delay / (1000 / BOB_FPS)) % BOB.length;
+    let i = Math.round(delay / (1000 / BOB_FPS)) % BOB.length
     const id = setInterval(() => {
-      i = (i + 1) % BOB.length;
-      bob.setValue(BOB[i]);
-    }, 1000 / BOB_FPS);
-    return () => clearInterval(id);
-  }, [bob, delay]);
+      i = (i + 1) % BOB.length
+      bob.setValue(BOB[i])
+    }, 1000 / BOB_FPS)
+    return () => clearInterval(id)
+  }, [bob, delay])
 
-  const round = variant === 'round';
+  const round = variant === 'round'
   const rectSize = {
     paddingHorizontal: 14 * scale,
     paddingVertical: 10 * scale,
     minWidth: 56 * scale,
-  };
-  const roundSize = { width: 34 * scale, height: 34 * scale, borderRadius: 17 * scale };
+  }
+  const roundSize = { width: 34 * scale, height: 34 * scale, borderRadius: 17 * scale }
   const textSize = round
     ? { fontSize: 18 * scale }
-    : { fontSize: 8 * scale, lineHeight: 14 * scale, letterSpacing: scale };
+    : { fontSize: 8 * scale, lineHeight: 14 * scale, letterSpacing: scale }
   return (
     <Animated.View style={[styles.wrap, { transform: [{ translateY: bob }] }]}>
       <Pressable
@@ -68,7 +68,7 @@ export function FloatingButton({
         </Text>
       </Pressable>
     </Animated.View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -105,4 +105,4 @@ const styles = StyleSheet.create({
   },
   labelPrimary: { color: theme.colors.bg },
   gear: { fontSize: 22, color: theme.colors.text },
-});
+})
