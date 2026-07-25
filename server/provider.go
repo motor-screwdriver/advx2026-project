@@ -37,7 +37,7 @@ type StructuredCompletionInput struct {
 	System     string
 	Messages   []ChatMessage
 	SchemaName string
-	Schema     map[string]any
+	Schema     json.RawMessage
 }
 
 // AiProvider is a structured-completion backend.
@@ -137,7 +137,7 @@ func (p *OpenAIProvider) Complete(ctx context.Context, input StructuredCompletio
 				"schema": input.Schema,
 			},
 		},
-		"temperature": 0.8,
+		"temperature": 0.7,
 		"max_tokens":  maxTokens,
 		"stream":      false,
 	}

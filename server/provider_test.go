@@ -13,7 +13,7 @@ var providerInput = StructuredCompletionInput{
 	System:     "sys",
 	Messages:   []ChatMessage{{Role: "user", Content: "hi"}},
 	SchemaName: "test",
-	Schema:     map[string]any{"type": "object"},
+	Schema:     json.RawMessage(`{"type": "object"}`),
 }
 
 // testProvider points an OpenAIProvider at a local test server, the Go
@@ -124,7 +124,7 @@ func TestProviderSendsExpectedRequest(t *testing.T) {
 	if gotBody["model"] != "m" {
 		t.Fatalf("model = %v", gotBody["model"])
 	}
-	if gotBody["temperature"] != 0.8 {
+	if gotBody["temperature"] != 0.7 {
 		t.Fatalf("temperature = %v", gotBody["temperature"])
 	}
 	if gotBody["max_tokens"] != float64(300) {

@@ -1,14 +1,10 @@
-package main
+import json, os, urllib.request
 
-import "encoding/json"
+KEY = open('/output/llm-services/api_key').read().strip()
+URL = 'http://127.0.0.1:8000/v1/chat/completions'
+MODEL = os.environ.get('EVAL_MODEL', 'Qwen/Qwen2.5-14B-Instruct-AWQ')
 
-// Persona and output contract for Luma, the conversational sleep oracle.
-// The prompt follows companion-agent practice: fixed identity and voice,
-// one leading question per turn, implicit info slots instead of a form,
-// hard safety boundaries, injection defense, and a strict JSON contract.
-// No few-shot example lines: smaller instruct models echo them verbatim
-// instead of listening to the traveler. Ported from src/server/oraclePersona.ts.
-const OracleSystemPrompt = `You are Luma, the Sleep Oracle: a young mage who keeps a corner table
+SYSTEM = """You are Luma, the Sleep Oracle: a young mage who keeps a corner table
 at the Hearthlight Tavern in the pixel world of 8bit Sleep. Travelers sit with you before their
 first night. Your gift: from a few honest words about someone's days, you read the window of
 night - a bedtime and a wake time - that will keep their sleep hero strong.
@@ -47,19 +43,15 @@ If they volunteer more (shift work, irregular days, naps, weekends), use it.
 ## Suggestions
 With every question, offer 2 or 3 short example answers (each under 35 characters) the traveler could
 tap instead of typing, written in the traveler's own voice, e.g. "Office job, nine to six" or
-"Evenings are for gaming". Spell numbers as words, never digits or clock times. Offer none with the
-final reading.
+"Evenings are for gaming". Offer none with the final reading.
 
 ## The final reading
 - Give the reading once you know the morning anchor, the evenings, and their sense of rest -
   usually after 3 exchanges, at most 5. If one part stays foggy, favor a gentle 8 hours anchored
   to their morning.
-- Work silently, step by step: pick the wake time from their real obligations - it must land
-  within about half an hour of the morning they described - then subtract the rest they need to
-  get the bedtime. Example: must be somewhere at 08:00 and needs 8 hours of sleep -> wake around
-  07:00, so bed around 23:00.
-- Self-check before sending the final reading: the window adds up; message and reason contain no
-  number words and no clock references at all; if either fails, rewrite before answering.
+- Work silently, step by step: pick the wake time from their real obligations, then subtract the
+  rest they need to get the bedtime. Example: must be somewhere at 08:00 and needs 8 hours of
+  sleep -> wake around 07:00, so bed around 23:00.
 - bedTime and wakeTime are 24-hour clock strings like "23:30" or "01:00", minutes 00, 15, 30 or 45.
   Bedtime between 20:00 and 00:00; wake between 04:00 and 10:00; 7 to 12 hours between them.
 - Respect what they told you: a bedtime hours before the evening life they described will simply
@@ -70,40 +62,51 @@ final reading.
   bell. Describe the night window only through imagery: embers dying down, stars, the world going
   quiet, dawn on the horizon. Acknowledge what the traveler told you without restating any number
   or duration they gave.
-- reason: one short sentence that names one concrete detail from the traveler's own words (their
-  work, their games), same no-numbers rule.
+- reason: one short sentence tying the window to the traveler's own words, same no-digits rule.
 
 ## Output contract (every turn, JSON matching the schema)
 - Asking onward: message ends with one question; suggestions has 2-3 entries; bedTime, wakeTime,
   reason are null.
 - Final reading: message holds the closing words; suggestions is empty; bedTime and wakeTime hold
-  the window; reason holds one sentence.`
+  the window; reason holds one sentence."""
 
-// OracleModelSchema is the strict JSON schema the model reply must match.
-// Property order is deliberate: bedTime and wakeTime are generated before the
-// prose fields, so the model commits to concrete numbers first and the message
-// stays imagery-only. A Go map would marshal keys alphabetically (putting
-// message before wakeTime), hence the raw literal.
-var OracleModelSchema = json.RawMessage(`{
-	"type": "object",
-	"properties": {
-		"bedTime": {"type": ["string", "null"], "description": "24-hour clock, e.g. \"23:30\""},
-		"wakeTime": {"type": ["string", "null"], "description": "24-hour clock, e.g. \"07:00\""},
-		"message": {"type": "string"},
-		"suggestions": {"type": "array", "items": {"type": "string"}, "maxItems": 3},
-		"reason": {"type": ["string", "null"]}
-	},
-	"required": ["bedTime", "wakeTime", "message", "suggestions", "reason"],
-	"additionalProperties": false
-}`)
+SCHEMA = {"type": "object", "properties": {"message": {"type": "string"}, "suggestions": {"type": "array", "items": {"type": "string"}, "maxItems": 3}, "bedTime": {"type": ["string", "null"]}, "wakeTime": {"type": ["string", "null"]}, "reason": {"type": ["string", "null"]}}, "required": ["message", "suggestions", "bedTime", "wakeTime", "reason"], "additionalProperties": False}
 
-// OracleOpeningDirection is the stage direction that opens the conversation.
-const OracleOpeningDirection = "[[A new traveler sits at your table for the first time, just before night. " +
-	"Greet them in one or two sentences, then ask your first question about what " +
-	"their days and mornings usually demand of them.]]"
+OPENING = "[[A new traveler sits at your table for the first time, just before night. Greet them in one or two sentences, then ask your first question about what their days and mornings usually demand of them.]]"
+FINALIZE = "[[The candle burns low. Give your final reading now, using everything you have learned.]]"
 
-// OracleFinalizeDirection is the stage direction that forces the final reading once the turn budget runs out.
-const OracleFinalizeDirection = "[[The candle burns low. Give your final reading now, using everything you have learned.]]"
+ANSWERS = [
+    "I work in an office, up around 7, at my desk by 9.",
+    "Evenings I game with friends online, often past midnight honestly.",
+    "I feel human after about 7 and a half hours. Weekends I sleep in way longer.",
+]
 
-// OracleJSONNudge is the stage direction that re-asks for the output contract after a prose-only reply.
-const OracleJSONNudge = "[[Your last reply did not arrive in the agreed JSON form. Answer again, only the JSON object.]]"
+
+def call(messages):
+    body = json.dumps({"model": MODEL, "messages": messages,
+                       "response_format": {"type": "json_schema", "json_schema": {"name": "sleep_oracle_reply", "strict": True, "schema": SCHEMA}},
+                       "temperature": float(os.environ.get("EVAL_TEMP", "0.8")), "max_tokens": 1200, "stream": False}).encode()
+    req = urllib.request.Request(URL, data=body, headers={"Authorization": "Bearer " + KEY, "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=180) as r:
+        content = json.load(r)["choices"][0]["message"]["content"]
+    return json.loads(content)
+
+
+print("MODEL UNDER TEST:", MODEL)
+msgs = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": OPENING}]
+reply = call(msgs)
+print("ORACLE:", reply["message"])
+print("  suggestions:", reply["suggestions"])
+msgs.append({"role": "assistant", "content": reply["message"]})
+for i, ans in enumerate(ANSWERS):
+    msgs.append({"role": "user", "content": ans})
+    if i == len(ANSWERS) - 1:
+        msgs.append({"role": "user", "content": FINALIZE})
+    reply = call(msgs)
+    print("USER:", ans)
+    print("ORACLE:", reply["message"])
+    if reply.get("bedTime"):
+        print("  READING: bed", reply["bedTime"], "wake", reply["wakeTime"], "| reason:", reply["reason"])
+    else:
+        print("  suggestions:", reply["suggestions"])
+    msgs.append({"role": "assistant", "content": reply["message"]})
