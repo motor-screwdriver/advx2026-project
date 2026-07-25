@@ -277,7 +277,7 @@
     "music_day": {
       "durationSec": 14.4,
       "loop": true,
-      "path": "audio/main_theme.mp3"
+      "path": "audio/day_theme.mp3"
     },
     "music_night": {
       "durationSec": 16.0,

@@ -1289,7 +1289,7 @@ export const DESIGN = {
 } as const satisfies Record<string, SpriteEntry>
 
 export const AUDIO = {
-  music_day: { source: require('./audio/main_theme.mp3'), durationSec: 14.4, loop: true },
+  music_day: { source: require('./audio/day_theme.mp3'), durationSec: 14.4, loop: true },
   music_night: { source: require('./audio/main_theme.mp3'), durationSec: 16.0, loop: true },
   sfx_chest: { source: require('./audio/sfx_chest.wav'), durationSec: 0.8, loop: false },
   sfx_damage: {
