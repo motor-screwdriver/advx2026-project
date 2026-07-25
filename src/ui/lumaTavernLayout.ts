@@ -38,9 +38,9 @@ export function stageFont(stage: StageSize, sourcePx: number): number {
   return (sourcePx / 3840) * stage.height
 }
 
-/** Shrink single-line Press Start 2P text (~1em advance) to fit `maxSourcePx`. */
+/** Shrink single-line Pixelify Sans text (~0.72em advance) to fit `maxSourcePx`. */
 export function fitFont(text: string, baseSourcePx: number, maxSourcePx: number): number {
-  return Math.min(baseSourcePx, (maxSourcePx * 0.94) / Math.max(1, text.length))
+  return Math.min(baseSourcePx, (maxSourcePx * 0.94) / (Math.max(1, text.length) * 0.72))
 }
 
 /** Scene 1 (question): parchment text-safe area, two answer slots, chat input row. */
@@ -60,8 +60,8 @@ export const S2_ADJUST: FracRect = { top: 0.8958, left: 0.2963, width: 0.4074, h
 
 /** Base font sizes in source-art pixels (3840 tall); DialogueText tiers down. */
 export const LUMA_FONT = {
-  parchment: 80,
-  slot: 64,
+  parchment: 160,
+  slot: 128,
   slotMaxWidth: 1680,
   strip: 68,
   stripMaxWidth: 1760,
