@@ -110,15 +110,8 @@ function Pips({ results, k }: { results: boolean[]; k: number }) {
 }
 
 /** Bar interior: golden zone, tick marks and the sparkle cursor. */
-function Track({
-  zone,
-  cursor,
-  k,
-}: {
-  zone: GoldenZone | null
-  cursor: Animated.Value | null
-  k: number
-}) {
+function Track(props: { zone: GoldenZone | null; cursor: Animated.Value | null; k: number }) {
+  const { zone, cursor, k } = props
   const t = SRC.track
   const tickStep = (SRC.tickTo - SRC.tickFrom) / (SRC.tickCount - 1)
   return (

@@ -306,6 +306,46 @@
     }
   },
   "design": {
+    "bag_button_close": {
+      "frameHeight": 380,
+      "frameWidth": 1200,
+      "frames": 1,
+      "height": 380,
+      "path": "design/bag/gen/button_close.png",
+      "width": 1200
+    },
+    "bag_panel_consumables": {
+      "frameHeight": 1540,
+      "frameWidth": 1920,
+      "frames": 1,
+      "height": 1540,
+      "path": "design/bag/gen/panel_consumables.png",
+      "width": 1920
+    },
+    "bag_slot_empty": {
+      "frameHeight": 870,
+      "frameWidth": 840,
+      "frames": 1,
+      "height": 870,
+      "path": "design/bag/gen/slot_empty.png",
+      "width": 840
+    },
+    "bag_slot_frame": {
+      "frameHeight": 870,
+      "frameWidth": 840,
+      "frames": 1,
+      "height": 870,
+      "path": "design/bag/gen/slot_frame.png",
+      "width": 840
+    },
+    "bag_title": {
+      "frameHeight": 201,
+      "frameWidth": 1648,
+      "frames": 1,
+      "height": 201,
+      "path": "design/bag/gen/title.png",
+      "width": 1648
+    },
     "chest_button_claim": {
       "frameHeight": 186,
       "frameWidth": 626,

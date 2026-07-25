@@ -44,7 +44,7 @@ DIRS = {
     "07-мозаика": "mosaic",
     "08-настройки": "settings",
     "09-сундук": "chest",
-    "10-инвентарь": "bag",
+    # "10-инвентарь": bag sprites live in-repo, see tools/slice_bag_sprites.py
     "11-туториал": "tutorial",
     "12-герои": "heroes",
     "13-рейд-костёр": "raid",
