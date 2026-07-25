@@ -17,7 +17,9 @@ import { DevTools } from './DevTools'
 import { Dock, TopBar } from './HomeNightDock'
 
 const MAX_HP = 7
-const HERO_SIZE = 184
+// Reference proportions: the knight is ~0.19 of screen height, feet on the
+// blade/soil line of the grass band (NightWorld puts it at 0.79H -> bottom 21%).
+const HERO_SIZE = 148
 
 export function HomeScreen() {
   const { state } = useGame()
@@ -171,7 +173,7 @@ const styles = StyleSheet.create({
     gap: theme.screenPad,
   },
   stageSpacer: { flex: 1 },
-  walkSlot: { position: 'absolute', left: 0, right: 0, bottom: '16%', alignItems: 'center' },
+  walkSlot: { position: 'absolute', left: 0, right: 0, bottom: '21%', alignItems: 'center' },
   emptyBox: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   emptyWell: { alignItems: 'center', gap: theme.spacing(5) },
   empty: {

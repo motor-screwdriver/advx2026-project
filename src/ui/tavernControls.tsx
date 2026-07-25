@@ -7,6 +7,11 @@ import { theme } from './theme'
 /**
  * Tavern UI kit — interactive controls (see tavern.tsx for the barrel
  * export): GoldButton, WoodButton, StatBadge, TavernBar.
+ *
+ * EVERY button in the app is the same tavern control — same 2px riveted
+ * edge, same bevel body, same pixel-bold label sizes (16 regular / 12
+ * compact), same press-sink. Palette is the only difference: honey gold for
+ * the primary action, dim wood for secondary (danger = red label).
  */
 
 function BaseButton({
@@ -16,6 +21,7 @@ function BaseButton({
   textColor,
   style,
   compact = false,
+  disabled = false,
 }: {
   label: string
   onPress?: () => void
@@ -23,14 +29,18 @@ function BaseButton({
   textColor: string
   style?: StyleProp<ViewStyle>
   compact?: boolean
+  disabled?: boolean
 }) {
   return (
     <Pressable
-      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityState={{ disabled }}
+      onPress={disabled ? undefined : onPress}
       style={({ pressed }) => [
         styles.btnEdge,
         { backgroundColor: colors.edge },
-        pressed && { transform: [{ translateY: 2 }] },
+        pressed && !disabled && { transform: [{ translateY: 2 }] },
+        disabled && styles.btnDisabled,
         style,
       ]}
     >
@@ -50,6 +60,23 @@ function BaseButton({
       </View>
       <CornerRivets size={4} inset={5} />
     </Pressable>
+  )
+}
+
+/** Generic tavern button — the one unified control behind every app button. */
+export function TavernButton(props: {
+  label: string
+  onPress?: () => void
+  style?: StyleProp<ViewStyle>
+  compact?: boolean
+  disabled?: boolean
+}) {
+  return (
+    <BaseButton
+      {...props}
+      colors={{ edge: wood.edge, top: wood.light, fill: wood.mid, bottom: wood.dark }}
+      textColor={theme.colors.gold}
+    />
   )
 }
 
@@ -123,21 +150,27 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     position: 'relative',
   },
+  btnDisabled: {
+    opacity: 0.4,
+  },
   btnBody: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: theme.spacing(3),
+    paddingHorizontal: theme.spacing(4),
     borderTopWidth: 3,
     borderBottomWidth: 3,
   },
   btnLabel: {
     fontFamily: theme.fontFamily,
     fontSize: 16,
+    lineHeight: 20,
     letterSpacing: 2,
   },
   btnLabelCompact: {
     fontFamily: theme.fontFamily,
-    fontSize: 9,
+    fontSize: 12,
+    lineHeight: 16,
     letterSpacing: 1,
   },
   badgeWell: {

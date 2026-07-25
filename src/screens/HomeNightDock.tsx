@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import { GearButton } from '../ui/GearButton'
 import { HeartRow } from '../ui/HeartRow'
 import { strings } from '../ui/strings'
-import { GoldButton, TavernBar, WoodButton, WoodPanel, tavernColors } from '../ui/tavern'
+import { GoldButton, TavernBar, WoodPanel, tavernColors } from '../ui/tavern'
 import { theme } from '../ui/theme'
 
 const MAX_HP = 7
@@ -13,11 +13,14 @@ const MAX_HP = 7
 // Local copy (design-mockup label; not in strings.ts).
 const XP_LABEL = 'XP'
 
-/** Riveted wood panel: hearts row on top, LV badge + XP bar below. */
+/** Riveted wood panel: hearts row on top, LV badge + XP bar below (compact,
+ * reference mockup: the HUD hugs the top so the moon stays clear of it). */
 export function TopBar({ hp, streak, level }: { hp: number; streak: number; level: number }) {
   return (
     <WoodPanel contentStyle={styles.topPanelWell}>
-      <HeartRow hp={hp} size={26} />
+      <View style={styles.heartsRow}>
+        <HeartRow hp={hp} size={20} />
+      </View>
       <View style={styles.xpRow}>
         <View style={styles.lvBadge}>
           <View style={styles.lvBadgeInner}>
@@ -35,31 +38,20 @@ export function TopBar({ hp, streak, level }: { hp: number; streak: number; leve
   )
 }
 
-/** Night dock: big gold WAKE UP, wood BAG + MOSAIC, round gear. */
+/** Night dock, one row like the reference mockup: big gold WAKE UP + gear. */
 export function Dock({ onWake }: { onWake: () => void }) {
   const router = useRouter()
   return (
     <WoodPanel contentStyle={styles.dockWell}>
       <GoldButton style={styles.sleepBtn} label={strings.home_wakeup} onPress={onWake} />
-      <View style={styles.dockSide}>
-        <WoodButton
-          compact
-          label={strings.home_nav_bag}
-          onPress={() => router.push('/inventory')}
-        />
-        <WoodButton
-          compact
-          label={strings.home_nav_mosaic}
-          onPress={() => router.push('/mosaic')}
-        />
-      </View>
       <GearButton onPress={() => router.push('/settings')} />
     </WoodPanel>
   )
 }
 
 const styles = StyleSheet.create({
-  topPanelWell: { gap: theme.spacing(3) },
+  topPanelWell: { padding: theme.spacing(2.5), gap: theme.spacing(2) },
+  heartsRow: { alignItems: 'center' },
   xpRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -98,5 +90,4 @@ const styles = StyleSheet.create({
     gap: theme.spacing(2.5),
   },
   sleepBtn: { flex: 1 },
-  dockSide: { width: 96, gap: theme.spacing(2) },
 })

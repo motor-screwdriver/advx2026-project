@@ -26,6 +26,14 @@ const FLICKER_MS = 130
 const MAX_HP = 7
 const INK = tavernColors.inkOnParchment
 
+// ONE pixel unit for the whole page: PX = 1/135 of the book width, the size a
+// 64px-art hero pixel lands on. Every ink element snaps to it: hero at 64·PX,
+// big script at 16·PX, small script + hearts (16px art) at 8·PX — the two
+// classic 8-bit tiers. The backdrop itself sits on a 108-wide art grid, i.e.
+// its pixels are 1.25× the hero pixel — deliberately a touch chunkier so the
+// page never reads finer than the sprites drawn on it.
+const BOOK_GRID_W = 135
+
 // The right page of the book art. Fractions of the book rect framing the
 // clean parchment so hero, stats and buttons never spill onto wood or candle.
 const PAGE_L = 0.16
@@ -57,7 +65,7 @@ function useFlicker(count: number, ms: number) {
 }
 
 /** HP pips + LV + XP + HP text, quill-written in ink on the parchment. */
-function PageStats({ hp, level, streak, heart }: Stats & { heart: number }) {
+function PageStats({ hp, level, streak, px }: Stats & { px: number }) {
   const pct = Math.max(0, Math.min(1, streak / MAX_HP))
   return (
     <View style={styles.stats} pointerEvents="none">
@@ -66,17 +74,22 @@ function PageStats({ hp, level, streak, heart }: Stats & { heart: number }) {
           <PixelSprite
             key={i}
             sprite={i < hp ? SPRITES_1BIT['1bit_heart_full'] : SPRITES_1BIT['1bit_heart_empty']}
-            size={heart}
+            size={px * 8}
           />
         ))}
       </View>
-      <Text style={styles.lv}>
+      <Text style={[styles.lv, { fontSize: px * 8, lineHeight: px * 9 }]}>
         {strings.home_level} {level}
       </Text>
-      <View style={styles.xpTrack}>
+      <View
+        style={[
+          styles.xpTrack,
+          { height: px * 3, borderWidth: Math.max(2, Math.round(px * 0.75)) },
+        ]}
+      >
         <View style={[styles.xpFill, { width: `${pct * 100}%` }]} />
       </View>
-      <Text style={styles.hp}>
+      <Text style={[styles.hp, { fontSize: px * 8, lineHeight: px * 9 }]}>
         HP {hp}/{MAX_HP}
       </Text>
     </View>
@@ -129,8 +142,8 @@ export function BookView({
   const frame = useFlicker(FRAMES.length, FLICKER_MS)
   const bookW = Math.max(W, H * ASPECT)
   const bookH = bookW / ASPECT
-  const heroSize = Math.min(bookW * 0.42, bookH * 0.26)
-  const heart = Math.round(bookW * 0.055)
+  const px = Math.max(2, Math.round(bookW / BOOK_GRID_W))
+  const heroSize = px * 64
   return (
     <View style={styles.root}>
       <View style={{ width: bookW, height: bookH }}>
@@ -153,18 +166,18 @@ export function BookView({
             },
           ]}
         >
-          <PageStats hp={hp} level={level} streak={streak} heart={heart} />
+          <PageStats hp={hp} level={level} streak={streak} px={px} />
           <View style={styles.heroWrap} pointerEvents="none">
             {heroType ? (
               <HeroSprite type={heroType} size={heroSize} animated={false} oneBit />
             ) : null}
           </View>
           <View style={styles.buttons}>
-            <InkButton label={strings.home_sleep} size={44} onPress={onSleep} />
+            <InkButton label={strings.home_sleep} size={px * 16} onPress={onSleep} />
             <View style={styles.btnRow}>
-              <InkButton label={strings.home_nav_bag} size={26} onPress={onBag} />
-              <InkButton label={strings.home_nav_mosaic} size={26} onPress={onMosaic} />
-              <InkButton label={strings.home_nav_settings} size={26} onPress={onSettings} />
+              <InkButton label={strings.home_nav_bag} size={px * 8} onPress={onBag} />
+              <InkButton label={strings.home_nav_mosaic} size={px * 8} onPress={onMosaic} />
+              <InkButton label={strings.home_nav_settings} size={px * 8} onPress={onSettings} />
             </View>
           </View>
         </View>
@@ -189,25 +202,19 @@ const styles = StyleSheet.create({
     gap: theme.spacing(1),
   },
   lv: {
-    fontFamily: theme.scriptFontFamily,
-    fontSize: 30,
-    lineHeight: 32,
+    fontFamily: theme.fontFamily,
     color: INK,
   },
   // Hand-ruled ink bar: a hair of skew keeps it looking quill-drawn.
   xpTrack: {
     width: '70%',
-    height: 10,
-    borderWidth: 2,
     borderColor: INK,
     backgroundColor: 'transparent',
     transform: [{ rotate: '-0.6deg' }],
   },
   xpFill: { height: '100%', backgroundColor: INK },
   hp: {
-    fontFamily: theme.scriptFontFamily,
-    fontSize: 24,
-    lineHeight: 26,
+    fontFamily: theme.fontFamily,
     color: INK,
   },
   heroWrap: { flex: 1, alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center' },
@@ -215,5 +222,5 @@ const styles = StyleSheet.create({
   btnRow: { flexDirection: 'row', justifyContent: 'center', gap: theme.spacing(6) },
   inkBtn: { alignItems: 'center', justifyContent: 'center' },
   inkBtnPressed: { transform: [{ scale: 0.94 }] },
-  script: { fontFamily: theme.scriptFontFamily, color: INK, textAlign: 'center' },
+  script: { fontFamily: theme.fontFamily, color: INK, textAlign: 'center' },
 })
