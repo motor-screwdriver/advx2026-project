@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { playSfx } from '../systems/audio'
 import { HeartRow } from '../ui/HeartRow'
+import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
 import {
   GoldButton,
@@ -89,6 +90,7 @@ function NoHeroScreen({ onBack }: { onBack: () => void }) {
 
 export function DeathScreen() {
   const router = useRouter()
+  const go = useScreenTransition()
   const { state, canResurrect, startNewHero, usePhoenix: activatePhoenix } = useGame()
   const hero = state.hero
   const hasFeather = state.artifacts.indexOf('phoenix_feather') >= 0
@@ -128,7 +130,7 @@ export function DeathScreen() {
           ) : (
             <DeathActions
               canRes={canResurrect()}
-              onResurrect={() => router.push('/resurrection')}
+              onResurrect={() => go('/resurrection', { effect: 'wipe' })}
               onNewHero={newHero}
             />
           )}

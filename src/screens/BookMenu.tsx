@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router'
 import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -6,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { ICONS } from '../../assets/manifest'
 import { HeartRow } from '../ui/HeartRow'
 import { PixelSprite } from '../ui/PixelSprite'
+import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
 import {
   CornerRivets,
@@ -123,7 +123,7 @@ function NavButton({
 
 /** Awake home: the closed storybook is the game's main menu. */
 export function BookMenu({ hp, streak, level, onSleep }: Props) {
-  const router = useRouter()
+  const go = useScreenTransition()
   return (
     <SafeAreaView style={styles.safe}>
       <TavernFrame>
@@ -139,17 +139,17 @@ export function BookMenu({ hp, streak, level, onSleep }: Props) {
             <NavButton
               glyph={GLYPHS.mosaic}
               label={strings.home_nav_mosaic}
-              onPress={() => router.push('/mosaic')}
+              onPress={() => go('/mosaic', { effect: 'wipe' })}
             />
             <NavButton
               glyph={GLYPHS.bag}
               label={strings.home_nav_bag}
-              onPress={() => router.push('/inventory')}
+              onPress={() => go('/inventory', { effect: 'wipe' })}
             />
             <NavButton
               glyph={GLYPHS.gear}
               label={strings.home_nav_settings}
-              onPress={() => router.push('/settings')}
+              onPress={() => go('/settings', { effect: 'wipe' })}
             />
           </View>
         </View>

@@ -7,6 +7,7 @@ import type { NightEvaluation, NightOutcome } from '../contracts/types'
 import { playSfx } from '../systems/audio'
 import { PixelSprite } from '../ui/PixelSprite'
 import { RewardRow } from '../ui/RewardRow'
+import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
 import { GoldButton, tavernColors, TavernFrame, tavernLayout, WoodPanel } from '../ui/tavern'
 import { theme } from '../ui/theme'
@@ -97,6 +98,7 @@ function StreakStrip({ streak }: { streak: number }) {
 
 export function MorningSceneScreen() {
   const router = useRouter()
+  const go = useScreenTransition()
   const { state, lastEvaluation, pendingChest } = useGame()
 
   useEffect(() => {
@@ -124,8 +126,8 @@ export function MorningSceneScreen() {
       evaluation={lastEvaluation}
       streak={state.perfectWeekStreak}
       pendingChest={pendingChest}
-      onContinue={() => router.replace('/morning-chat')}
-      onChest={() => router.push('/chest')}
+      onContinue={() => go('/morning-chat', { effect: 'wipe', replace: true })}
+      onChest={() => go('/chest', { effect: 'wipe' })}
     />
   )
 }

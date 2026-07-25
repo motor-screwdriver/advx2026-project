@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router'
 import React, { useEffect, useMemo, useRef } from 'react'
 import { Animated, StyleSheet, View } from 'react-native'
 
@@ -6,6 +5,7 @@ import { useFadeIn } from '../ui/animations'
 import { BookView } from '../ui/BookView'
 import { HeroSprite } from '../ui/HeroSprite'
 import { NightWorld } from '../ui/NightWorld'
+import { useScreenTransition } from '../ui/screenTransition'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
 import { Dock, TopBar } from './HomeNightDock'
@@ -44,7 +44,7 @@ export function HeroStage({
   state: ReturnType<typeof useGame>['state']
   onSleep: () => void
 }) {
-  const router = useRouter()
+  const go = useScreenTransition()
   const hero = state.hero!
   const nightFade = useAsleepProgress(asleep)
   const bookFade = useMemo(
@@ -64,9 +64,9 @@ export function HeroStage({
           level={hero.level}
           streak={state.perfectWeekStreak}
           onSleep={onSleep}
-          onBag={() => router.push('/inventory')}
-          onMosaic={() => router.push('/mosaic')}
-          onSettings={() => router.push('/settings')}
+          onBag={() => go('/inventory', { effect: 'wipe' })}
+          onMosaic={() => go('/mosaic', { effect: 'wipe' })}
+          onSettings={() => go('/settings', { effect: 'wipe' })}
         />
       </Animated.View>
       <Animated.View

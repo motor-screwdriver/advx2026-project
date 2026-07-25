@@ -1,8 +1,8 @@
-import { useRouter } from 'expo-router'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import { FloatingButton } from '../ui/FloatingButton'
+import { useScreenTransition } from '../ui/screenTransition'
 import { theme } from '../ui/theme'
 
 const BUTTONS = [
@@ -12,7 +12,7 @@ const BUTTONS = [
 
 /** Journal + guide shortcuts, shown in the home top bar next to the streak. */
 export function HomeNav() {
-  const router = useRouter()
+  const go = useScreenTransition()
   return (
     <View style={styles.row}>
       {BUTTONS.map(({ label, href, delay }) => (
@@ -22,7 +22,7 @@ export function HomeNav() {
           scale={1}
           delay={delay}
           label={label}
-          onPress={() => router.push(href)}
+          onPress={() => go(href, { effect: 'wipe' })}
         />
       ))}
     </View>
