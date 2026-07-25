@@ -21,8 +21,6 @@ export interface HomeWidgetData {
   maxHp: number
   /** True while the hero is tucked in (bed check-in pending). */
   asleep: boolean
-  /** Perfect-week streak capped — hero wears the gold skin. */
-  gold: boolean
 }
 
 const STORAGE_KEY = '8bit-sleep/game'
@@ -50,7 +48,6 @@ export function buildWidgetData(game: GameState, pendingBedTime: number | null):
     hp: game.hp,
     maxHp: MAX_HP,
     asleep: pendingBedTime !== null,
-    gold: game.perfectWeekStreak >= MAX_HP,
   }
 }
 

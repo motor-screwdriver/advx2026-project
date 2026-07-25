@@ -3,7 +3,7 @@
 
 Home-screen widgets render static RemoteViews: the 2-frame idle strips used by
 the app would show up doubled. This crops frame 0 of every hero idle strip
-(normal + gold) into assets/pixellab/sprites/widget/hero_<type>[_gold].png.
+into assets/pixellab/sprites/widget/hero_<type>.png.
 Rerun after the hero sprites change in the pixel pipeline.
 """
 from pathlib import Path
@@ -41,12 +41,11 @@ def crop_first_frame(strip: Path, out: Path) -> None:
 def main() -> None:
     DST.mkdir(parents=True, exist_ok=True)
     for hero in HERO_TYPES:
-        for suffix in ("", "_gold"):
-            strip = SRC / f"hero_{hero}{suffix}.png"
-            if not strip.exists():
-                print(f"[widget-frames] SKIP {strip.name} (missing)")
-                continue
-            crop_first_frame(strip, DST / f"hero_{hero}{suffix}.png")
+        strip = SRC / f"hero_{hero}.png"
+        if not strip.exists():
+            print(f"[widget-frames] SKIP {strip.name} (missing)")
+            continue
+        crop_first_frame(strip, DST / f"hero_{hero}.png")
 
 
 if __name__ == "__main__":

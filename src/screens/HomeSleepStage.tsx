@@ -13,7 +13,6 @@ import { Dock, TopBar } from './HomeNightDock'
 // Reference proportions: the knight is ~0.19 of screen height, feet on the
 // blade/soil line of the grass band (NightWorld puts it at 0.79H -> bottom 21%).
 const HERO_SIZE = 148
-const MAX_HP = 7
 // Book <-> night-world crossfade: long enough to read as a deliberate scene
 // change, short enough that tapping SLEEP still feels immediate.
 const STAGE_FADE_MS = 550
@@ -75,13 +74,7 @@ export function HeroStage({
       >
         <NightWorld />
         <View style={styles.walkSlot} pointerEvents="none">
-          <HeroSprite
-            type={hero.type}
-            size={HERO_SIZE}
-            walking
-            fps={6}
-            gold={state.perfectWeekStreak >= MAX_HP}
-          />
+          <HeroSprite type={hero.type} size={HERO_SIZE} walking fps={6} />
         </View>
       </Animated.View>
     </View>

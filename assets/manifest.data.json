@@ -1090,22 +1090,6 @@
       "path": "pixellab/sprites/hero_druid.png",
       "width": 512
     },
-    "hero_druid_gold": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 2,
-      "height": 256,
-      "path": "pixellab/sprites/hero_druid_gold.png",
-      "width": 512
-    },
-    "hero_druid_gold_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/hero_druid_gold_walk.png",
-      "width": 1536
-    },
     "hero_druid_walk": {
       "frameHeight": 256,
       "frameWidth": 256,
@@ -1121,22 +1105,6 @@
       "height": 256,
       "path": "pixellab/sprites/hero_knight.png",
       "width": 512
-    },
-    "hero_knight_gold": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 2,
-      "height": 256,
-      "path": "pixellab/sprites/hero_knight_gold.png",
-      "width": 512
-    },
-    "hero_knight_gold_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/hero_knight_gold_walk.png",
-      "width": 1536
     },
     "hero_knight_walk": {
       "frameHeight": 256,
@@ -1154,22 +1122,6 @@
       "path": "pixellab/sprites/hero_mage.png",
       "width": 512
     },
-    "hero_mage_gold": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 2,
-      "height": 256,
-      "path": "pixellab/sprites/hero_mage_gold.png",
-      "width": 512
-    },
-    "hero_mage_gold_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/hero_mage_gold_walk.png",
-      "width": 1536
-    },
     "hero_mage_walk": {
       "frameHeight": 256,
       "frameWidth": 256,
@@ -1185,22 +1137,6 @@
       "height": 256,
       "path": "pixellab/sprites/hero_monk.png",
       "width": 512
-    },
-    "hero_monk_gold": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 2,
-      "height": 256,
-      "path": "pixellab/sprites/hero_monk_gold.png",
-      "width": 512
-    },
-    "hero_monk_gold_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/hero_monk_gold_walk.png",
-      "width": 1536
     },
     "hero_monk_walk": {
       "frameHeight": 256,
@@ -1218,22 +1154,6 @@
       "path": "pixellab/sprites/hero_ninja.png",
       "width": 512
     },
-    "hero_ninja_gold": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 2,
-      "height": 256,
-      "path": "pixellab/sprites/hero_ninja_gold.png",
-      "width": 512
-    },
-    "hero_ninja_gold_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/hero_ninja_gold_walk.png",
-      "width": 1536
-    },
     "hero_ninja_walk": {
       "frameHeight": 256,
       "frameWidth": 256,
@@ -1249,22 +1169,6 @@
       "height": 256,
       "path": "pixellab/sprites/hero_paladin.png",
       "width": 512
-    },
-    "hero_paladin_gold": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 2,
-      "height": 256,
-      "path": "pixellab/sprites/hero_paladin_gold.png",
-      "width": 512
-    },
-    "hero_paladin_gold_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/hero_paladin_gold_walk.png",
-      "width": 1536
     },
     "hero_paladin_walk": {
       "frameHeight": 256,
@@ -1282,22 +1186,6 @@
       "path": "pixellab/sprites/hero_ranger.png",
       "width": 512
     },
-    "hero_ranger_gold": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 2,
-      "height": 256,
-      "path": "pixellab/sprites/hero_ranger_gold.png",
-      "width": 512
-    },
-    "hero_ranger_gold_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/hero_ranger_gold_walk.png",
-      "width": 1536
-    },
     "hero_ranger_walk": {
       "frameHeight": 256,
       "frameWidth": 256,
@@ -1314,22 +1202,6 @@
       "path": "pixellab/sprites/hero_rogue.png",
       "width": 512
     },
-    "hero_rogue_gold": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 2,
-      "height": 256,
-      "path": "pixellab/sprites/hero_rogue_gold.png",
-      "width": 512
-    },
-    "hero_rogue_gold_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/hero_rogue_gold_walk.png",
-      "width": 1536
-    },
     "hero_rogue_walk": {
       "frameHeight": 256,
       "frameWidth": 256,
@@ -1345,22 +1217,6 @@
       "height": 256,
       "path": "pixellab/sprites/hero_warlock.png",
       "width": 512
-    },
-    "hero_warlock_gold": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 2,
-      "height": 256,
-      "path": "pixellab/sprites/hero_warlock_gold.png",
-      "width": 512
-    },
-    "hero_warlock_gold_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/hero_warlock_gold_walk.png",
-      "width": 1536
     },
     "hero_warlock_walk": {
       "frameHeight": 256,
@@ -1391,18 +1247,10 @@
     "hero_druid": {
       "frameHeight": 256,
       "frameWidth": 256,
-      "frames": 2,
+      "frames": 1,
       "height": 256,
       "path": "pixellab/sprites/1bit/hero_druid.png",
-      "width": 512
-    },
-    "hero_druid_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/1bit/hero_druid_walk.png",
-      "width": 1536
+      "width": 256
     },
     "hero_icon_40": {
       "frameHeight": 160,
@@ -1415,130 +1263,66 @@
     "hero_knight": {
       "frameHeight": 256,
       "frameWidth": 256,
-      "frames": 2,
+      "frames": 1,
       "height": 256,
       "path": "pixellab/sprites/1bit/hero_knight.png",
-      "width": 512
-    },
-    "hero_knight_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/1bit/hero_knight_walk.png",
-      "width": 1536
+      "width": 256
     },
     "hero_mage": {
       "frameHeight": 256,
       "frameWidth": 256,
-      "frames": 2,
+      "frames": 1,
       "height": 256,
       "path": "pixellab/sprites/1bit/hero_mage.png",
-      "width": 512
-    },
-    "hero_mage_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/1bit/hero_mage_walk.png",
-      "width": 1536
+      "width": 256
     },
     "hero_monk": {
       "frameHeight": 256,
       "frameWidth": 256,
-      "frames": 2,
+      "frames": 1,
       "height": 256,
       "path": "pixellab/sprites/1bit/hero_monk.png",
-      "width": 512
-    },
-    "hero_monk_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/1bit/hero_monk_walk.png",
-      "width": 1536
+      "width": 256
     },
     "hero_ninja": {
       "frameHeight": 256,
       "frameWidth": 256,
-      "frames": 2,
+      "frames": 1,
       "height": 256,
       "path": "pixellab/sprites/1bit/hero_ninja.png",
-      "width": 512
-    },
-    "hero_ninja_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/1bit/hero_ninja_walk.png",
-      "width": 1536
+      "width": 256
     },
     "hero_paladin": {
       "frameHeight": 256,
       "frameWidth": 256,
-      "frames": 2,
+      "frames": 1,
       "height": 256,
       "path": "pixellab/sprites/1bit/hero_paladin.png",
-      "width": 512
-    },
-    "hero_paladin_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/1bit/hero_paladin_walk.png",
-      "width": 1536
+      "width": 256
     },
     "hero_ranger": {
       "frameHeight": 256,
       "frameWidth": 256,
-      "frames": 2,
+      "frames": 1,
       "height": 256,
       "path": "pixellab/sprites/1bit/hero_ranger.png",
-      "width": 512
-    },
-    "hero_ranger_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/1bit/hero_ranger_walk.png",
-      "width": 1536
+      "width": 256
     },
     "hero_rogue": {
       "frameHeight": 256,
       "frameWidth": 256,
-      "frames": 2,
+      "frames": 1,
       "height": 256,
       "path": "pixellab/sprites/1bit/hero_rogue.png",
-      "width": 512
-    },
-    "hero_rogue_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/1bit/hero_rogue_walk.png",
-      "width": 1536
+      "width": 256
     },
     "hero_warlock": {
       "frameHeight": 256,
       "frameWidth": 256,
-      "frames": 2,
+      "frames": 1,
       "height": 256,
       "path": "pixellab/sprites/1bit/hero_warlock.png",
-      "width": 512
-    },
-    "hero_warlock_walk": {
-      "frameHeight": 256,
-      "frameWidth": 256,
-      "frames": 6,
-      "height": 256,
-      "path": "pixellab/sprites/1bit/hero_warlock_walk.png",
-      "width": 1536
+      "width": 256
     }
   }
 }
