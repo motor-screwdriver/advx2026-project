@@ -55,7 +55,7 @@ function useOracleActions(recommendation: SleepRecommendation | null) {
       return
     }
     completeOnboarding(recommendation)
-    router.replace('/hero-ceremony')
+    router.replace('/')
   }
   return { manual, adjust, accept }
 }

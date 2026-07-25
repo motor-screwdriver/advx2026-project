@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router'
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 
 import { ICONS, SCENES, type SpriteEntry } from '../../assets/manifest'
@@ -59,7 +59,9 @@ function LeafOrnament() {
   return <View style={styles.leafOrnament} />
 }
 
-/** Full-width scene illustration with the big outcome title over the sky. */
+/** Full-bleed banner: one randomly-picked house illustration (chosen once,
+ * held still — not cycled) spanning the full device width and closing off
+ * the top of the screen, with the big outcome title over the sky. */
 function SceneHero({
   outcome,
   title,
@@ -68,11 +70,11 @@ function SceneHero({
   title: { text: string; tone: Tone }
 }) {
   const { width } = useWindowDimensions()
-  // TavernFrame: outer padding 8 + border 2 + inner screenPad on each side.
-  const sceneWidth = width - 2 * (theme.spacing(2) + 2 + tavernLayout.screenPad)
+  const sprite = SCENES[SCENE_KEYS[outcome]]
+  const frame = useMemo(() => Math.floor(Math.random() * sprite.frames), [sprite])
   return (
     <View style={styles.sceneFrame}>
-      <PixelSprite sprite={SCENES[SCENE_KEYS[outcome]]} size={sceneWidth} animated fps={3} />
+      <PixelSprite sprite={sprite} size={width} frame={frame} />
       <View style={styles.titleOverlay} pointerEvents="none">
         <Text style={[styles.bigTitle, { color: TONE_COLORS[title.tone] }]}>{title.text}</Text>
       </View>
@@ -143,39 +145,43 @@ function MorningResult({
 }) {
   const { outcome, hpDelta, xp } = evaluation
   return (
-    <TavernFrame>
-      <View style={styles.stack}>
-        <SceneHero outcome={outcome} title={bannerFor(outcome)} />
-
-        <WoodPanel>
-          <View style={styles.panelBody}>
-            <Text style={styles.line}>{strings[LINE_KEYS[outcome]]}</Text>
-            <View style={styles.rewards}>
-              {hpDelta > 0 && (
-                <RewardRow icon={ICONS.heart_full} label={`+${hpDelta} HP`} tone="leaf" />
-              )}
-              {hpDelta < 0 && (
-                <RewardRow icon={ICONS.heart_empty} label={`${hpDelta} HP`} tone="text" />
-              )}
-              {xp > 0 && <RewardRow icon={STAR_ICON} label={`+${xp} XP`} tone="gold" />}
-              {outcome === 'PERFECT' && (
-                <RewardRow icon={ICONS.tile_gold} label={strings.reward_gold_pixel} tone="gold" />
-              )}
+    <View style={styles.root}>
+      <SceneHero outcome={outcome} title={bannerFor(outcome)} />
+      <TavernFrame>
+        <View style={styles.stack}>
+          <WoodPanel>
+            <View style={styles.panelBody}>
+              <Text style={styles.line}>{strings[LINE_KEYS[outcome]]}</Text>
+              <View style={styles.rewards}>
+                {hpDelta > 0 && (
+                  <RewardRow icon={ICONS.heart_full} label={`+${hpDelta} HP`} tone="leaf" />
+                )}
+                {hpDelta < 0 && (
+                  <RewardRow icon={ICONS.heart_empty} label={`${hpDelta} HP`} tone="text" />
+                )}
+                {xp > 0 && <RewardRow icon={STAR_ICON} label={`+${xp} XP`} tone="gold" />}
+                {outcome === 'PERFECT' && (
+                  <RewardRow icon={ICONS.tile_gold} label={strings.reward_gold_pixel} tone="gold" />
+                )}
+              </View>
             </View>
-          </View>
-        </WoodPanel>
+          </WoodPanel>
 
-        <StreakStrip streak={streak} />
+          <StreakStrip streak={streak} />
 
-        {pendingChest && <GoldButton label={strings.chest_title.toUpperCase()} onPress={onChest} />}
+          {pendingChest && (
+            <GoldButton label={strings.chest_title.toUpperCase()} onPress={onChest} />
+          )}
 
-        <GoldButton label={strings.morning_continue.toUpperCase()} onPress={onContinue} />
-      </View>
-    </TavernFrame>
+          <GoldButton label={strings.morning_continue.toUpperCase()} onPress={onContinue} />
+        </View>
+      </TavernFrame>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: theme.colors.bg },
   stack: {
     flex: 1,
     gap: tavernLayout.sectionGap,
@@ -192,9 +198,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   sceneFrame: {
-    alignSelf: 'center',
-    borderWidth: 2,
-    borderColor: tavernColors.edge,
+    alignSelf: 'stretch',
     backgroundColor: tavernColors.edge,
     overflow: 'hidden',
   },

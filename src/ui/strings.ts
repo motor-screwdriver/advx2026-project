@@ -98,10 +98,6 @@ export const strings = {
   home_nav_settings: 'SETTINGS',
   home_menu_tagline: 'THE NIGHTLY WATCH',
 
-  // Sleep transition (book carries you to the hero)
-  transition_carry: 'THE BOOK CARRIES YOU TO YOUR HERO...',
-  transition_tap: 'Tap to continue',
-
   // Night outcomes
   outcome_perfect: 'PERFECT',
   outcome_good: 'GOOD',
