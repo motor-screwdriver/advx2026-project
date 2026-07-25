@@ -633,6 +633,126 @@
       "height": 40,
       "path": "design/onboarding/14-selection-arrow.png",
       "width": 32
+    },
+    "settings_dropdown_bottom": {
+      "frameHeight": 170,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 170,
+      "path": "design/settings/dropdown_bottom.png",
+      "width": 2026
+    },
+    "settings_dropdown_mid": {
+      "frameHeight": 100,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 100,
+      "path": "design/settings/dropdown_mid.png",
+      "width": 2026
+    },
+    "settings_dropdown_top": {
+      "frameHeight": 170,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 170,
+      "path": "design/settings/dropdown_top.png",
+      "width": 2026
+    },
+    "settings_header": {
+      "frameHeight": 340,
+      "frameWidth": 1960,
+      "frames": 1,
+      "height": 340,
+      "path": "design/settings/header.png",
+      "width": 1960
+    },
+    "settings_row_blank": {
+      "frameHeight": 440,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 440,
+      "path": "design/settings/row_blank.png",
+      "width": 2026
+    },
+    "settings_row_change": {
+      "frameHeight": 444,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 444,
+      "path": "design/settings/row_change.png",
+      "width": 2026
+    },
+    "settings_row_eink": {
+      "frameHeight": 442,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 442,
+      "path": "design/settings/row_eink.png",
+      "width": 2026
+    },
+    "settings_row_eink_off": {
+      "frameHeight": 442,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 442,
+      "path": "design/settings/row_eink_off.png",
+      "width": 2026
+    },
+    "settings_row_notif": {
+      "frameHeight": 444,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 444,
+      "path": "design/settings/row_notif.png",
+      "width": 2026
+    },
+    "settings_row_reset": {
+      "frameHeight": 454,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 454,
+      "path": "design/settings/row_reset.png",
+      "width": 2026
+    },
+    "settings_row_window": {
+      "frameHeight": 440,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 440,
+      "path": "design/settings/row_window.png",
+      "width": 2026
+    },
+    "settings_toggle_knob": {
+      "frameHeight": 245,
+      "frameWidth": 295,
+      "frames": 1,
+      "height": 245,
+      "path": "design/settings/toggle_knob.png",
+      "width": 295
+    },
+    "settings_toggle_knob_blank": {
+      "frameHeight": 245,
+      "frameWidth": 295,
+      "frames": 1,
+      "height": 245,
+      "path": "design/settings/toggle_knob_blank.png",
+      "width": 295
+    },
+    "settings_toggle_track": {
+      "frameHeight": 216,
+      "frameWidth": 461,
+      "frames": 1,
+      "height": 216,
+      "path": "design/settings/toggle_track.png",
+      "width": 461
+    },
+    "settings_version": {
+      "frameHeight": 80,
+      "frameWidth": 610,
+      "frames": 1,
+      "height": 80,
+      "path": "design/settings/version.png",
+      "width": 610
     }
   },
   "icons": {

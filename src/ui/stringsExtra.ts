@@ -57,6 +57,14 @@ export const stringsExtra = {
   mifit_disconnect: 'Disconnect',
   mifit_error_generic: 'Mi Fitness login failed.',
 
+  // Settings (sprite redesign rows — split from strings.ts for line cap)
+  settings_version_full: 'Version 0.1.0',
+  settings_not_linked: 'Not linked',
+  settings_linked: 'Linked',
+  settings_cooldown: '7-day cooldown',
+  settings_mifit: 'Mi Fit',
+  settings_connected: 'Connected',
+
   // Debug (temporary, M0-M1)
   debug_title: '-- Debug (temporary) --',
   debug_presets: 'State presets',
