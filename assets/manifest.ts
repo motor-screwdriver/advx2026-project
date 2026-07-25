@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 // GENERATED FILE — produced by tools/pixelate.py / tools/generate_audio.py.
 // Do not edit by hand; rerun the pipeline instead. This manifest is the ONLY
 // supported way for UI code to reference game assets (PROMPT C §6).
@@ -1285,6 +1286,62 @@ export const DESIGN = {
     frames: 1,
     frameWidth: 160,
     frameHeight: 160,
+  },
+  onboarding_button_begin_plaque: {
+    source: require('./design/onboarding/17-button-begin-plaque.png'),
+    width: 1558,
+    height: 452,
+    frames: 1,
+    frameWidth: 1558,
+    frameHeight: 452,
+  },
+  onboarding_caption_min_hours: {
+    source: require('./design/onboarding/18-caption-min-hours.png'),
+    width: 874,
+    height: 70,
+    frames: 1,
+    frameWidth: 874,
+    frameHeight: 70,
+  },
+  onboarding_logo_text: {
+    source: require('./design/onboarding/15-logo-text.png'),
+    width: 1508,
+    height: 774,
+    frames: 1,
+    frameWidth: 1508,
+    frameHeight: 774,
+  },
+  onboarding_panel_rules_card: {
+    source: require('./design/onboarding/16-panel-rules-card.png'),
+    width: 1848,
+    height: 1028,
+    frames: 1,
+    frameWidth: 1848,
+    frameHeight: 1028,
+  },
+  onboarding_picker_window_bedtime: {
+    source: require('./design/onboarding/12-picker-window-bedtime.png'),
+    width: 282,
+    height: 364,
+    frames: 1,
+    frameWidth: 282,
+    frameHeight: 364,
+  },
+  onboarding_picker_window_wakeup: {
+    source: require('./design/onboarding/13-picker-window-wakeup.png'),
+    width: 282,
+    height: 364,
+    frames: 1,
+    frameWidth: 282,
+    frameHeight: 364,
+  },
+  onboarding_selection_arrow: {
+    source: require('./design/onboarding/14-selection-arrow.png'),
+    width: 32,
+    height: 40,
+    frames: 1,
+    frameWidth: 32,
+    frameHeight: 40,
   },
 } as const satisfies Record<string, SpriteEntry>
 
