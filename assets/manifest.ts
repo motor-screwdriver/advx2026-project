@@ -574,14 +574,6 @@ export const SCENES = {
     frameWidth: 2160,
     frameHeight: 3840,
   },
-  start_book_frame_2: {
-    source: require('./start_screen/book_frame_2.png'),
-    width: 2160,
-    height: 3840,
-    frames: 1,
-    frameWidth: 2160,
-    frameHeight: 3840,
-  },
   start_mosaic_pressed: {
     source: require('./start_screen/mosaic_pressed.png'),
     width: 210,
