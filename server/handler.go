@@ -84,6 +84,8 @@ func clientID(r *http.Request) string {
 // Server wires the oracle endpoint, rate limiting and provider factory.
 type Server struct {
 	providerFactory func() (AiProvider, error)
+	mifitFactory    miFitnessClientFactory
+	mifitChallenges *miFitnessChallengeStore
 	limiter         *rateLimiter
 	handler         http.Handler
 }
@@ -91,10 +93,14 @@ type Server struct {
 func newServer(providerFactory func() (AiProvider, error)) *Server {
 	s := &Server{
 		providerFactory: providerFactory,
+		mifitFactory:    newRealMiFitnessClient,
+		mifitChallenges: newMiFitnessChallengeStore(10 * time.Minute),
 		limiter:         newRateLimiter(rateWindow, rateLimit),
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /api/oracle", s.handleOracle)
+	mux.HandleFunc("POST /api/mifit/login", s.handleMiFitnessLogin)
+	mux.HandleFunc("POST /api/mifit/verify-email", s.handleMiFitnessVerifyEmail)
 	mux.HandleFunc("POST /api/morning-oracle", s.handleMorningOracle)
 	mux.HandleFunc("GET /healthz", s.handleHealthz)
 	s.handler = corsMiddleware(mux)
@@ -214,9 +220,13 @@ func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(r.URL.Path, "/api/") {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Private-Network", "true")
 			if r.Method == http.MethodOptions {
 				w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
 				w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+				log.Printf("cors preflight: path=%s origin=%s private_network=%s",
+					r.URL.Path, r.Header.Get("Origin"),
+					r.Header.Get("Access-Control-Request-Private-Network"))
 				w.WriteHeader(http.StatusNoContent)
 				return
 			}
