@@ -16,8 +16,8 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	if os.Getenv("OPENROUTER_API_KEY") == "" {
-		log.Println("warning: OPENROUTER_API_KEY is not set; /api/oracle will answer 503")
+	if os.Getenv("AI_API_KEY") == "" {
+		log.Println("warning: AI_API_KEY is not set; /api/oracle will answer 503")
 	}
 	addr := host + ":" + port
 	// WriteTimeout must outlast the upstream provider timeout (60s).
