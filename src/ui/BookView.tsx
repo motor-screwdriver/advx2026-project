@@ -52,6 +52,7 @@ interface Nav {
   onBag?: () => void
   onMosaic?: () => void
   onSettings?: () => void
+  onSleepPlan?: () => void
 }
 
 /** Cycles 0..count-1 to page the flicker frames. */
@@ -128,16 +129,8 @@ function InkButton({
  * optional; without them (sleep transition opening frame) the entries render
  * as plain ink.
  */
-export function BookView({
-  heroType,
-  hp,
-  level,
-  streak,
-  onSleep,
-  onBag,
-  onMosaic,
-  onSettings,
-}: Stats & Nav & { heroType: HeroType | null }) {
+export function BookView(props: Stats & Nav & { heroType: HeroType | null }) {
+  const { heroType, hp, level, streak, onSleep, onBag, onMosaic, onSettings, onSleepPlan } = props
   const { width: W, height: H } = useWindowDimensions()
   const frame = useFlicker(FRAMES.length, FLICKER_MS)
   const bookW = Math.max(W, H * ASPECT)
@@ -179,6 +172,9 @@ export function BookView({
               <InkButton label={strings.home_nav_mosaic} size={px * 8} onPress={onMosaic} />
               <InkButton label={strings.home_nav_settings} size={px * 8} onPress={onSettings} />
             </View>
+            {onSleepPlan && (
+              <InkButton label={strings.sleep_plan_button} size={px * 8} onPress={onSleepPlan} />
+            )}
           </View>
         </View>
       </View>

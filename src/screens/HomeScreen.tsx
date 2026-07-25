@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { useMiFitnessStore } from '../state/mifitStore'
 import { playMusic } from '../systems/audio'
 import { BookView } from '../ui/BookView'
 import { DayNightBackground } from '../ui/DayNightBackground'
@@ -115,6 +116,7 @@ function HeroStage({
   onSleep: () => void
 }) {
   const router = useRouter()
+  const mifitConnected = useMiFitnessStore((s) => s.connected)
   const hero = state.hero!
   if (!asleep) {
     return (
@@ -127,6 +129,7 @@ function HeroStage({
         onBag={() => router.push('/inventory')}
         onMosaic={() => router.push('/mosaic')}
         onSettings={() => router.push('/settings')}
+        onSleepPlan={mifitConnected ? () => router.push('/sleep-plan') : undefined}
       />
     )
   }
