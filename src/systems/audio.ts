@@ -11,6 +11,7 @@ export type MusicKey = 'music_day' | 'music_night'
 export type SfxKey = 'sfx_chest' | 'sfx_damage' | 'sfx_death' | 'sfx_victory'
 
 const MUSIC_VOLUME = 0.5
+const SFX_KEYS: readonly SfxKey[] = ['sfx_chest', 'sfx_damage', 'sfx_death', 'sfx_victory']
 // Sleep/Wake track swap: old theme dies down, then the new one enters.
 // 250 + 300 ms ≈ the 550 ms book<->night stage crossfade (HomeSleepStage),
 // so the ear and the eye finish the scene change together.
@@ -33,6 +34,21 @@ function init(): void {
   initialized = true
   // Bedside use: keep the chiptune audible even with the ringer silenced.
   setAudioModeAsync({ playsInSilentMode: true }).catch(() => {})
+  // Warm up the one-shot players now (Home mount), long before any tap:
+  // creating them inside playSfx made the first chest/damage/death/victory
+  // sound pay the file load+decode cost and land audibly late.
+  for (const key of SFX_KEYS) {
+    getSfxPlayer(key)
+  }
+}
+
+function getSfxPlayer(key: SfxKey): AudioPlayer {
+  let player = sfxPlayers[key]
+  if (!player) {
+    player = createAudioPlayer(AUDIO[key].source)
+    sfxPlayers[key] = player
+  }
+  return player
 }
 
 /** pause() before remove(): remove() alone releases the JS handle but can
@@ -125,17 +141,17 @@ export function stopMusic(): void {
   musicKey = null
 }
 
-/** Play a one-shot sound effect, reusing a cached player per key. */
+/** Play a one-shot sound effect on its preloaded, cached player. */
 export function playSfx(key: SfxKey): void {
   init()
   if (!enabled) {
     return
   }
-  let player = sfxPlayers[key]
-  if (!player) {
-    player = createAudioPlayer(AUDIO[key].source)
-    sfxPlayers[key] = player
+  const player = getSfxPlayer(key)
+  // Rewind only on replay: seekTo() is async, and awaiting it before every
+  // play() pushed even the very first shot behind the button press.
+  if (player.currentTime > 0) {
+    player.seekTo(0)
   }
-  player.seekTo(0)
   player.play()
 }
