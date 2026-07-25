@@ -106,12 +106,12 @@ function parchmentFont(length: number): number {
     return LUMA_FONT.parchment
   }
   if (length <= 110) {
-    return 64
+    return 128
   }
   if (length <= 170) {
-    return 56
+    return 112
   }
-  return 50
+  return 100
 }
 
 /** Scrollable ink text over the parchment area; follows the typewriter. */
@@ -125,8 +125,19 @@ export function DialogueText({
   text: string
 }) {
   const scroll = useRef<ScrollView>(null)
+  const previous = useRef('')
   useEffect(() => {
-    scroll.current?.scrollToEnd({ animated: false })
+    // Typewriter appends -> follow the tail; a new text -> read from the top.
+    const appended =
+      previous.current.length > 0 &&
+      text.startsWith(previous.current) &&
+      text.length > previous.current.length
+    previous.current = text
+    if (appended) {
+      scroll.current?.scrollToEnd({ animated: false })
+    } else {
+      scroll.current?.scrollTo({ y: 0, animated: false })
+    }
   }, [text])
   const fontSize = stageFont(stage, parchmentFont(text.length))
   return (
