@@ -83,7 +83,7 @@ export function OnboardingScreen() {
       return
     }
     completeOnboarding({ bedMin, wakeMin })
-    go('/', { replace: true })
+    go('/tutorial', { replace: true })
   }
 
   const compactIntro = editing ? strings.onboarding_change_body : strings.onboarding_adjust_body

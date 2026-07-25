@@ -47,7 +47,7 @@ function useOracleActions(recommendation: SleepRecommendation | null) {
       return
     }
     completeOnboarding(recommendation)
-    go('/', { replace: true })
+    go('/tutorial', { replace: true })
   }
   return { manual, adjust, accept }
 }
