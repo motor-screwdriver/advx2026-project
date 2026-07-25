@@ -1,10 +1,10 @@
-import { useRouter } from 'expo-router'
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { ICONS } from '../../assets/manifest'
 import { PixelSprite } from '../ui/PixelSprite'
+import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
 import {
   ScreenTitle,
@@ -32,7 +32,7 @@ function slotIcon(id: string) {
 }
 
 export function InventoryScreen() {
-  const router = useRouter()
+  const go = useScreenTransition()
   const { state } = useGame()
   const { equipped } = state
 
@@ -45,23 +45,21 @@ export function InventoryScreen() {
             <EquipSlot
               label={strings.inventory_armor}
               artifact={equipped.armor}
-              onPress={() => router.push({ pathname: '/equip-slot', params: { slot: 'armor' } })}
+              onPress={() => go('/equip-slot', { params: { slot: 'armor' } })}
             />
             <EquipSlot
               label={strings.inventory_utilities}
               artifact={equipped.utilities}
-              onPress={() =>
-                router.push({ pathname: '/equip-slot', params: { slot: 'utilities' } })
-              }
+              onPress={() => go('/equip-slot', { params: { slot: 'utilities' } })}
             />
             <EquipSlot
               label={strings.inventory_charm}
               artifact={equipped.charm}
-              onPress={() => router.push({ pathname: '/equip-slot', params: { slot: 'charm' } })}
+              onPress={() => go('/equip-slot', { params: { slot: 'charm' } })}
             />
           </View>
           <Text style={styles.hint}>{strings.inventory_hint}</Text>
-          <WoodButton label="CLOSE" onPress={() => router.back()} style={styles.close} />
+          <WoodButton label="CLOSE" onPress={() => go.back()} style={styles.close} />
         </View>
       </TavernFrame>
     </SafeAreaView>

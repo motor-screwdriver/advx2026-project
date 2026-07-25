@@ -1,9 +1,9 @@
-import { useRouter } from 'expo-router'
 import React from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { type SpriteEntry } from '../../assets/manifest'
 import type { HeroType } from '../contracts/types'
+import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
 import { tavernColors, WoodPanel } from '../ui/tavern'
 import { theme } from '../ui/theme'
@@ -78,13 +78,13 @@ export function HeroCard({ type, condition, isCurrent }: CardProps) {
  * (gold-highlighted, not pressable), gear → settings.
  */
 export function NavBar() {
-  const router = useRouter()
+  const go = useScreenTransition()
   return (
     <WoodPanel rivets={false} contentStyle={styles.navWell}>
       <NavButton
         glyph="ZZZ"
         accessibilityLabel={strings.home_sleep}
-        onPress={() => router.dismissTo('/')}
+        onPress={() => go.dismissTo('/')}
       />
       <View style={styles.navActive} accessibilityLabel={strings.home_nav_heroes}>
         <View style={styles.navActiveBody}>
@@ -94,7 +94,7 @@ export function NavBar() {
       <NavButton
         glyph="GEAR"
         accessibilityLabel={strings.home_nav_settings}
-        onPress={() => router.push('/settings')}
+        onPress={() => go('/settings')}
       />
     </WoodPanel>
   )

@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router'
-import React, { createContext, useCallback, useContext, useState } from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Image, StyleSheet, useWindowDimensions } from 'react-native'
 import Animated, {
   Easing,
@@ -11,61 +11,68 @@ import Animated, {
 } from 'react-native-reanimated'
 
 /**
- * Pixel-art screen transition on the Reanimated UI thread: a cloud curtain
- * slides across, the route swaps underneath, the curtain slides off. Stack
- * native transitions should be `animation: 'none'` so they don't fight this.
- * Usage: const go = useScreenTransition(); go('/chest', { effect: 'wipe' }).
+ * Cloud-curtain screen transitions (Reanimated UI thread). Stack should use
+ * `animation: 'none'` so it doesn't fight the wipe.
+ * Usage: const go = useScreenTransition(); go('/chest'); go.back(); go.dismissTo('/')
  */
-export type TransitionEffect = 'wipe'
+export type TransitionEffect = 'wipe' | 'none'
 
 export interface TransitionOptions {
   params?: Record<string, string>
   replace?: boolean
+  /** Default `wipe`. Pass `none` only for rare no-animation jumps. */
   effect?: TransitionEffect
 }
 
-type Go = (href: string, options?: TransitionOptions) => void
+export type ScreenNav = ((href: string, options?: TransitionOptions) => void) & {
+  back: (options?: Pick<TransitionOptions, 'effect'>) => void
+  dismissTo: (href: string, options?: Pick<TransitionOptions, 'effect'>) => void
+}
 
-const TransitionContext = createContext<Go>(() => {})
+const TransitionContext = createContext<ScreenNav>(noopNav())
 
-export function useScreenTransition(): Go {
+/** Module bridge so non-React systems (demo, wake reminder) get the same clouds. */
+let bridge: ScreenNav = noopNav()
+
+export function useScreenTransition(): ScreenNav {
   return useContext(TransitionContext)
 }
 
-// One continuous drift at constant speed: the curtain enters, the route
-// swaps the instant the solid zone covers the screen, and it keeps floating
-// off without pausing. Both legs travel almost the same distance, so equal
-// durations + linear easing give a uniform speed across the whole pass.
+/** Same API as the hook, safe to call outside React after the provider mounts. */
+export const cloudGo: ScreenNav = Object.assign(
+  ((href: string, options?: TransitionOptions) => bridge(href, options)) as ScreenNav,
+  {
+    back: (options?: Pick<TransitionOptions, 'effect'>) => bridge.back(options),
+    dismissTo: (href: string, options?: Pick<TransitionOptions, 'effect'>) =>
+      bridge.dismissTo(href, options),
+  },
+)
+
+function noopNav(): ScreenNav {
+  const go = ((_href: string, _options?: TransitionOptions) => {}) as ScreenNav
+  go.back = () => {}
+  go.dismissTo = () => {}
+  return go
+}
+
 const WIPE_LEG_MS = 450
-
-/** Cloud curtain for the wipe transition (local asset, 1536x768 RGBA). */
 const CLOUD_CURTAIN = require('../../assets/design/gen/cloud_curtain.png')
+const CURTAIN_ASPECT = 2
 
-export function TransitionProvider({ children }: { children: React.ReactNode }) {
+function useCloudNav(wipe: SharedValue<number>, setActive: (v: boolean) => void): ScreenNav {
   const router = useRouter()
-  // 0 left → 1 cover → 2 right; lives on the UI thread so router work can't stall it.
-  const wipe = useSharedValue(0)
-  const [active, setActive] = useState(false)
   const busyRef = React.useRef(false)
 
   const finish = useCallback(() => {
     setActive(false)
     busyRef.current = false
     wipe.value = 0
-  }, [wipe])
+  }, [wipe, setActive])
 
-  const go: Go = useCallback(
-    (href, options = {}) => {
-      const navigate = () => {
-        const target = { pathname: href, params: options.params } as never
-        if (options.replace) {
-          router.replace(target)
-        } else {
-          router.push(target)
-        }
-      }
-      if (!options.effect || busyRef.current) {
-        navigate()
+  const runAfterCover = useCallback(
+    (action: () => void, effect: TransitionEffect) => {
+      if (effect === 'none' || busyRef.current) {
+        action()
         return
       }
       busyRef.current = true
@@ -73,26 +80,50 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
       wipe.value = 0
       wipe.value = withTiming(1, { duration: WIPE_LEG_MS, easing: Easing.linear }, (done) => {
         if (!done) return
-        runOnJS(navigate)()
+        runOnJS(action)()
         wipe.value = withTiming(2, { duration: WIPE_LEG_MS, easing: Easing.linear }, (done2) => {
           if (done2) runOnJS(finish)()
         })
       })
     },
-    [router, wipe, finish],
+    [wipe, finish, setActive],
   )
 
+  return useMemo<ScreenNav>(() => {
+    const go = ((href: string, options: TransitionOptions = {}) => {
+      const effect = options.effect ?? 'wipe'
+      runAfterCover(() => {
+        const target = { pathname: href, params: options.params } as never
+        if (options.replace) router.replace(target)
+        else router.push(target)
+      }, effect)
+    }) as ScreenNav
+    go.back = (options = {}) => runAfterCover(() => router.back(), options.effect ?? 'wipe')
+    go.dismissTo = (href, options = {}) =>
+      runAfterCover(() => router.dismissTo(href as never), options.effect ?? 'wipe')
+    return go
+  }, [router, runAfterCover])
+}
+
+export function TransitionProvider({ children }: { children: React.ReactNode }) {
+  const wipe = useSharedValue(0)
+  const [active, setActive] = useState(false)
+  const nav = useCloudNav(wipe, setActive)
+
+  useEffect(() => {
+    bridge = nav
+    return () => {
+      bridge = noopNav()
+    }
+  }, [nav])
+
   return (
-    <TransitionContext.Provider value={go}>
+    <TransitionContext.Provider value={nav}>
       {children}
       <WipePanel wipe={wipe} active={active} />
     </TransitionContext.Provider>
   )
 }
-
-/** The curtain asset is 1536x768; keep its aspect so the feathered flanks
- * are never cropped into hard vertical borders. */
-const CURTAIN_ASPECT = 2
 
 function WipePanel({ wipe, active }: { wipe: SharedValue<number>; active: boolean }) {
   const { width, height } = useWindowDimensions()
@@ -132,8 +163,5 @@ function WipePanel({ wipe, active }: { wipe: SharedValue<number>; active: boolea
 }
 
 const styles = StyleSheet.create({
-  panel: {
-    position: 'absolute',
-    left: 0,
-  },
+  panel: { position: 'absolute', left: 0 },
 })

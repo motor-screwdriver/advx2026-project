@@ -1,9 +1,9 @@
-import { useRouter } from 'expo-router'
 import React, { useState } from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import type { SpriteEntry } from '../../assets/manifest'
+import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
 import { CornerRivets, GoldButton, tavernColors, TavernFrame, WoodPanel } from '../ui/tavern'
 import { theme } from '../ui/theme'
@@ -64,10 +64,10 @@ const PAGES: readonly { art: Art; text: string }[] = [
 ]
 
 export function TutorialScreen() {
-  const router = useRouter()
+  const go = useScreenTransition()
   const [page, setPage] = useState(0)
   const last = page === PAGES.length - 1
-  const close = () => router.dismissTo('/')
+  const close = () => go.dismissTo('/')
 
   return (
     <SafeAreaView style={styles.safe}>

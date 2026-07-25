@@ -1,4 +1,3 @@
-import { Link } from 'expo-router'
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
@@ -6,6 +5,7 @@ import { FLAGS } from '../contracts/flags'
 import { useGameStore } from '../state/store'
 import { demoCheckIns, type DemoNightKind } from '../systems/demoNights'
 import { PixelButton } from '../ui/PixelButton'
+import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
 import { theme } from '../ui/theme'
 import { useGame, type DebugPreset } from '../ui/useGame'
@@ -42,6 +42,7 @@ const NIGHT_SIMS: { kind: DemoNightKind; label: string }[] = [
 
 /** Temporary M0-M1 navigation + state presets. Removed before release. */
 export function DebugMenu() {
+  const go = useScreenTransition()
   const { loadDebugPreset } = useGame()
   const routes = FLAGS.artGallery
     ? [...ROUTES, { href: '/art-gallery', label: strings.gallery_title }]
@@ -51,9 +52,12 @@ export function DebugMenu() {
       <Text style={styles.heading}>{strings.debug_title}</Text>
       <View style={styles.grid}>
         {routes.map((route) => (
-          <Link key={route.href} href={route.href} asChild>
-            <PixelButton compact label={route.label} />
-          </Link>
+          <PixelButton
+            key={route.href}
+            compact
+            label={route.label}
+            onPress={() => go(route.href)}
+          />
         ))}
       </View>
       <Text style={styles.heading}>{strings.debug_presets}</Text>

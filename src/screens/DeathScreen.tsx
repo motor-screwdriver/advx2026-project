@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router'
 import React, { useEffect } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -89,7 +88,6 @@ function NoHeroScreen({ onBack }: { onBack: () => void }) {
 }
 
 export function DeathScreen() {
-  const router = useRouter()
   const go = useScreenTransition()
   const { state, canResurrect, startNewHero, usePhoenix: activatePhoenix } = useGame()
   const hero = state.hero
@@ -100,17 +98,17 @@ export function DeathScreen() {
   }, [])
 
   if (!hero) {
-    return <NoHeroScreen onBack={() => router.dismissTo('/')} />
+    return <NoHeroScreen onBack={() => go.dismissTo('/')} />
   }
 
   const newHero = () => {
     startNewHero()
-    router.dismissTo('/hero-ceremony')
+    go.dismissTo('/hero-ceremony')
   }
 
   const riseFromAshes = () => {
     activatePhoenix()
-    router.dismissTo('/')
+    go.dismissTo('/')
   }
 
   return (
@@ -130,7 +128,7 @@ export function DeathScreen() {
           ) : (
             <DeathActions
               canRes={canResurrect()}
-              onResurrect={() => go('/resurrection', { effect: 'wipe' })}
+              onResurrect={() => go('/resurrection')}
               onNewHero={newHero}
             />
           )}

@@ -1,9 +1,9 @@
-import { useRouter } from 'expo-router'
 import React, { useState } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { playSfx } from '../systems/audio'
+import { useScreenTransition } from '../ui/screenTransition'
 import { SoulTether } from '../ui/SoulTether'
 import { TetherScene } from '../ui/SoulTetherParts'
 import { strings } from '../ui/strings'
@@ -50,7 +50,7 @@ function ResultPhase({ phase, onFinish }: { phase: Phase; onFinish: () => void }
 }
 
 export function ResurrectionGameScreen() {
-  const router = useRouter()
+  const go = useScreenTransition()
   const { resurrect, startNewHero } = useGame()
   const [phase, setPhase] = useState<Phase>('playing')
 
@@ -64,11 +64,11 @@ export function ResurrectionGameScreen() {
 
   const finish = () => {
     if (phase === 'won') {
-      router.dismissTo('/')
+      go.dismissTo('/')
       return
     }
     startNewHero()
-    router.dismissTo('/hero-ceremony')
+    go.dismissTo('/hero-ceremony')
   }
 
   return (

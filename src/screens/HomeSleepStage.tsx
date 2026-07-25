@@ -78,9 +78,9 @@ export function HeroStage({
           hp={state.hp}
           level={hero.level}
           onSleep={onSleep}
-          onBag={() => go('/inventory', { effect: 'wipe' })}
-          onMosaic={() => go('/mosaic', { effect: 'wipe' })}
-          onSettings={() => go('/settings', { effect: 'wipe' })}
+          onBag={() => go('/inventory')}
+          onMosaic={() => go('/mosaic')}
+          onSettings={() => go('/settings')}
         />
       </Animated.View>
       {nightMounted && (

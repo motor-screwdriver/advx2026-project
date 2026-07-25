@@ -1,10 +1,11 @@
-import { useLocalSearchParams, useRouter } from 'expo-router'
+import { useLocalSearchParams } from 'expo-router'
 import React, { useState } from 'react'
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { DESIGN } from '../../assets/manifest'
 import { PixelSprite } from '../ui/PixelSprite'
+import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
 import { theme } from '../ui/theme'
 import { useGame } from '../ui/useGame'
@@ -50,7 +51,7 @@ function windowWarning(bedMin: number, wakeMin: number): string | null {
 }
 
 export function OnboardingScreen() {
-  const router = useRouter()
+  const go = useScreenTransition()
   const params = useLocalSearchParams<{
     source?: string
     mode?: string
@@ -78,11 +79,11 @@ export function OnboardingScreen() {
         setBlocked(true)
         return
       }
-      router.replace('/')
+      go('/', { replace: true })
       return
     }
     completeOnboarding({ bedMin, wakeMin })
-    router.replace('/')
+    go('/', { replace: true })
   }
 
   const compactIntro = editing ? strings.onboarding_change_body : strings.onboarding_adjust_body
@@ -99,7 +100,7 @@ export function OnboardingScreen() {
       onBedChange={setBedMin}
       onWakeChange={setWakeMin}
       onBegin={begin}
-      onBack={() => router.back()}
+      onBack={() => go.back()}
     />
   )
 }

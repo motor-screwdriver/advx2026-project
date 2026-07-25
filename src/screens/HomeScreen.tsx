@@ -1,4 +1,4 @@
-import { useFocusEffect, useRouter } from 'expo-router'
+import { useFocusEffect } from 'expo-router'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -22,7 +22,7 @@ export function HomeScreen() {
 }
 
 function NoHeroHome() {
-  const router = useRouter()
+  const go = useScreenTransition()
   return (
     <HomeScene phase={getDayPhase()}>
       <View style={styles.emptyBox}>
@@ -30,7 +30,7 @@ function NoHeroHome() {
           <Text style={styles.empty}>{strings.home_no_hero}</Text>
           <GoldButton
             label={strings.onboarding_begin}
-            onPress={() => router.replace('/onboarding')}
+            onPress={() => go('/onboarding', { replace: true })}
           />
         </WoodPanel>
       </View>
@@ -90,7 +90,7 @@ function HeroHome() {
     tapLock.current = true
     const evaluation = wakeNow()
     const hpAfter = Math.min(Math.max(state.hp + evaluation.hpDelta, 0), MAX_HP)
-    go(hpAfter === 0 ? '/death' : '/morning-scene', { effect: 'wipe' })
+    go(hpAfter === 0 ? '/death' : '/morning-scene')
   }
 
   return (
