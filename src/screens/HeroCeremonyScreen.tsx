@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router'
 import React, { useEffect, useRef } from 'react'
 import { Animated, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 
@@ -8,6 +7,7 @@ import { HeartRow } from '../ui/HeartRow'
 import { HeroSprite } from '../ui/HeroSprite'
 import { PixelButton } from '../ui/PixelButton'
 import { Screen } from '../ui/Screen'
+import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
 import { tavernColors, TavernFrame, WoodPanel } from '../ui/tavern'
 import { theme } from '../ui/theme'
@@ -92,7 +92,7 @@ function HeroInfoPanel({
 
 /** Dramatic summon: hero pops onto the circle, screen shakes, panel fades in. */
 export function HeroCeremonyScreen() {
-  const router = useRouter()
+  const go = useScreenTransition()
   const { state } = useGame()
   const scale = useRef(new Animated.Value(0)).current
   const shakeX = useRef(new Animated.Value(0)).current
@@ -107,7 +107,7 @@ export function HeroCeremonyScreen() {
     return (
       <Screen title={strings.ceremony_summoning}>
         <View style={styles.filler} />
-        <PixelButton label={strings.common_back} onPress={() => router.replace('/oracle')} />
+        <PixelButton label={strings.common_back} onPress={() => go('/oracle', { replace: true })} />
       </Screen>
     )
   }
@@ -126,7 +126,7 @@ export function HeroCeremonyScreen() {
           lootPct={hero.level * 5}
           hp={state.hp}
           fade={fade}
-          onContinue={() => router.dismissTo('/')}
+          onContinue={() => go.dismissTo('/')}
         />
       </View>
     </TavernFrame>

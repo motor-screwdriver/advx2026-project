@@ -5,10 +5,9 @@
  * restores it byte-for-byte — real data survives the demo (spec NFR-12).
  * Reachable only via the hidden 5-tap gesture in Settings, never by accident.
  */
-import { router } from 'expo-router'
-
 import { mockGameState } from '../contracts/mock'
 import { useGameStore } from '../state/store'
+import { cloudGo } from '../ui/screenTransition'
 import { demoCheckIns, type DemoNightKind } from './demoNights'
 
 /** Panel actions: [Perfect Night] [Bad Night] [Death] — [Reset] is separate. */
@@ -81,7 +80,7 @@ export function runDemoNight(kind: DemoPanelAction): void {
   } else {
     runOneNight(kind)
   }
-  router.push(useGameStore.getState().game.hp === 0 ? '/death' : '/morning-scene')
+  cloudGo(useGameStore.getState().game.hp === 0 ? '/death' : '/morning-scene')
 }
 
 /** [Reset]: restore the pre-demo snapshot byte-for-byte and go back Home. */
@@ -90,5 +89,5 @@ export function resetDemo(): void {
     useGameStore.setState({ ...snapshot, game: { ...snapshot.game, demoMode: true } })
     snapshot = null
   }
-  router.replace('/')
+  cloudGo('/', { replace: true })
 }

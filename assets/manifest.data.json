@@ -277,12 +277,12 @@
     "music_day": {
       "durationSec": 14.4,
       "loop": true,
-      "path": "audio/day_theme.mp3"
+      "path": "audio/music_day_theme.mp3"
     },
     "music_night": {
       "durationSec": 16.0,
       "loop": true,
-      "path": "audio/main_theme.mp3"
+      "path": "audio/music_night_theme.mp3"
     },
     "sfx_chest": {
       "durationSec": 0.8,
@@ -306,6 +306,46 @@
     }
   },
   "design": {
+    "bag_button_close": {
+      "frameHeight": 380,
+      "frameWidth": 1200,
+      "frames": 1,
+      "height": 380,
+      "path": "design/bag/gen/button_close.png",
+      "width": 1200
+    },
+    "bag_panel_consumables": {
+      "frameHeight": 1540,
+      "frameWidth": 1920,
+      "frames": 1,
+      "height": 1540,
+      "path": "design/bag/gen/panel_consumables.png",
+      "width": 1920
+    },
+    "bag_slot_empty": {
+      "frameHeight": 870,
+      "frameWidth": 840,
+      "frames": 1,
+      "height": 870,
+      "path": "design/bag/gen/slot_empty.png",
+      "width": 840
+    },
+    "bag_slot_frame": {
+      "frameHeight": 870,
+      "frameWidth": 840,
+      "frames": 1,
+      "height": 870,
+      "path": "design/bag/gen/slot_frame.png",
+      "width": 840
+    },
+    "bag_title": {
+      "frameHeight": 201,
+      "frameWidth": 1648,
+      "frames": 1,
+      "height": 201,
+      "path": "design/bag/gen/title.png",
+      "width": 1648
+    },
     "chest_button_claim": {
       "frameHeight": 186,
       "frameWidth": 626,
@@ -514,14 +554,6 @@
       "path": "design/gen/heroes_bust_warlock.png",
       "width": 64
     },
-    "gen_tether_scene": {
-      "frameHeight": 200,
-      "frameWidth": 200,
-      "frames": 1,
-      "height": 200,
-      "path": "design/gen/tether_scene.png",
-      "width": 200
-    },
     "gen_tutorial_p1": {
       "frameHeight": 160,
       "frameWidth": 160,
@@ -601,6 +633,126 @@
       "height": 40,
       "path": "design/onboarding/14-selection-arrow.png",
       "width": 32
+    },
+    "settings_dropdown_bottom": {
+      "frameHeight": 170,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 170,
+      "path": "design/settings/dropdown_bottom.png",
+      "width": 2026
+    },
+    "settings_dropdown_mid": {
+      "frameHeight": 100,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 100,
+      "path": "design/settings/dropdown_mid.png",
+      "width": 2026
+    },
+    "settings_dropdown_top": {
+      "frameHeight": 170,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 170,
+      "path": "design/settings/dropdown_top.png",
+      "width": 2026
+    },
+    "settings_header": {
+      "frameHeight": 340,
+      "frameWidth": 1960,
+      "frames": 1,
+      "height": 340,
+      "path": "design/settings/header.png",
+      "width": 1960
+    },
+    "settings_row_blank": {
+      "frameHeight": 440,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 440,
+      "path": "design/settings/row_blank.png",
+      "width": 2026
+    },
+    "settings_row_change": {
+      "frameHeight": 444,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 444,
+      "path": "design/settings/row_change.png",
+      "width": 2026
+    },
+    "settings_row_eink": {
+      "frameHeight": 442,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 442,
+      "path": "design/settings/row_eink.png",
+      "width": 2026
+    },
+    "settings_row_eink_off": {
+      "frameHeight": 442,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 442,
+      "path": "design/settings/row_eink_off.png",
+      "width": 2026
+    },
+    "settings_row_notif": {
+      "frameHeight": 444,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 444,
+      "path": "design/settings/row_notif.png",
+      "width": 2026
+    },
+    "settings_row_reset": {
+      "frameHeight": 454,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 454,
+      "path": "design/settings/row_reset.png",
+      "width": 2026
+    },
+    "settings_row_window": {
+      "frameHeight": 440,
+      "frameWidth": 2026,
+      "frames": 1,
+      "height": 440,
+      "path": "design/settings/row_window.png",
+      "width": 2026
+    },
+    "settings_toggle_knob": {
+      "frameHeight": 245,
+      "frameWidth": 295,
+      "frames": 1,
+      "height": 245,
+      "path": "design/settings/toggle_knob.png",
+      "width": 295
+    },
+    "settings_toggle_knob_blank": {
+      "frameHeight": 245,
+      "frameWidth": 295,
+      "frames": 1,
+      "height": 245,
+      "path": "design/settings/toggle_knob_blank.png",
+      "width": 295
+    },
+    "settings_toggle_track": {
+      "frameHeight": 216,
+      "frameWidth": 461,
+      "frames": 1,
+      "height": 216,
+      "path": "design/settings/toggle_track.png",
+      "width": 461
+    },
+    "settings_version": {
+      "frameHeight": 80,
+      "frameWidth": 610,
+      "frames": 1,
+      "height": 80,
+      "path": "design/settings/version.png",
+      "width": 610
     }
   },
   "icons": {
@@ -1174,14 +1326,6 @@
       "frames": 1,
       "height": 3840,
       "path": "start_screen/book_frame_1.png",
-      "width": 2160
-    },
-    "start_book_frame_2": {
-      "frameHeight": 3840,
-      "frameWidth": 2160,
-      "frames": 1,
-      "height": 3840,
-      "path": "start_screen/book_frame_2.png",
       "width": 2160
     },
     "start_mosaic_pressed": {

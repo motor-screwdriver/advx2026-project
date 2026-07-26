@@ -1,9 +1,8 @@
-import { useFocusEffect, useRouter } from 'expo-router'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useFocusEffect } from 'expo-router'
+import React, { useCallback, useRef, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { playMusic } from '../systems/audio'
 import { DayNightBackground } from '../ui/DayNightBackground'
 import { useScreenTransition } from '../ui/screenTransition'
 import { strings } from '../ui/strings'
@@ -22,7 +21,7 @@ export function HomeScreen() {
 }
 
 function NoHeroHome() {
-  const router = useRouter()
+  const go = useScreenTransition()
   return (
     <HomeScene phase={getDayPhase()}>
       <View style={styles.emptyBox}>
@@ -30,19 +29,12 @@ function NoHeroHome() {
           <Text style={styles.empty}>{strings.home_no_hero}</Text>
           <GoldButton
             label={strings.onboarding_begin}
-            onPress={() => router.replace('/onboarding')}
+            onPress={() => go('/onboarding', { replace: true })}
           />
         </WoodPanel>
       </View>
     </HomeScene>
   )
-}
-
-/** Cozy day theme while awake; hushed night theme once tucked in. */
-function usePhaseMusic(asleep: boolean) {
-  useEffect(() => {
-    playMusic(asleep ? 'music_night' : 'music_day')
-  }, [asleep])
 }
 
 /** WAKE UP pushes to /death or /morning-scene and keeps Home mounted below
@@ -71,8 +63,6 @@ function HeroHome() {
   const focused = useHomeFocusGate(tapLock)
   const asleep = pendingBedTime !== null && focused
 
-  usePhaseMusic(asleep)
-
   // Tapping SLEEP tucks the hero in right here — the book crossfades into
   // the living night world in place (see HeroStage), no separate screen to
   // navigate to or glitch through. WAKE UP evaluates the night and rolls on
@@ -90,7 +80,7 @@ function HeroHome() {
     tapLock.current = true
     const evaluation = wakeNow()
     const hpAfter = Math.min(Math.max(state.hp + evaluation.hpDelta, 0), MAX_HP)
-    go(hpAfter === 0 ? '/death' : '/morning-scene', { effect: 'wipe' })
+    go(hpAfter === 0 ? '/death' : '/morning-scene')
   }
 
   return (

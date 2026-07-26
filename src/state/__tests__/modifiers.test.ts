@@ -103,17 +103,18 @@ describe('Phoenix Feather — manual use on death', () => {
   })
 })
 
-describe('Resurrection cooldown', () => {
-  it('resurrection cooldown gates applyResurrection', () => {
+describe('Resurrection', () => {
+  it('applyResurrection is never blocked; the stamp tracks the latest use', () => {
     onboard()
     const s = useGameStore.getState()
     expect(s.canResurrect(DAY1)).toBe(true)
     s.applyResurrection(true, DAY1)
     expect(useGameStore.getState().game.hp).toBe(3)
+    // Still reported as "recharging", but the tether stays usable.
     expect(useGameStore.getState().canResurrect(DAY2)).toBe(false)
-    useGameStore.getState().applyResurrection(true, DAY2) // blocked
-    expect(useGameStore.getState().game.lastResurrectionAt).toBe(DAY1.toISOString())
-    expect(useGameStore.getState().canResurrect(DAY9)).toBe(true)
+    useGameStore.getState().applyResurrection(true, DAY2)
+    expect(useGameStore.getState().game.hp).toBe(3)
+    expect(useGameStore.getState().game.lastResurrectionAt).toBe(DAY2.toISOString())
   })
 
   it('failed resurrection is permanent; startNewHero re-summons', () => {

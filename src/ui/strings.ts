@@ -226,10 +226,11 @@ export const strings = {
   // Tutorial
   tutorial_title: 'How to play',
   tutorial_card1_title: '1. Tap Sleep at night',
-  tutorial_card1_body: 'Going to bed? One tap on Sleep and your hero dozes off with you.',
+  tutorial_card1_body:
+    'Bedtime? One tap on Sleep and your hero sets off on a night adventure while you rest.',
   tutorial_card2_title: '2. Wake up on time',
   tutorial_card2_body:
-    'Tap Wake up in the morning. Nights close to your window heal and earn XP. Short or messy nights cost hearts.',
+    'Wake up near your window and the hero comes home with loot and XP. Short or late nights cost hearts.',
   tutorial_card3_title: '3. Survive the week',
   tutorial_card3_body:
     '7 clean nights in a row: level up plus a loot chest. At 0 hearts your hero dies. One resurrection per 7 days.',

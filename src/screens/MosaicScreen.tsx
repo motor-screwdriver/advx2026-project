@@ -1,9 +1,9 @@
-import { useRouter } from 'expo-router'
 import React, { useRef } from 'react'
 import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { shareViewAsPng } from '../systems/share'
+import { useScreenTransition } from '../ui/screenTransition'
 import { useGame } from '../ui/useGame'
 import { MosaicBackButton, MosaicSheet } from './MosaicParts'
 
@@ -17,7 +17,7 @@ const copy = {
  * dynamic values and tiles are overlaid at measured positions.
  */
 export function MosaicScreen() {
-  const router = useRouter()
+  const go = useScreenTransition()
   const { state } = useGame()
   const { width } = useWindowDimensions()
   const shareRef = useRef<View>(null)
@@ -44,7 +44,7 @@ export function MosaicScreen() {
             onShare={onShare}
           />
         </View>
-        <MosaicBackButton width={width} onPress={() => router.back()} />
+        <MosaicBackButton width={width} onPress={() => go.back()} />
       </ScrollView>
     </SafeAreaView>
   )

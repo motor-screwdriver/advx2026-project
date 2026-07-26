@@ -12,6 +12,7 @@ import { AppState } from 'react-native'
 import { FLAGS } from '../contracts/flags'
 import { todayDate } from '../engine/time'
 import { useGameStore, type GameStore } from '../state/store'
+import { AudioThemeController } from './audioTheme'
 import { DemoPanel } from './DemoPanel'
 import { scheduleEinkPush } from './eink'
 import { EinkCardHost } from './einkCard'
@@ -90,6 +91,7 @@ async function resyncNotifications(): Promise<void> {
 export function SystemsLayer() {
   return (
     <>
+      <AudioThemeController />
       <DemoPanel />
       {FLAGS.eink && <EinkCardHost />}
     </>

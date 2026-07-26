@@ -12,10 +12,10 @@
  * so it must load in Expo Go too. On web the native module cannot load and
  * everything silently no-ops.
  */
-import { router } from 'expo-router'
 import { Platform } from 'react-native'
 
 import { useGameStore } from '../state/store'
+import { cloudGo } from '../ui/screenTransition'
 import { getNotificationsEnabled } from './notifications'
 import { WAKE_REMINDER_BODY, WAKE_REMINDER_SUBTITLE, WAKE_REMINDER_TITLE } from './reminderLines'
 
@@ -147,12 +147,12 @@ export function initWakeReminderListener(): void {
     response?.notification.request.content.data?.wakeReminder === true
   n.addNotificationResponseReceivedListener((response) => {
     if (isReminder(response)) {
-      router.push('/')
+      cloudGo('/')
     }
   })
   void n.getLastNotificationResponseAsync().then((response) => {
     if (response && isReminder(response)) {
-      router.push('/')
+      cloudGo('/')
     }
   })
 }

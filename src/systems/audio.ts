@@ -3,70 +3,198 @@
  * one looping music track at a time plus fire-and-forget SFX. Screens call
  * these helpers on game events; nothing here touches game state.
  */
-import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
+import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio'
 
-import { AUDIO } from '../../assets/manifest';
+import { AUDIO } from '../../assets/manifest'
+import { SFX_KEYS, type MusicKey, type SfxKey } from './audioTracks'
 
-export type MusicKey = 'music_day' | 'music_night';
-export type SfxKey = 'sfx_chest' | 'sfx_damage' | 'sfx_death' | 'sfx_victory';
+const MUSIC_VOLUME = 0.5
+// Sleep/Wake track swap: old theme dies down, then the new one enters.
+// 250 + 300 ms ≈ the 550 ms book<->night stage crossfade (HomeSleepStage),
+// so the ear and the eye finish the scene change together.
+const FADE_OUT_MS = 250
+const FADE_IN_MS = 300
+const FADE_STEP_MS = 30
 
-let musicPlayer: AudioPlayer | null = null;
-let musicKey: MusicKey | null = null;
-const sfxPlayers: Partial<Record<SfxKey, AudioPlayer>> = {};
-let enabled = true;
-let initialized = false;
+let musicPlayer: AudioPlayer | null = null
+let musicKey: MusicKey | null = null
+let desiredMusicKey: MusicKey | null = null
+// Undoes whatever transition is in flight (fade timer + pending player).
+let cancelTransition: (() => void) | null = null
+const liveMusicPlayers = new Set<AudioPlayer>()
+const sfxPlayers: Partial<Record<SfxKey, AudioPlayer>> = {}
+let activeSfxCount = 0
+let enabled = true
+let initialized = false
 
 function init(): void {
   if (initialized) {
-    return;
+    return
   }
-  initialized = true;
+  initialized = true
   // Bedside use: keep the chiptune audible even with the ringer silenced.
-  setAudioModeAsync({ playsInSilentMode: true }).catch(() => {});
+  setAudioModeAsync({ playsInSilentMode: true }).catch(() => {})
+  // Warm up the one-shot players now (Home mount), long before any tap:
+  // creating them inside playSfx made the first chest/damage/death/victory
+  // sound pay the file load+decode cost and land audibly late.
+  for (const key of SFX_KEYS) {
+    getSfxPlayer(key)
+  }
+}
+
+function getSfxPlayer(key: SfxKey): AudioPlayer {
+  let player = sfxPlayers[key]
+  if (!player) {
+    player = createAudioPlayer(AUDIO[key].source)
+    sfxPlayers[key] = player
+  }
+  return player
+}
+
+/** pause() before remove(): remove() alone releases the JS handle but can
+ * leave the native looping player sounding (the day/night overlap bug). */
+function releasePlayer(player: AudioPlayer): void {
+  player.pause()
+  player.remove()
+  liveMusicPlayers.delete(player)
+}
+
+/** Linear volume ramp on a setInterval; returns a cancel function. */
+function fadeVolume(
+  player: AudioPlayer,
+  from: number,
+  to: number,
+  durationMs: number,
+  onDone: () => void,
+): () => void {
+  const steps = Math.max(1, Math.round(durationMs / FADE_STEP_MS))
+  let step = 0
+  player.volume = from
+  const timer = setInterval(() => {
+    step += 1
+    player.volume = from + ((to - from) * step) / steps
+    if (step >= steps) {
+      clearInterval(timer)
+      player.volume = to
+      onDone()
+    }
+  }, FADE_STEP_MS)
+  return () => clearInterval(timer)
+}
+
+/** Create the new track at zero volume and ease it in. */
+function startMusic(key: MusicKey): void {
+  const player = createAudioPlayer(AUDIO[key].source)
+  liveMusicPlayers.add(player)
+  player.loop = true
+  player.volume = 0
+  player.play()
+  musicPlayer = player
+  const cancelFade = fadeVolume(player, 0, MUSIC_VOLUME, FADE_IN_MS, () => {
+    cancelTransition = null
+  })
+  cancelTransition = cancelFade
+}
+
+function pauseMusicPlayers(): void {
+  cancelTransition?.()
+  cancelTransition = null
+  for (const player of liveMusicPlayers) {
+    player.pause()
+  }
+}
+
+function resumeDesiredMusic(): void {
+  if (!enabled || activeSfxCount > 0 || !desiredMusicKey) {
+    return
+  }
+  const key = desiredMusicKey
+  if (musicPlayer && musicKey === key) {
+    musicPlayer.volume = MUSIC_VOLUME
+    musicPlayer.play()
+    return
+  }
+  playMusic(key)
 }
 
 /** Master switch for the Settings sound toggle. Off also stops music. */
 export function setAudioEnabled(on: boolean): void {
-  enabled = on;
+  enabled = on
   if (!on) {
-    stopMusic();
+    stopMusic()
+    return
   }
+  resumeDesiredMusic()
 }
 
-/** Start (or swap to) a looping music track. No-op if already playing it. */
+/** Swap to a looping music track: fade the current one out, then fade the
+ * new one in. No-op if it's already playing (or being faded in). */
 export function playMusic(key: MusicKey): void {
-  init();
-  if (!enabled || musicKey === key) {
-    return;
-  }
-  stopMusic();
-  const player = createAudioPlayer(AUDIO[key].source);
-  player.loop = true;
-  player.volume = 0.5;
-  player.play();
-  musicPlayer = player;
-  musicKey = key;
-}
-
-export function stopMusic(): void {
-  if (musicPlayer) {
-    musicPlayer.remove();
-    musicPlayer = null;
-    musicKey = null;
-  }
-}
-
-/** Play a one-shot sound effect, reusing a cached player per key. */
-export function playSfx(key: SfxKey): void {
-  init();
+  desiredMusicKey = key
+  init()
   if (!enabled) {
-    return;
+    return
   }
-  let player = sfxPlayers[key];
-  if (!player) {
-    player = createAudioPlayer(AUDIO[key].source);
-    sfxPlayers[key] = player;
+  if (activeSfxCount > 0) {
+    pauseMusicPlayers()
+    return
   }
-  player.seekTo(0);
-  player.play();
+  if (musicKey === key && musicPlayer) {
+    return
+  }
+  // A rapid re-switch lands here mid-transition: finish the old one now
+  // (kill its timer, silence its player) so nothing stacks up.
+  cancelTransition?.()
+  cancelTransition = null
+  musicKey = key
+  const outgoing = musicPlayer
+  musicPlayer = null
+  if (!outgoing) {
+    startMusic(key)
+    return
+  }
+  const cancelFade = fadeVolume(outgoing, outgoing.volume, 0, FADE_OUT_MS, () => {
+    releasePlayer(outgoing)
+    startMusic(key)
+  })
+  cancelTransition = () => {
+    cancelFade()
+    releasePlayer(outgoing)
+  }
+}
+
+/** Immediate stop (no fade) — used by the master sound toggle. */
+export function stopMusic(): void {
+  cancelTransition?.()
+  cancelTransition = null
+  if (musicPlayer) {
+    releasePlayer(musicPlayer)
+    musicPlayer = null
+  }
+  musicKey = null
+}
+
+function finishSfx(): void {
+  activeSfxCount = Math.max(0, activeSfxCount - 1)
+  if (activeSfxCount === 0) {
+    resumeDesiredMusic()
+  }
+}
+
+/** Play a one-shot sound effect on its preloaded, cached player. */
+export function playSfx(key: SfxKey): void {
+  init()
+  if (!enabled) {
+    return
+  }
+  activeSfxCount += 1
+  pauseMusicPlayers()
+  const player = getSfxPlayer(key)
+  // Rewind only on replay: seekTo() is async, and awaiting it before every
+  // play() pushed even the very first shot behind the button press.
+  if (player.currentTime > 0) {
+    player.seekTo(0)
+  }
+  player.play()
+  setTimeout(finishSfx, AUDIO[key].durationSec * 1000)
 }
