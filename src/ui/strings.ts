@@ -98,6 +98,7 @@ export const strings = {
   home_nav_bag: 'BAG',
   home_nav_heroes: 'HEROES',
   home_nav_settings: 'SETTINGS',
+  home_sleep_plan: 'Sleep analysis',
   home_menu_tagline: 'THE NIGHTLY WATCH',
 
   // Night outcomes

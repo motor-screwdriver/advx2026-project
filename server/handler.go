@@ -83,11 +83,12 @@ func clientID(r *http.Request) string {
 
 // Server wires the oracle endpoint, rate limiting and provider factory.
 type Server struct {
-	providerFactory func() (AiProvider, error)
-	mifitFactory    miFitnessClientFactory
-	mifitChallenges *miFitnessChallengeStore
-	limiter         *rateLimiter
-	handler         http.Handler
+	providerFactory  func() (AiProvider, error)
+	mifitFactory     miFitnessClientFactory
+	sleepPlanFactory sleepPlanClientFactory // nil = use real MiFitness client
+	mifitChallenges  *miFitnessChallengeStore
+	limiter          *rateLimiter
+	handler          http.Handler
 }
 
 func newServer(providerFactory func() (AiProvider, error)) *Server {
@@ -99,9 +100,8 @@ func newServer(providerFactory func() (AiProvider, error)) *Server {
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /api/oracle", s.handleOracle)
-	mux.HandleFunc("POST /api/mifit/login", s.handleMiFitnessLogin)
-	mux.HandleFunc("POST /api/mifit/verify-email", s.handleMiFitnessVerifyEmail)
 	mux.HandleFunc("POST /api/morning-oracle", s.handleMorningOracle)
+	mux.HandleFunc("POST /api/sleep-plan", s.handleSleepPlan)
 	mux.HandleFunc("POST /api/mifit/login", s.handleMiFitnessLogin)
 	mux.HandleFunc("POST /api/mifit/verify-email", s.handleMiFitnessVerifyEmail)
 	mux.HandleFunc("GET /healthz", s.handleHealthz)

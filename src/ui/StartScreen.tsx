@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native'
 import { SCENES } from '../../assets/manifest'
 import { StartStatusStrip } from './StartStatusStrip'
 import { strings } from './strings'
+import { CornerRivets, tavernColors as wood } from './tavernBase'
 
 // The awake home is one authored 9:16 phone screen (docs/start_screen, published
 // by tools/start_screen.py): the storybook on a candle-lit table with the SLEEP
@@ -32,6 +33,13 @@ const PLAQUES: Record<'sleep' | 'mosaic' | 'bag' | 'settings', Rect> = {
   settings: { l: 1446 / 2160, t: 3176 / 3840, w: 616 / 2160, h: 510 / 3840 },
 }
 
+const SLEEP_PLAN_BUTTON: Rect = {
+  l: 1700 / 2160,
+  t: 1500 / 3840,
+  w: 260 / 2160,
+  h: 260 / 3840,
+}
+
 const PRESSED = {
   sleep: SCENES.start_sleep_pressed,
   mosaic: SCENES.start_mosaic_pressed,
@@ -57,6 +65,7 @@ interface Props {
   onBag?: () => void
   onMosaic?: () => void
   onSettings?: () => void
+  onSleepPlan?: () => void
 }
 
 /** Absolute frame for a rect of the backdrop, in on-screen px. */
@@ -105,6 +114,53 @@ function Plaque({
   )
 }
 
+function FourPointedStar({ size, color }: { size: number; color: string }) {
+  return (
+    <View
+      style={{
+        width: size,
+        height: size,
+        backgroundColor: color,
+        transform: [{ rotate: '45deg' }],
+      }}
+    />
+  )
+}
+
+function SleepPlanButton({
+  bookW,
+  bookH,
+  onPress,
+}: {
+  bookW: number
+  bookH: number
+  onPress: () => void
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={strings.home_sleep_plan}
+      onPress={onPress}
+      style={({ pressed }) => [
+        place(SLEEP_PLAN_BUTTON, bookW, bookH),
+        styles.sleepPlanOuter,
+        pressed && styles.sleepPlanPressed,
+      ]}
+    >
+      <View style={styles.sleepPlanBody}>
+        <View style={styles.sleepPlanWell}>
+          <View style={styles.starRow}>
+            <FourPointedStar size={10} color={wood.gold} />
+            <FourPointedStar size={12} color={wood.goldLight} />
+            <FourPointedStar size={10} color={wood.gold} />
+          </View>
+        </View>
+      </View>
+      <CornerRivets size={4} inset={5} />
+    </Pressable>
+  )
+}
+
 /**
  * The awake home / start screen. The backdrop is fitted to the full width and
  * centred, never cropped — the plaques run almost to the edges of the art, and
@@ -114,7 +170,15 @@ function Plaque({
  * Nav handlers are optional; without them (sleep transition opening frame) the
  * plaques render as plain art.
  */
-export function StartScreen({ hp, level, onSleep, onBag, onMosaic, onSettings }: Props) {
+export function StartScreen({
+  hp,
+  level,
+  onSleep,
+  onBag,
+  onMosaic,
+  onSettings,
+  onSleepPlan,
+}: Props) {
   const { width: W, height: H } = useWindowDimensions()
   const bookW = Math.min(W, H * ASPECT)
   const bookH = bookW / ASPECT
@@ -136,6 +200,7 @@ export function StartScreen({ hp, level, onSleep, onBag, onMosaic, onSettings }:
         <Plaque name="mosaic" bookW={bookW} bookH={bookH} onPress={onMosaic} />
         <Plaque name="bag" bookW={bookW} bookH={bookH} onPress={onBag} />
         <Plaque name="settings" bookW={bookW} bookH={bookH} onPress={onSettings} />
+        {onSleepPlan && <SleepPlanButton bookW={bookW} bookH={bookH} onPress={onSleepPlan} />}
       </View>
     </View>
   )
@@ -148,5 +213,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     // The art fades to black at every edge, so the letterbox is the same table.
     backgroundColor: '#000000',
+  },
+  sleepPlanOuter: {
+    borderWidth: 2,
+    borderColor: wood.edge,
+    backgroundColor: wood.edge,
+  },
+  sleepPlanPressed: {
+    transform: [{ translateY: 2 }],
+  },
+  sleepPlanBody: {
+    flex: 1,
+    borderTopWidth: 2,
+    borderTopColor: wood.light,
+    borderBottomWidth: 2,
+    borderBottomColor: wood.dark,
+    backgroundColor: wood.mid,
+    padding: 4,
+  },
+  sleepPlanWell: {
+    flex: 1,
+    backgroundColor: '#20130b',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  starRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
 })
