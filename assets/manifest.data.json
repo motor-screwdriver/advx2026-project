@@ -1021,6 +1021,144 @@
       "width": 32
     }
   },
+  "journey": {
+    "btn_bag": {
+      "frameHeight": 245,
+      "frameWidth": 228,
+      "frames": 1,
+      "height": 245,
+      "path": "journey/gen/btn_bag.png",
+      "width": 228
+    },
+    "btn_bag_pressed": {
+      "frameHeight": 245,
+      "frameWidth": 228,
+      "frames": 1,
+      "height": 245,
+      "path": "journey/gen/btn_bag_pressed.png",
+      "width": 228
+    },
+    "btn_settings": {
+      "frameHeight": 240,
+      "frameWidth": 230,
+      "frames": 1,
+      "height": 240,
+      "path": "journey/gen/btn_settings.png",
+      "width": 230
+    },
+    "btn_settings_pressed": {
+      "frameHeight": 240,
+      "frameWidth": 230,
+      "frames": 1,
+      "height": 240,
+      "path": "journey/gen/btn_settings_pressed.png",
+      "width": 230
+    },
+    "forest_strip": {
+      "frameHeight": 800,
+      "frameWidth": 4000,
+      "frames": 1,
+      "height": 800,
+      "path": "journey/gen/forest_strip.png",
+      "width": 4000
+    },
+    "hud_bottom": {
+      "frameHeight": 475,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 475,
+      "path": "journey/gen/hud_bottom.png",
+      "width": 1080
+    },
+    "hud_top": {
+      "frameHeight": 410,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 410,
+      "path": "journey/gen/hud_top.png",
+      "width": 1080
+    },
+    "plate": {
+      "frameHeight": 285,
+      "frameWidth": 455,
+      "frames": 1,
+      "height": 285,
+      "path": "journey/gen/plate.png",
+      "width": 455
+    },
+    "plate_pressed": {
+      "frameHeight": 285,
+      "frameWidth": 455,
+      "frames": 1,
+      "height": 285,
+      "path": "journey/gen/plate_pressed.png",
+      "width": 455
+    },
+    "sky": {
+      "frameHeight": 1035,
+      "frameWidth": 1080,
+      "frames": 1,
+      "height": 1035,
+      "path": "journey/gen/sky.png",
+      "width": 1080
+    },
+    "xp_bar_1": {
+      "frameHeight": 60,
+      "frameWidth": 546,
+      "frames": 1,
+      "height": 60,
+      "path": "journey/gen/xp_bar_1.png",
+      "width": 546
+    },
+    "xp_bar_2": {
+      "frameHeight": 60,
+      "frameWidth": 546,
+      "frames": 1,
+      "height": 60,
+      "path": "journey/gen/xp_bar_2.png",
+      "width": 546
+    },
+    "xp_bar_3": {
+      "frameHeight": 60,
+      "frameWidth": 546,
+      "frames": 1,
+      "height": 60,
+      "path": "journey/gen/xp_bar_3.png",
+      "width": 546
+    },
+    "xp_bar_4": {
+      "frameHeight": 60,
+      "frameWidth": 546,
+      "frames": 1,
+      "height": 60,
+      "path": "journey/gen/xp_bar_4.png",
+      "width": 546
+    },
+    "xp_bar_5": {
+      "frameHeight": 60,
+      "frameWidth": 546,
+      "frames": 1,
+      "height": 60,
+      "path": "journey/gen/xp_bar_5.png",
+      "width": 546
+    },
+    "xp_bar_6": {
+      "frameHeight": 60,
+      "frameWidth": 546,
+      "frames": 1,
+      "height": 60,
+      "path": "journey/gen/xp_bar_6.png",
+      "width": 546
+    },
+    "xp_bar_7": {
+      "frameHeight": 60,
+      "frameWidth": 546,
+      "frames": 1,
+      "height": 60,
+      "path": "journey/gen/xp_bar_7.png",
+      "width": 546
+    }
+  },
   "luma": {
     "btn_accept": {
       "frameHeight": 162,

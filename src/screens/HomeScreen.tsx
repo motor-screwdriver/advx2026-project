@@ -11,7 +11,7 @@ import { theme } from '../ui/theme'
 import { getDayPhase, type DayPhase } from '../ui/timeOfDay'
 import { useGame } from '../ui/useGame'
 import { DevTools } from './DevTools'
-import { AsleepHUD, HeroStage } from './HomeSleepStage'
+import { HeroStage } from './HomeSleepStage'
 
 const MAX_HP = 7
 
@@ -58,13 +58,12 @@ function useHomeFocusGate(tapLock: { current: boolean }) {
 function HeroHome() {
   const go = useScreenTransition()
   const { state, pendingBedTime, sleepNow, wakeNow } = useGame()
-  const hero = state.hero!
   const tapLock = useRef(false)
   const focused = useHomeFocusGate(tapLock)
   const asleep = pendingBedTime !== null && focused
 
   // Tapping SLEEP tucks the hero in right here — the book crossfades into
-  // the living night world in place (see HeroStage), no separate screen to
+  // the night journey in place (see HeroStage), no separate screen to
   // navigate to or glitch through. WAKE UP evaluates the night and rolls on
   // to morning.
   const onSleep = () => {
@@ -85,13 +84,9 @@ function HeroHome() {
 
   return (
     <View style={styles.root}>
-      <HeroStage asleep={asleep} state={state} onSleep={onSleep} />
+      <HeroStage asleep={asleep} state={state} onSleep={onSleep} onWake={onWake} />
       <SafeAreaView style={styles.safe} pointerEvents="box-none">
-        {asleep ? (
-          <AsleepHUD hp={state.hp} xp={hero.xp} level={hero.level} onWake={onWake} />
-        ) : (
-          <View style={styles.stageSpacer} pointerEvents="none" />
-        )}
+        <View style={styles.stageSpacer} pointerEvents="none" />
         <DevTools />
       </SafeAreaView>
     </View>
