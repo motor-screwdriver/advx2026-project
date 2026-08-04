@@ -19,7 +19,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
 
   return {
     ...config,
-    name: config.name ?? '8bit Sleep',
+    name: config.name ?? 'The Sleepy Knight',
     slug: config.slug ?? '8bit-sleep',
     plugins,
     web: {

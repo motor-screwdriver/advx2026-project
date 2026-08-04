@@ -95,7 +95,7 @@ export async function pushStatsCard(state: GameState, config?: EinkConfig): Prom
     return false
   }
   return postToDevice(cfg, 'text', {
-    title: '8BIT SLEEP',
+    title: 'THE SLEEPY KNIGHT',
     message: statsMessage(state),
     signature: statsDate(state),
     icon,

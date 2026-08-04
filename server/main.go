@@ -29,7 +29,7 @@ func main() {
 		WriteTimeout:      90 * time.Second,
 		IdleTimeout:       60 * time.Second,
 	}
-	log.Printf("8bit Sleep oracle server listening on http://%s", addr)
+	log.Printf("The Sleepy Knight oracle server listening on http://%s", addr)
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}

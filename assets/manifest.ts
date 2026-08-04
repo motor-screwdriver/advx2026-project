@@ -1871,11 +1871,11 @@ export const JOURNEY = {
   },
   forest_strip: {
     source: require('./journey/gen/forest_strip.png'),
-    width: 4000,
-    height: 800,
+    width: 2560,
+    height: 512,
     frames: 1,
-    frameWidth: 4000,
-    frameHeight: 800,
+    frameWidth: 2560,
+    frameHeight: 512,
   },
   hud_bottom: {
     source: require('./journey/gen/hud_bottom.png'),

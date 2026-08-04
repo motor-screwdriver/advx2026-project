@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "8bit Sleep",
+    "name": "The Sleepy Knight",
     "slug": "8bit-sleep",
     "version": "0.1.0",
     "scheme": "eightbitsleep",
@@ -28,7 +28,7 @@
       [
         "react-native-nfc-manager",
         {
-          "nfcPermission": "Scan your Quote e-ink device to connect it to 8bit Sleep."
+          "nfcPermission": "Scan your Quote e-ink device to connect it to The Sleepy Knight."
         }
       ],
       [
@@ -38,7 +38,7 @@
           "widgets": [
             {
               "name": "SleepStats",
-              "label": "8bit Sleep · Hero",
+              "label": "The Sleepy Knight · Hero",
               "description": "Hero level, sleep streak and hearts at a glance.",
               "minWidth": "110dp",
               "minHeight": "110dp",
@@ -49,7 +49,7 @@
             },
             {
               "name": "SleepToggle",
-              "label": "8bit Sleep · Sleep / Wake",
+              "label": "The Sleepy Knight · Sleep / Wake",
               "description": "Tap to start sleep or wake up.",
               "minWidth": "110dp",
               "minHeight": "40dp",

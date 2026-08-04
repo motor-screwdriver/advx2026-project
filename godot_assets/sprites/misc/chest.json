@@ -1,0 +1,13 @@
+{
+  "name": "chest",
+  "type": "animation",
+  "texture": "sprites/misc/chest.png",
+  "frame_width": 192,
+  "frame_height": 192,
+  "frames": 3,
+  "fps": 2,
+  "loop": false,
+  "meta": {
+    "note": "state frames: closed / opening / open \u2014 drive by frame, not loop"
+  }
+}

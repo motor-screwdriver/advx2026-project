@@ -17,8 +17,18 @@ export interface HudBox {
 export const TOP_PANEL_ASPECT = 2160 / 820
 export const BOTTOM_PANEL_ASPECT = 2160 / 950
 
-/** Forest strip is 5 square tiles side by side (4000x800 on disk). */
+/** Forest strip is 5 square tiles side by side (2560x512 on disk). */
 export const STRIP_TILES = 5
+
+/** Grass line of the strip, as a fraction of its height — the hero's feet
+ * land here. Baked by tools/rebuild_forest_strip.py (GROUND_Y / TILE_SIZE),
+ * which aligns every tile's soil onto this one line. */
+export const STRIP_GROUND = 880 / 1024
+
+/** Fraction of a hero walk frame from its top down to the sole: the strips
+ * carry a few rows of empty pixels under the boots, and ignoring them leaves
+ * the hero hovering. Measured off the 256px frames (lowest opaque row 243). */
+export const HERO_SOLE = 244 / 256
 
 export const TOP_HUD = {
   /** Empty upper well of the panel — the hearts row lives here. */

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""pixelate.py — the 8bit Sleep deterministic art pipeline (PROMPT C §1).
+"""pixelate.py — the The Sleepy Knight deterministic art pipeline (PROMPT C §1).
 
 Every shipped asset passes through here, no exceptions:
 

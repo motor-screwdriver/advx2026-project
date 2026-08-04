@@ -3,7 +3,7 @@
  * pushes fire while the app is not running, so they cannot depend on the
  * UI layer. Hero persona, English only.
  */
-export const NOTIF_TITLE = '8bit Sleep'
+export const NOTIF_TITLE = 'The Sleepy Knight'
 
 /** Bedtime reminder pool — one per day, rotated deterministically. */
 export const BEDTIME_LINES = [

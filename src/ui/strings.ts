@@ -6,7 +6,7 @@
 import { stringsExtra } from './stringsExtra'
 
 export const strings = {
-  appName: '8bit Sleep',
+  appName: 'The Sleepy Knight',
 
   // Onboarding
   onboarding_title: 'Your hero needs sleep',
@@ -84,7 +84,7 @@ export const strings = {
   heroes_current: 'Yours',
 
   // Home
-  home_title: '8bit Sleep',
+  home_title: 'The Sleepy Knight',
   home_hearts: 'Hearts',
   home_streak: 'Perfect week',
   home_level: 'LV',

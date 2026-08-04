@@ -1,0 +1,11 @@
+{
+  "name": "env_candle",
+  "type": "animation",
+  "texture": "luma/tavern_result/env_candle.png",
+  "frame_width": 115,
+  "frame_height": 170,
+  "frames": 3,
+  "fps": 1.43,
+  "loop": true,
+  "frame_order": [0, 1, 2, 1]
+}

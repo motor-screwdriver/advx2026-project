@@ -1,0 +1,10 @@
+{
+  "name": "guide_luma",
+  "type": "animation",
+  "texture": "sprites/misc/guide_luma.png",
+  "frame_width": 256,
+  "frame_height": 256,
+  "frames": 2,
+  "fps": 1.5,
+  "loop": true
+}

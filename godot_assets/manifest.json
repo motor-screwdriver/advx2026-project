@@ -1,0 +1,1358 @@
+{
+  "atmosphere": {
+    "cloud_a_day": {
+      "height": 96,
+      "texture": "atmosphere/cloud_a_day.png",
+      "type": "sprite",
+      "width": 192
+    },
+    "cloud_a_evening": {
+      "height": 96,
+      "texture": "atmosphere/cloud_a_evening.png",
+      "type": "sprite",
+      "width": 192
+    },
+    "cloud_a_morning": {
+      "height": 96,
+      "texture": "atmosphere/cloud_a_morning.png",
+      "type": "sprite",
+      "width": 192
+    },
+    "cloud_a_night": {
+      "height": 96,
+      "texture": "atmosphere/cloud_a_night.png",
+      "type": "sprite",
+      "width": 192
+    },
+    "cloud_b_day": {
+      "height": 64,
+      "texture": "atmosphere/cloud_b_day.png",
+      "type": "sprite",
+      "width": 128
+    },
+    "cloud_b_evening": {
+      "height": 64,
+      "texture": "atmosphere/cloud_b_evening.png",
+      "type": "sprite",
+      "width": 128
+    },
+    "cloud_b_morning": {
+      "height": 64,
+      "texture": "atmosphere/cloud_b_morning.png",
+      "type": "sprite",
+      "width": 128
+    },
+    "cloud_b_night": {
+      "height": 64,
+      "texture": "atmosphere/cloud_b_night.png",
+      "type": "sprite",
+      "width": 128
+    },
+    "grass_day": {
+      "height": 210,
+      "texture": "atmosphere/grass_day.png",
+      "type": "sprite",
+      "width": 384
+    },
+    "grass_evening": {
+      "height": 210,
+      "texture": "atmosphere/grass_evening.png",
+      "type": "sprite",
+      "width": 384
+    },
+    "grass_morning": {
+      "height": 210,
+      "texture": "atmosphere/grass_morning.png",
+      "type": "sprite",
+      "width": 384
+    },
+    "grass_night": {
+      "height": 96,
+      "texture": "atmosphere/grass_night.png",
+      "type": "sprite",
+      "width": 384
+    },
+    "moon_night": {
+      "height": 198,
+      "texture": "atmosphere/moon_night.png",
+      "type": "sprite",
+      "width": 200
+    },
+    "sun_day": {
+      "height": 256,
+      "texture": "atmosphere/sun_day.png",
+      "type": "sprite",
+      "width": 256
+    },
+    "sun_evening": {
+      "height": 256,
+      "texture": "atmosphere/sun_evening.png",
+      "type": "sprite",
+      "width": 256
+    },
+    "sun_morning": {
+      "height": 256,
+      "texture": "atmosphere/sun_morning.png",
+      "type": "sprite",
+      "width": 256
+    }
+  },
+  "backgrounds": {
+    "cloud_curtain": {
+      "height": 768,
+      "meta": {
+        "note": "fullscreen transition curtain"
+      },
+      "texture": "backgrounds/cloud_curtain.png",
+      "type": "sprite",
+      "width": 1536
+    },
+    "death": {
+      "height": 1920,
+      "texture": "backgrounds/death.png",
+      "type": "background",
+      "width": 1080
+    },
+    "glow": {
+      "height": 512,
+      "meta": {
+        "note": "white radial alpha \u2014 tint per outcome, breathe over the sun/moon"
+      },
+      "texture": "backgrounds/glow.png",
+      "type": "sprite",
+      "width": 512
+    },
+    "mosaic": {
+      "height": 1920,
+      "texture": "backgrounds/mosaic.png",
+      "type": "background",
+      "width": 1080
+    },
+    "night_bad": {
+      "height": 1920,
+      "texture": "backgrounds/night_bad.png",
+      "type": "background",
+      "width": 1080
+    },
+    "night_good": {
+      "height": 1920,
+      "texture": "backgrounds/night_good.png",
+      "type": "background",
+      "width": 1080
+    },
+    "night_missed": {
+      "height": 1920,
+      "texture": "backgrounds/night_missed.png",
+      "type": "background",
+      "width": 1080
+    },
+    "night_perfect": {
+      "height": 1920,
+      "texture": "backgrounds/night_perfect.png",
+      "type": "background",
+      "width": 1080
+    },
+    "night_terrible": {
+      "height": 1920,
+      "texture": "backgrounds/night_terrible.png",
+      "type": "background",
+      "width": 1080
+    },
+    "tether": {
+      "height": 1999,
+      "texture": "backgrounds/tether.png",
+      "type": "background",
+      "width": 1125
+    },
+    "tether_star": {
+      "height": 96,
+      "texture": "backgrounds/tether_star.png",
+      "type": "sprite",
+      "width": 96
+    }
+  },
+  "icons": {
+    "art_alarm_bell": {
+      "height": 64,
+      "texture": "icons/art_alarm_bell.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "art_coffee_amulet": {
+      "height": 64,
+      "texture": "icons/art_coffee_amulet.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "art_hourglass": {
+      "height": 64,
+      "texture": "icons/art_hourglass.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "art_iron_armor": {
+      "height": 64,
+      "texture": "icons/art_iron_armor.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "art_lucky_coin": {
+      "height": 64,
+      "texture": "icons/art_lucky_coin.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "art_night_watch": {
+      "height": 64,
+      "texture": "icons/art_night_watch.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "art_phoenix_feather": {
+      "height": 64,
+      "texture": "icons/art_phoenix_feather.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "art_second_wind": {
+      "height": 64,
+      "texture": "icons/art_second_wind.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "art_warm_blanket": {
+      "height": 64,
+      "texture": "icons/art_warm_blanket.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "cos_aura": {
+      "height": 64,
+      "texture": "icons/cos_aura.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "cos_frame": {
+      "height": 64,
+      "texture": "icons/cos_frame.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "cos_hat": {
+      "height": 64,
+      "texture": "icons/cos_hat.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "cos_pet": {
+      "height": 64,
+      "texture": "icons/cos_pet.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "guide_sleep_book": {
+      "height": 64,
+      "texture": "icons/guide_sleep_book.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "heart_empty": {
+      "height": 64,
+      "texture": "icons/heart_empty.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "heart_full": {
+      "height": 64,
+      "texture": "icons/heart_full.png",
+      "type": "sprite",
+      "width": 64
+    }
+  },
+  "journey": {
+    "btn_bag": {
+      "height": 490,
+      "meta": {
+        "note": "opaque dock button, slot-sized \u2014 drop straight into the dock"
+      },
+      "texture": "journey/btn_bag.png",
+      "type": "sprite",
+      "width": 455
+    },
+    "btn_bag_pressed": {
+      "height": 490,
+      "meta": {
+        "note": "opaque dock button, slot-sized \u2014 drop straight into the dock"
+      },
+      "texture": "journey/btn_bag_pressed.png",
+      "type": "sprite",
+      "width": 455
+    },
+    "btn_settings": {
+      "height": 480,
+      "meta": {
+        "note": "opaque dock button, slot-sized \u2014 drop straight into the dock"
+      },
+      "texture": "journey/btn_settings.png",
+      "type": "sprite",
+      "width": 460
+    },
+    "btn_settings_pressed": {
+      "height": 480,
+      "meta": {
+        "note": "opaque dock button, slot-sized \u2014 drop straight into the dock"
+      },
+      "texture": "journey/btn_settings_pressed.png",
+      "type": "sprite",
+      "width": 460
+    },
+    "hud_bottom": {
+      "height": 950,
+      "meta": {
+        "anchors": {
+          "bag": [1152, 260, 455, 490],
+          "plate": [136, 204, 910, 570],
+          "settings": [1616, 264, 460, 480]
+        }
+      },
+      "texture": "journey/hud_bottom.png",
+      "type": "sprite",
+      "width": 2160
+    },
+    "hud_top": {
+      "height": 820,
+      "meta": {
+        "anchors": {
+          "hearts": [151, 90, 1858, 340],
+          "level_badge": [150, 454, 493, 255],
+          "xp_groove": [930, 529, 1080, 121]
+        }
+      },
+      "texture": "journey/hud_top.png",
+      "type": "sprite",
+      "width": 2160
+    },
+    "plate": {
+      "height": 570,
+      "meta": {
+        "note": "blank gold plate \u2014 typeset the label on top"
+      },
+      "texture": "journey/plate.png",
+      "type": "sprite",
+      "width": 910
+    },
+    "plate_pressed": {
+      "height": 570,
+      "meta": {
+        "note": "blank gold plate (pressed) \u2014 typeset the label on top"
+      },
+      "texture": "journey/plate_pressed.png",
+      "type": "sprite",
+      "width": 910
+    },
+    "sky": {
+      "height": 640,
+      "meta": {
+        "full_height": 2070,
+        "gradient": {
+          "from": [4, 12, 21],
+          "to": [1, 3, 5]
+        },
+        "note": "below the crop, fill with a vertical gradient"
+      },
+      "texture": "journey/sky.png",
+      "type": "background",
+      "width": 2160
+    },
+    "tile_01": {
+      "height": 1024,
+      "meta": {
+        "loop_order": [1, 2, 8, 4, 5],
+        "seconds_per_tile": 10
+      },
+      "texture": "journey/tiles/tile_01.png",
+      "type": "sprite",
+      "width": 1024
+    },
+    "tile_02": {
+      "height": 1024,
+      "meta": {
+        "loop_order": [1, 2, 8, 4, 5],
+        "seconds_per_tile": 10
+      },
+      "texture": "journey/tiles/tile_02.png",
+      "type": "sprite",
+      "width": 1024
+    },
+    "tile_04": {
+      "height": 1024,
+      "meta": {
+        "loop_order": [1, 2, 8, 4, 5],
+        "seconds_per_tile": 10
+      },
+      "texture": "journey/tiles/tile_04.png",
+      "type": "sprite",
+      "width": 1024
+    },
+    "tile_05": {
+      "height": 1024,
+      "meta": {
+        "loop_order": [1, 2, 8, 4, 5],
+        "seconds_per_tile": 10
+      },
+      "texture": "journey/tiles/tile_05.png",
+      "type": "sprite",
+      "width": 1024
+    },
+    "tile_08": {
+      "height": 1024,
+      "meta": {
+        "loop_order": [1, 2, 8, 4, 5],
+        "seconds_per_tile": 10
+      },
+      "texture": "journey/tiles/tile_08.png",
+      "type": "sprite",
+      "width": 1024
+    },
+    "xp_bar": {
+      "fps": 0,
+      "frame_height": 121,
+      "frame_width": 1091,
+      "frames": 7,
+      "loop": false,
+      "meta": {
+        "note": "fill states 1/7..7/7 \u2014 pick the frame by XP progress"
+      },
+      "texture": "journey/xp_bar.png",
+      "type": "animation"
+    }
+  },
+  "luma": {
+    "morning": {
+      "background": "luma/morning/background.png",
+      "height": 3840,
+      "type": "layered_scene",
+      "width": 2160,
+      "zones": [
+        {
+          "fps": 4.55,
+          "frame_height": 1140,
+          "frame_width": 1100,
+          "frames": 2,
+          "loop": false,
+          "meta": {
+            "note": "random blink: show frame 1 for one tick every 3-6 s"
+          },
+          "name": "luma_blink",
+          "position": [520, 540],
+          "texture": "luma/morning/luma_blink.png",
+          "type": "animation"
+        },
+        {
+          "fps": 6.67,
+          "frame_height": 1140,
+          "frame_order": [0, 1, 2, 1],
+          "frame_width": 1100,
+          "frames": 3,
+          "loop": true,
+          "meta": {
+            "note": "cycle while Luma speaks: closed -> half -> open -> half"
+          },
+          "name": "luma_talk",
+          "position": [520, 540],
+          "texture": "luma/morning/luma_talk.png",
+          "type": "animation"
+        },
+        {
+          "fps": 1.43,
+          "frame_height": 355,
+          "frame_order": [0, 1, 2, 1],
+          "frame_width": 375,
+          "frames": 3,
+          "loop": true,
+          "name": "env_fire",
+          "position": [1590, 890],
+          "texture": "luma/morning/env_fire.png",
+          "type": "animation"
+        },
+        {
+          "fps": 1.43,
+          "frame_height": 270,
+          "frame_order": [0, 1, 2, 1],
+          "frame_width": 160,
+          "frames": 3,
+          "loop": true,
+          "name": "env_candle",
+          "position": [25, 1095],
+          "texture": "luma/morning/env_candle.png",
+          "type": "animation"
+        }
+      ]
+    },
+    "tavern_question": {
+      "background": "luma/tavern_question/background.png",
+      "height": 1920,
+      "type": "layered_scene",
+      "width": 1080,
+      "zones": [
+        {
+          "fps": 4.55,
+          "frame_height": 585,
+          "frame_width": 620,
+          "frames": 2,
+          "loop": false,
+          "meta": {
+            "note": "random blink: show frame 1 for one tick every 3-6 s"
+          },
+          "name": "luma_blink",
+          "position": [150, 215],
+          "texture": "luma/tavern_question/luma_blink.png",
+          "type": "animation"
+        },
+        {
+          "fps": 6.67,
+          "frame_height": 585,
+          "frame_order": [0, 1, 2, 1],
+          "frame_width": 620,
+          "frames": 3,
+          "loop": true,
+          "meta": {
+            "note": "cycle while Luma speaks: closed -> half -> open -> half"
+          },
+          "name": "luma_talk",
+          "position": [150, 215],
+          "texture": "luma/tavern_question/luma_talk.png",
+          "type": "animation"
+        },
+        {
+          "fps": 1.43,
+          "frame_height": 280,
+          "frame_order": [0, 1, 2, 3, 2, 1],
+          "frame_width": 240,
+          "frames": 4,
+          "loop": true,
+          "name": "env_fire",
+          "position": [775, 385],
+          "texture": "luma/tavern_question/env_fire.png",
+          "type": "animation"
+        },
+        {
+          "fps": 1.43,
+          "frame_height": 130,
+          "frame_order": [0, 1, 2, 3, 2, 1],
+          "frame_width": 95,
+          "frames": 4,
+          "loop": true,
+          "name": "env_candle",
+          "position": [25, 540],
+          "texture": "luma/tavern_question/env_candle.png",
+          "type": "animation"
+        }
+      ]
+    },
+    "tavern_result": {
+      "background": "luma/tavern_result/background.png",
+      "height": 1920,
+      "type": "layered_scene",
+      "width": 1080,
+      "zones": [
+        {
+          "fps": 4.55,
+          "frame_height": 760,
+          "frame_width": 545,
+          "frames": 2,
+          "loop": false,
+          "meta": {
+            "note": "random blink: show frame 1 for one tick every 3-6 s"
+          },
+          "name": "luma_blink",
+          "position": [200, 150],
+          "texture": "luma/tavern_result/luma_blink.png",
+          "type": "animation"
+        },
+        {
+          "fps": 1.43,
+          "frame_height": 220,
+          "frame_order": [0, 1, 2, 1],
+          "frame_width": 305,
+          "frames": 3,
+          "loop": true,
+          "name": "env_fire",
+          "position": [715, 580],
+          "texture": "luma/tavern_result/env_fire.png",
+          "type": "animation"
+        },
+        {
+          "fps": 1.43,
+          "frame_height": 170,
+          "frame_order": [0, 1, 2, 1],
+          "frame_width": 115,
+          "frames": 3,
+          "loop": true,
+          "name": "env_candle",
+          "position": [35, 645],
+          "texture": "luma/tavern_result/env_candle.png",
+          "type": "animation"
+        }
+      ]
+    },
+    "tavern_welcome": {
+      "background": "luma/tavern_welcome/background.png",
+      "height": 1920,
+      "type": "layered_scene",
+      "width": 1080,
+      "zones": [
+        {
+          "fps": 4.55,
+          "frame_height": 585,
+          "frame_width": 620,
+          "frames": 2,
+          "loop": false,
+          "meta": {
+            "note": "random blink: show frame 1 for one tick every 3-6 s"
+          },
+          "name": "luma_blink",
+          "position": [150, 215],
+          "texture": "luma/tavern_welcome/luma_blink.png",
+          "type": "animation"
+        },
+        {
+          "fps": 6.67,
+          "frame_height": 585,
+          "frame_order": [0, 1, 2, 1],
+          "frame_width": 620,
+          "frames": 3,
+          "loop": true,
+          "meta": {
+            "note": "cycle while Luma speaks: closed -> half -> open -> half"
+          },
+          "name": "luma_talk",
+          "position": [150, 215],
+          "texture": "luma/tavern_welcome/luma_talk.png",
+          "type": "animation"
+        },
+        {
+          "fps": 1.43,
+          "frame_height": 280,
+          "frame_order": [0, 1, 2, 3, 2, 1],
+          "frame_width": 240,
+          "frames": 4,
+          "loop": true,
+          "name": "env_fire",
+          "position": [775, 385],
+          "texture": "luma/tavern_welcome/env_fire.png",
+          "type": "animation"
+        },
+        {
+          "fps": 1.43,
+          "frame_height": 130,
+          "frame_order": [0, 1, 2, 3, 2, 1],
+          "frame_width": 95,
+          "frames": 4,
+          "loop": true,
+          "name": "env_candle",
+          "position": [25, 540],
+          "texture": "luma/tavern_welcome/env_candle.png",
+          "type": "animation"
+        }
+      ]
+    }
+  },
+  "sprites": {
+    "chest": {
+      "fps": 2,
+      "frame_height": 192,
+      "frame_width": 192,
+      "frames": 3,
+      "loop": false,
+      "meta": {
+        "note": "state frames: closed / opening / open \u2014 drive by frame, not loop"
+      },
+      "texture": "sprites/misc/chest.png",
+      "type": "animation"
+    },
+    "guide_luma": {
+      "fps": 1.5,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites/misc/guide_luma.png",
+      "type": "animation"
+    },
+    "hero_druid": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites/heroes/hero_druid.png",
+      "type": "animation"
+    },
+    "hero_knight": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites/heroes/hero_knight.png",
+      "type": "animation"
+    },
+    "hero_mage": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites/heroes/hero_mage.png",
+      "type": "animation"
+    },
+    "hero_monk": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites/heroes/hero_monk.png",
+      "type": "animation"
+    },
+    "hero_ninja": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites/heroes/hero_ninja.png",
+      "type": "animation"
+    },
+    "hero_paladin": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites/heroes/hero_paladin.png",
+      "type": "animation"
+    },
+    "hero_ranger": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites/heroes/hero_ranger.png",
+      "type": "animation"
+    },
+    "hero_rogue": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites/heroes/hero_rogue.png",
+      "type": "animation"
+    },
+    "hero_warlock": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites/heroes/hero_warlock.png",
+      "type": "animation"
+    }
+  },
+  "sprites_1bit": {
+    "1bit_heart_empty": {
+      "height": 64,
+      "texture": "sprites_1bit/misc/1bit_heart_empty.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "1bit_heart_full": {
+      "height": 64,
+      "texture": "sprites_1bit/misc/1bit_heart_full.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "hero_druid": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites_1bit/heroes/hero_druid.png",
+      "type": "animation"
+    },
+    "hero_icon_40": {
+      "height": 160,
+      "texture": "sprites_1bit/heroes/hero_icon_40.png",
+      "type": "sprite",
+      "width": 160
+    },
+    "hero_knight": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites_1bit/heroes/hero_knight.png",
+      "type": "animation"
+    },
+    "hero_mage": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites_1bit/heroes/hero_mage.png",
+      "type": "animation"
+    },
+    "hero_monk": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites_1bit/heroes/hero_monk.png",
+      "type": "animation"
+    },
+    "hero_ninja": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites_1bit/heroes/hero_ninja.png",
+      "type": "animation"
+    },
+    "hero_paladin": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites_1bit/heroes/hero_paladin.png",
+      "type": "animation"
+    },
+    "hero_ranger": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites_1bit/heroes/hero_ranger.png",
+      "type": "animation"
+    },
+    "hero_rogue": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites_1bit/heroes/hero_rogue.png",
+      "type": "animation"
+    },
+    "hero_warlock": {
+      "fps": 2,
+      "frame_height": 256,
+      "frame_width": 256,
+      "frames": 2,
+      "loop": true,
+      "texture": "sprites_1bit/heroes/hero_warlock.png",
+      "type": "animation"
+    }
+  },
+  "start_screen": {
+    "background": {
+      "height": 256,
+      "meta": {
+        "note": "authored pixel grid \u2014 scale with nearest",
+        "source_cell": 15
+      },
+      "texture": "start_screen/background.png",
+      "type": "background",
+      "width": 144
+    },
+    "bag_pressed": {
+      "height": 34,
+      "meta": {
+        "note": "overlay while the plaque is held",
+        "position": [51, 212]
+      },
+      "texture": "start_screen/bag_pressed.png",
+      "type": "sprite",
+      "width": 42
+    },
+    "candle": {
+      "fps": 4,
+      "frame_height": 33,
+      "frame_width": 20,
+      "frames": 4,
+      "loop": true,
+      "meta": {
+        "position": [4, 25]
+      },
+      "texture": "start_screen/candle.png",
+      "type": "animation"
+    },
+    "mosaic_pressed": {
+      "height": 34,
+      "meta": {
+        "note": "overlay while the plaque is held",
+        "position": [6, 212]
+      },
+      "texture": "start_screen/mosaic_pressed.png",
+      "type": "sprite",
+      "width": 42
+    },
+    "settings_pressed": {
+      "height": 34,
+      "meta": {
+        "note": "overlay while the plaque is held",
+        "position": [96, 212]
+      },
+      "texture": "start_screen/settings_pressed.png",
+      "type": "sprite",
+      "width": 41
+    },
+    "sleep_pressed": {
+      "height": 33,
+      "meta": {
+        "note": "overlay while the plaque is held",
+        "position": [13, 174]
+      },
+      "texture": "start_screen/sleep_pressed.png",
+      "type": "sprite",
+      "width": 119
+    }
+  },
+  "ui": {
+    "btn_accept": {
+      "height": 162,
+      "texture": "ui/luma/btn_accept.png",
+      "type": "sprite",
+      "width": 703
+    },
+    "btn_accept_down": {
+      "height": 162,
+      "texture": "ui/luma/btn_accept_down.png",
+      "type": "sprite",
+      "width": 703
+    },
+    "btn_adjust": {
+      "height": 115,
+      "texture": "ui/luma/btn_adjust.png",
+      "type": "sprite",
+      "width": 424
+    },
+    "btn_adjust_down": {
+      "height": 115,
+      "texture": "ui/luma/btn_adjust_down.png",
+      "type": "sprite",
+      "width": 424
+    },
+    "btn_back": {
+      "height": 208,
+      "texture": "ui/mosaic/btn_back.png",
+      "type": "sprite",
+      "width": 504
+    },
+    "btn_back_pressed": {
+      "height": 208,
+      "texture": "ui/mosaic/btn_back_pressed.png",
+      "type": "sprite",
+      "width": 504
+    },
+    "btn_empty": {
+      "height": 129,
+      "texture": "ui/luma/btn_empty.png",
+      "type": "sprite",
+      "width": 959
+    },
+    "btn_empty_down": {
+      "height": 129,
+      "texture": "ui/luma/btn_empty_down.png",
+      "type": "sprite",
+      "width": 959
+    },
+    "btn_gold": {
+      "height": 236,
+      "texture": "ui/buttons/btn_gold.png",
+      "type": "sprite",
+      "width": 636
+    },
+    "btn_gold_pressed": {
+      "height": 236,
+      "texture": "ui/buttons/btn_gold_pressed.png",
+      "type": "sprite",
+      "width": 636
+    },
+    "btn_next": {
+      "height": 366,
+      "texture": "ui/tutorial/btn_next.png",
+      "type": "sprite",
+      "width": 1527
+    },
+    "btn_next_pressed": {
+      "height": 366,
+      "texture": "ui/tutorial/btn_next_pressed.png",
+      "type": "sprite",
+      "width": 1527
+    },
+    "btn_skip": {
+      "height": 107,
+      "texture": "ui/tutorial/btn_skip.png",
+      "type": "sprite",
+      "width": 317
+    },
+    "btn_skip_pressed": {
+      "height": 107,
+      "texture": "ui/tutorial/btn_skip_pressed.png",
+      "type": "sprite",
+      "width": 317
+    },
+    "btn_wood_compact": {
+      "height": 141,
+      "texture": "ui/buttons/btn_wood_compact.png",
+      "type": "sprite",
+      "width": 578
+    },
+    "btn_wood_compact_pressed": {
+      "height": 141,
+      "texture": "ui/buttons/btn_wood_compact_pressed.png",
+      "type": "sprite",
+      "width": 578
+    },
+    "button_begin_plaque": {
+      "height": 452,
+      "texture": "ui/onboarding/button_begin_plaque.png",
+      "type": "sprite",
+      "width": 1558
+    },
+    "button_claim": {
+      "height": 186,
+      "texture": "ui/chest/button_claim.png",
+      "type": "sprite",
+      "width": 626
+    },
+    "button_close": {
+      "height": 380,
+      "texture": "ui/bag/button_close.png",
+      "type": "sprite",
+      "width": 1200
+    },
+    "candle_l": {
+      "height": 310,
+      "texture": "ui/chest/candle_l.png",
+      "type": "sprite",
+      "width": 110
+    },
+    "candle_r": {
+      "height": 310,
+      "texture": "ui/chest/candle_r.png",
+      "type": "sprite",
+      "width": 158
+    },
+    "caption_min_hours": {
+      "height": 70,
+      "texture": "ui/onboarding/caption_min_hours.png",
+      "type": "sprite",
+      "width": 874
+    },
+    "card_frame": {
+      "height": 626,
+      "texture": "ui/chest/card_frame.png",
+      "type": "sprite",
+      "width": 522
+    },
+    "chest_gold": {
+      "height": 544,
+      "texture": "ui/chest/chest_gold.png",
+      "type": "sprite",
+      "width": 626
+    },
+    "chest_open_glow": {
+      "height": 486,
+      "texture": "ui/chest/chest_open_glow.png",
+      "type": "sprite",
+      "width": 612
+    },
+    "chest_steel": {
+      "height": 478,
+      "texture": "ui/chest/chest_steel.png",
+      "type": "sprite",
+      "width": 626
+    },
+    "dropdown_bottom": {
+      "height": 170,
+      "texture": "ui/settings/dropdown_bottom.png",
+      "type": "sprite",
+      "width": 2026
+    },
+    "dropdown_mid": {
+      "height": 100,
+      "texture": "ui/settings/dropdown_mid.png",
+      "type": "sprite",
+      "width": 2026
+    },
+    "dropdown_top": {
+      "height": 170,
+      "texture": "ui/settings/dropdown_top.png",
+      "type": "sprite",
+      "width": 2026
+    },
+    "header": {
+      "height": 340,
+      "texture": "ui/settings/header.png",
+      "type": "sprite",
+      "width": 1960
+    },
+    "heroes_bust_druid": {
+      "height": 64,
+      "texture": "ui/misc/heroes_bust_druid.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "heroes_bust_knight": {
+      "height": 64,
+      "texture": "ui/misc/heroes_bust_knight.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "heroes_bust_mage": {
+      "height": 64,
+      "texture": "ui/misc/heroes_bust_mage.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "heroes_bust_monk": {
+      "height": 64,
+      "texture": "ui/misc/heroes_bust_monk.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "heroes_bust_ninja": {
+      "height": 64,
+      "texture": "ui/misc/heroes_bust_ninja.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "heroes_bust_paladin": {
+      "height": 64,
+      "texture": "ui/misc/heroes_bust_paladin.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "heroes_bust_ranger": {
+      "height": 64,
+      "texture": "ui/misc/heroes_bust_ranger.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "heroes_bust_rogue": {
+      "height": 64,
+      "texture": "ui/misc/heroes_bust_rogue.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "heroes_bust_warlock": {
+      "height": 64,
+      "texture": "ui/misc/heroes_bust_warlock.png",
+      "type": "sprite",
+      "width": 64
+    },
+    "logo_text": {
+      "height": 774,
+      "texture": "ui/onboarding/logo_text.png",
+      "type": "sprite",
+      "width": 1508
+    },
+    "panel_consumables": {
+      "height": 1540,
+      "texture": "ui/bag/panel_consumables.png",
+      "type": "sprite",
+      "width": 1920
+    },
+    "panel_rules_card": {
+      "height": 1028,
+      "texture": "ui/onboarding/panel_rules_card.png",
+      "type": "sprite",
+      "width": 1848
+    },
+    "picker_window_bedtime": {
+      "height": 364,
+      "texture": "ui/onboarding/picker_window_bedtime.png",
+      "type": "sprite",
+      "width": 282
+    },
+    "picker_window_wakeup": {
+      "height": 364,
+      "texture": "ui/onboarding/picker_window_wakeup.png",
+      "type": "sprite",
+      "width": 282
+    },
+    "plaque_ready": {
+      "height": 154,
+      "texture": "ui/chest/plaque_ready.png",
+      "type": "sprite",
+      "width": 582
+    },
+    "ribbon_lucky": {
+      "height": 90,
+      "texture": "ui/chest/ribbon_lucky.png",
+      "type": "sprite",
+      "width": 622
+    },
+    "ribbon_rare": {
+      "height": 146,
+      "texture": "ui/chest/ribbon_rare.png",
+      "type": "sprite",
+      "width": 382
+    },
+    "row_blank": {
+      "height": 440,
+      "texture": "ui/settings/row_blank.png",
+      "type": "sprite",
+      "width": 2026
+    },
+    "row_change": {
+      "height": 444,
+      "texture": "ui/settings/row_change.png",
+      "type": "sprite",
+      "width": 2026
+    },
+    "row_eink": {
+      "height": 442,
+      "texture": "ui/settings/row_eink.png",
+      "type": "sprite",
+      "width": 2026
+    },
+    "row_eink_off": {
+      "height": 442,
+      "texture": "ui/settings/row_eink_off.png",
+      "type": "sprite",
+      "width": 2026
+    },
+    "row_notif": {
+      "height": 444,
+      "texture": "ui/settings/row_notif.png",
+      "type": "sprite",
+      "width": 2026
+    },
+    "row_reset": {
+      "height": 454,
+      "texture": "ui/settings/row_reset.png",
+      "type": "sprite",
+      "width": 2026
+    },
+    "row_window": {
+      "height": 440,
+      "texture": "ui/settings/row_window.png",
+      "type": "sprite",
+      "width": 2026
+    },
+    "selection_arrow": {
+      "height": 40,
+      "texture": "ui/onboarding/selection_arrow.png",
+      "type": "sprite",
+      "width": 32
+    },
+    "slot_empty": {
+      "height": 870,
+      "texture": "ui/bag/slot_empty.png",
+      "type": "sprite",
+      "width": 840
+    },
+    "slot_frame": {
+      "height": 870,
+      "texture": "ui/bag/slot_frame.png",
+      "type": "sprite",
+      "width": 840
+    },
+    "sparkle_1": {
+      "height": 42,
+      "texture": "ui/chest/sparkle_1.png",
+      "type": "sprite",
+      "width": 38
+    },
+    "step1": {
+      "height": 3840,
+      "texture": "ui/tutorial/step1.png",
+      "type": "sprite",
+      "width": 2160
+    },
+    "step2": {
+      "height": 3840,
+      "texture": "ui/tutorial/step2.png",
+      "type": "sprite",
+      "width": 2160
+    },
+    "step3": {
+      "height": 3840,
+      "texture": "ui/tutorial/step3.png",
+      "type": "sprite",
+      "width": 2160
+    },
+    "tile_bad": {
+      "height": 95,
+      "texture": "ui/mosaic/tile_bad.png",
+      "type": "sprite",
+      "width": 94
+    },
+    "tile_good": {
+      "height": 95,
+      "texture": "ui/mosaic/tile_good.png",
+      "type": "sprite",
+      "width": 91
+    },
+    "tile_perfect": {
+      "height": 95,
+      "texture": "ui/mosaic/tile_perfect.png",
+      "type": "sprite",
+      "width": 93
+    },
+    "title": {
+      "height": 201,
+      "texture": "ui/bag/title.png",
+      "type": "sprite",
+      "width": 1648
+    },
+    "title_weekly_chest": {
+      "height": 156,
+      "texture": "ui/chest/title_weekly_chest.png",
+      "type": "sprite",
+      "width": 622
+    },
+    "title_weekly_chest_gold": {
+      "height": 158,
+      "texture": "ui/chest/title_weekly_chest_gold.png",
+      "type": "sprite",
+      "width": 612
+    },
+    "title_weekly_loot": {
+      "height": 128,
+      "texture": "ui/chest/title_weekly_loot.png",
+      "type": "sprite",
+      "width": 612
+    },
+    "toggle_knob_blank": {
+      "height": 245,
+      "texture": "ui/settings/toggle_knob_blank.png",
+      "type": "sprite",
+      "width": 295
+    },
+    "toggle_track": {
+      "height": 216,
+      "texture": "ui/settings/toggle_track.png",
+      "type": "sprite",
+      "width": 461
+    },
+    "version": {
+      "height": 80,
+      "texture": "ui/settings/version.png",
+      "type": "sprite",
+      "width": 610
+    }
+  }
+}

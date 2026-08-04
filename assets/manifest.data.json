@@ -1055,12 +1055,12 @@
       "width": 230
     },
     "forest_strip": {
-      "frameHeight": 800,
-      "frameWidth": 4000,
+      "frameHeight": 512,
+      "frameWidth": 2560,
       "frames": 1,
-      "height": 800,
+      "height": 512,
       "path": "journey/gen/forest_strip.png",
-      "width": 4000
+      "width": 2560
     },
     "hud_bottom": {
       "frameHeight": 475,

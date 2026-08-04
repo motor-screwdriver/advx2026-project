@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""pixellab_gen.py — PixelLab AI pixel-art generation helper for 8bit Sleep.
+"""pixellab_gen.py — PixelLab AI pixel-art generation helper for The Sleepy Knight.
 
 Thin CLI over the PixelLab REST API (https://api.pixellab.ai/v1). The API key
 is read from the PIXELLAB_SECRET env var or from the repo-root .env file (see

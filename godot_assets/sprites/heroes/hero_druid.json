@@ -1,0 +1,10 @@
+{
+  "name": "hero_druid",
+  "type": "animation",
+  "texture": "sprites/heroes/hero_druid.png",
+  "frame_width": 256,
+  "frame_height": 256,
+  "frames": 2,
+  "fps": 2,
+  "loop": true
+}

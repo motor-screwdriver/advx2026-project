@@ -1,9 +1,9 @@
-# 8bit Sleep
+# The Sleepy Knight
 
 Pixel-art sleep tamagotchi. Your hero stays alive only while **you** sleep — bad nights deal damage, a perfect week levels you up and opens a loot chest.
 
 <p align="center">
-  <img src="assets/pixellab/root/icon.png" alt="8bit Sleep" width="96" height="96" />
+  <img src="assets/pixellab/root/icon.png" alt="The Sleepy Knight" width="96" height="96" />
 </p>
 
 <p align="center">

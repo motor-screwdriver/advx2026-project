@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""hero_profile.py — side-profile WALK sprites for the 8bit Sleep heroes.
+"""hero_profile.py — side-profile WALK sprites for the The Sleepy Knight heroes.
 
 Companion to heroes.py (which draws the front-facing idle chibi). This module
 draws the SAME roster in a right-facing 3/4-side profile and animates a proper

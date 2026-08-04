@@ -1,4 +1,4 @@
-"""Shared helpers for the 8bit Sleep source-art generators.
+"""Shared helpers for the The Sleepy Knight source-art generators.
 
 blit() draws ASCII-art rows with a char->color map; mirror() expands 8-char
 left halves into symmetric 16-char rows; save() enforces palette compliance

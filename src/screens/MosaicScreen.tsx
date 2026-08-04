@@ -8,7 +8,7 @@ import { useGame } from '../ui/useGame'
 import { MosaicBackButton, MosaicSheet } from './MosaicParts'
 
 const copy = {
-  shareDialog: 'My 8bit Sleep year mosaic',
+  shareDialog: 'My The Sleepy Knight year mosaic',
 } as const
 
 /**

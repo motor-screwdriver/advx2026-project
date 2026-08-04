@@ -1,0 +1,13 @@
+{
+  "name": "candle",
+  "type": "animation",
+  "texture": "start_screen/candle.png",
+  "frame_width": 20,
+  "frame_height": 33,
+  "frames": 4,
+  "fps": 4,
+  "loop": true,
+  "meta": {
+    "position": [4, 25]
+  }
+}

@@ -1,4 +1,4 @@
-"""Hero roster for 8bit Sleep — pure data: color schemes + gear specs.
+"""Hero roster for The Sleepy Knight — pure data: color schemes + gear specs.
 
 Every hero is drawn by the SAME construction code (heroes.draw_hero); only
 these scheme colors and gear-key strings differ. Scheme roles:

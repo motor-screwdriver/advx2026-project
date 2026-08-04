@@ -46,7 +46,13 @@ export function SleepStatsWidget({ data }: { data: HomeWidgetData }) {
     return (
       <FlexWidget style={styles.root} clickAction="OPEN_APP">
         <FlexWidget style={styles.emptyBox}>
-          <TextWidget text="8BIT SLEEP" style={styles.statBig} />
+          {/* Stacked, not one line: the title does not fit a 2x2 cell at the
+              stat size, and widget text has no auto-shrink to fall back on.
+              Own box so the empty state's gap does not split the wordmark. */}
+          <FlexWidget style={styles.wordmarkBox}>
+            <TextWidget text="THE SLEEPY" style={styles.wordmark} />
+            <TextWidget text="KNIGHT" style={styles.wordmark} />
+          </FlexWidget>
           <TextWidget text="Summon your hero" style={styles.labelDim} />
         </FlexWidget>
       </FlexWidget>
@@ -157,6 +163,8 @@ const styles = {
   heartsRow: { flexDirection: 'row', justifyContent: 'center', flexGap: 4 },
   emptyBox: { flex: 1, alignItems: 'center', justifyContent: 'center', flexGap: 8 },
   statBig: { color: C.gold, fontFamily: FONT, fontSize: 22 },
+  wordmarkBox: { alignItems: 'center' },
+  wordmark: { color: C.gold, fontFamily: FONT, fontSize: 12 },
   label: { color: C.text, fontFamily: FONT, fontSize: 8 },
   labelDim: { color: C.textDim, fontFamily: FONT, fontSize: 8 },
   toggleRoot: {

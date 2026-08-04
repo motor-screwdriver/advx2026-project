@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""pixellab_batch.py — regenerate every visual asset of 8bit Sleep via PixelLab.
+"""pixellab_batch.py — regenerate every visual asset of The Sleepy Knight via PixelLab.
 
 Produces a full alternative asset tree under assets/pixellab/ that mirrors the
 geometry of the original pipeline output (same strip layouts, same on-disk

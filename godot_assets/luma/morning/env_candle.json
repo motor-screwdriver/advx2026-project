@@ -1,0 +1,11 @@
+{
+  "name": "env_candle",
+  "type": "animation",
+  "texture": "luma/morning/env_candle.png",
+  "frame_width": 160,
+  "frame_height": 270,
+  "frames": 3,
+  "fps": 1.43,
+  "loop": true,
+  "frame_order": [0, 1, 2, 1]
+}

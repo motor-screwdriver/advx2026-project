@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""heroes.py — generate all 8bit Sleep hero sprites procedurally.
+"""heroes.py — generate all The Sleepy Knight hero sprites procedurally.
 
 One shared chibi construction (draw_hero) draws all 9 heroes; per-hero
 identity comes from the schemes + gear keys in hero_defs.py. For each hero

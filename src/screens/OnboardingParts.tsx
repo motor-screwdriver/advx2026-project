@@ -16,7 +16,10 @@ const COPY = {
   yourWindow: 'YOUR WINDOW',
   begin: 'BEGIN',
   minHours: 'MIN 7 HOURS',
-  title: '8BIT SLEEP',
+  // Two lines on purpose: 17 glyphs of the 22px pixel font run ~425px wide,
+  // past the short edge of most phones, and shrinking a bitmap font to fit
+  // just makes it mushy.
+  title: 'THE SLEEPY\nKNIGHT',
   questionPrompt: 'WHEN DO YOU USUALLY GO TO BED?',
   proposalPrompt: 'HERE IS YOUR SLEEP WINDOW, ADVENTURER.',
   accept: 'ACCEPT',

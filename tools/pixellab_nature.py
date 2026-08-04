@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""pixellab_nature.py — the living night-world nature pack for 8bit Sleep.
+"""pixellab_nature.py — the living night-world nature pack for The Sleepy Knight.
 
 Generates a full quality pass of night nature via the PixelLab API (per
-docs/8bit Sleep — гайд генерация ассетов Kimi + PixelLab.md): moon, drifting
+docs/The Sleepy Knight — гайд генерация ассетов Kimi + PixelLab.md): moon, drifting
 clouds, far mountains, pine forest, foreground grass, a lone wind-swayed oak
 and falling leaves. Wide bands are mirrored (mirror_h) so the parallax loop
 wraps seamlessly; everything is upscaled with NEAREST so fat pixels survive

@@ -1,0 +1,14 @@
+{
+  "name": "luma_talk",
+  "type": "animation",
+  "texture": "luma/morning/luma_talk.png",
+  "frame_width": 1100,
+  "frame_height": 1140,
+  "frames": 3,
+  "fps": 6.67,
+  "loop": true,
+  "frame_order": [0, 1, 2, 1],
+  "meta": {
+    "note": "cycle while Luma speaks: closed -> half -> open -> half"
+  }
+}

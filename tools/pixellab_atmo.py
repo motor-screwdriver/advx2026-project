@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""pixellab_atmo.py — PixelLab-generated home-screen atmosphere for 8bit Sleep.
+"""pixellab_atmo.py — PixelLab-generated home-screen atmosphere for The Sleepy Knight.
 
 Generates the day/night atmosphere elements (sun, moon, clouds, grass tile)
 via the PixelLab API and derives the four DayPhase variants (morning / day /

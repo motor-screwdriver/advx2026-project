@@ -1,0 +1,13 @@
+{
+  "name": "xp_bar",
+  "type": "animation",
+  "texture": "journey/xp_bar.png",
+  "frame_width": 1091,
+  "frame_height": 121,
+  "frames": 7,
+  "fps": 0,
+  "loop": false,
+  "meta": {
+    "note": "fill states 1/7..7/7 \u2014 pick the frame by XP progress"
+  }
+}

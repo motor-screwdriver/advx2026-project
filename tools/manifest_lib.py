@@ -1,4 +1,4 @@
-"""Manifest bookkeeping for the 8bit Sleep art pipeline.
+"""Manifest bookkeeping for the The Sleepy Knight art pipeline.
 
 `assets/manifest.data.json` is the machine-readable source of truth; every
 pipeline run updates it and regenerates the typed `assets/manifest.ts` that

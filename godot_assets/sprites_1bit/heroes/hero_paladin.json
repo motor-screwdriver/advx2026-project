@@ -1,0 +1,10 @@
+{
+  "name": "hero_paladin",
+  "type": "animation",
+  "texture": "sprites_1bit/heroes/hero_paladin.png",
+  "frame_width": 256,
+  "frame_height": 256,
+  "frames": 2,
+  "fps": 2,
+  "loop": true
+}

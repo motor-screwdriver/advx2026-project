@@ -1,0 +1,11 @@
+{
+  "name": "env_fire",
+  "type": "animation",
+  "texture": "luma/tavern_result/env_fire.png",
+  "frame_width": 305,
+  "frame_height": 220,
+  "frames": 3,
+  "fps": 1.43,
+  "loop": true,
+  "frame_order": [0, 1, 2, 1]
+}

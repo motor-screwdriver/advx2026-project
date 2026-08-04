@@ -86,7 +86,13 @@ export function HeroStage({
           style={[StyleSheet.absoluteFill, { opacity: journeyFade }]}
           pointerEvents={asleep ? 'auto' : 'none'}
         >
-          <JourneyStage hp={state.hp} xp={hero.xp} level={hero.level} onWake={onWake} />
+          <JourneyStage
+            hp={state.hp}
+            xp={hero.xp}
+            level={hero.level}
+            hero={hero.type}
+            onWake={onWake}
+          />
         </Animated.View>
       )}
     </View>

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""generate_audio.py — the 8bit Sleep deterministic chiptune audio pipeline.
+"""generate_audio.py — the The Sleepy Knight deterministic chiptune audio pipeline.
 
 Every music loop and SFX is synthesized procedurally in pure stdlib Python:
 square/triangle oscillators, NES-style 15-bit LFSR noise, linear ADSR-ish

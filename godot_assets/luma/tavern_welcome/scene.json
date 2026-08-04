@@ -1,0 +1,62 @@
+{
+  "name": "tavern_welcome",
+  "type": "layered_scene",
+  "background": "luma/tavern_welcome/background.png",
+  "width": 1080,
+  "height": 1920,
+  "zones": [
+    {
+      "name": "luma_blink",
+      "position": [150, 215],
+      "type": "animation",
+      "texture": "luma/tavern_welcome/luma_blink.png",
+      "frame_width": 620,
+      "frame_height": 585,
+      "frames": 2,
+      "fps": 4.55,
+      "loop": false,
+      "meta": {
+        "note": "random blink: show frame 1 for one tick every 3-6 s"
+      }
+    },
+    {
+      "name": "luma_talk",
+      "position": [150, 215],
+      "type": "animation",
+      "texture": "luma/tavern_welcome/luma_talk.png",
+      "frame_width": 620,
+      "frame_height": 585,
+      "frames": 3,
+      "fps": 6.67,
+      "loop": true,
+      "frame_order": [0, 1, 2, 1],
+      "meta": {
+        "note": "cycle while Luma speaks: closed -> half -> open -> half"
+      }
+    },
+    {
+      "name": "env_fire",
+      "position": [775, 385],
+      "type": "animation",
+      "texture": "luma/tavern_welcome/env_fire.png",
+      "frame_width": 240,
+      "frame_height": 280,
+      "frames": 4,
+      "fps": 1.43,
+      "loop": true,
+      "frame_order": [0, 1, 2, 3, 2, 1]
+    },
+    {
+      "name": "env_candle",
+      "position": [25, 540],
+      "type": "animation",
+      "texture": "luma/tavern_welcome/env_candle.png",
+      "frame_width": 95,
+      "frame_height": 130,
+      "frames": 4,
+      "fps": 1.43,
+      "loop": true,
+      "frame_order": [0, 1, 2, 3, 2, 1]
+    }
+  ]
+}

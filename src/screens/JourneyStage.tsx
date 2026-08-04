@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import type { HeroType } from '../contracts/types'
 import { JourneyCarousel } from '../ui/journey/JourneyCarousel'
 import { JourneyDock } from '../ui/journey/JourneyDock'
 import { JourneyTopHud } from '../ui/journey/JourneyTopHud'
@@ -19,24 +20,32 @@ export function JourneyStage({
   hp,
   xp,
   level,
+  hero,
   onWake,
 }: {
   hp: number
   xp: number
   level: number
+  hero: HeroType
   onWake: () => void
 }) {
   const go = useScreenTransition()
   return (
     <View style={styles.root}>
       <SafeAreaView style={styles.safe}>
-        <JourneyTopHud hp={hp} xp={xp} level={level} rightAccessory={<HomeNav />} />
-        <JourneyCarousel />
-        <JourneyDock
-          onWake={onWake}
-          onBag={() => go('/inventory')}
-          onSettings={() => go('/settings')}
-        />
+        <View style={styles.hud}>
+          <JourneyTopHud hp={hp} xp={xp} level={level} rightAccessory={<HomeNav />} />
+        </View>
+        <View style={styles.carousel}>
+          <JourneyCarousel hero={hero} />
+        </View>
+        <View style={styles.hud}>
+          <JourneyDock
+            onWake={onWake}
+            onBag={() => go('/inventory')}
+            onSettings={() => go('/settings')}
+          />
+        </View>
       </SafeAreaView>
     </View>
   )
@@ -49,6 +58,9 @@ const styles = StyleSheet.create({
   safe: {
     flex: 1,
     padding: theme.screenPad,
-    gap: theme.screenPad,
   },
+  // The panels sit on top and the viewport runs a hair under both of them, so
+  // the carousel is never separated from the HUD by a seam of background.
+  hud: { zIndex: 1 },
+  carousel: { flex: 1, marginVertical: -2 },
 })
